@@ -1,0 +1,38 @@
+    <div class="row">
+        <div class="col-md-4 offset-md-4">
+            <form action="">
+                <div class="form-group">
+                    <label for="text">Nick</label>
+                    <input 
+                    type="text"
+                    id="nick"
+                    class="form-control"
+                    ngModel name="nick"
+                    required
+                    >
+                </div>
+                <div class="form-group">
+                    <label for="password">Hasło</label>
+                    <input 
+                    type="password"
+                    id="password"
+                    class="form-control"
+                    ngModel name="password"
+                    required
+                    >
+                </div>
+                <div class="row" id="buttonRow">
+                    <div class="col-2">
+                        <button class="btn btn-primary" >Zaloguj</button>
+                    </div>
+                    <div class="col-3">
+                        <button class="btn btn-success">Rejestracja</button>
+                    </div>
+                    <div class="col-4">
+                        <button class="btn btn-outline-danger" *ngIf="isPasswordReset">Nie pamiętam hasła</button>
+                    </div> 
+                </div>
+              
+            </form>
+        </div>
+    </div>
