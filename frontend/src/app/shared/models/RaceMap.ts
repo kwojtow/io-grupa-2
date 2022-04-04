@@ -1,17 +1,17 @@
 import {Vector} from "./Vector";
 
 export class RaceMap{
-  constructor( private _mapWidth: number,
-               private _mapHeight: number,
-               private finishLine: Array<Vector>,
-               private startLine: Array<Vector>,
-               private obstacles: Array<Vector> ){
+  constructor( private readonly _mapWidth: number,
+               private readonly _mapHeight: number,
+               private readonly _finishLine: Array<Vector>,
+               private readonly _startLine: Array<Vector>,
+               private readonly _obstacles: Array<Vector> ){
 
     this._mapHeight = _mapHeight;
     this._mapWidth = _mapWidth;
-    this.finishLine = finishLine;
-    this.startLine = startLine;
-    this.obstacles = obstacles;
+    this._finishLine = _finishLine;
+    this._startLine = _startLine;
+    this._obstacles = _obstacles;
   }
 
   get mapWidth(): number {
@@ -20,5 +20,18 @@ export class RaceMap{
 
   get mapHeight(): number {
     return this._mapHeight;
+  }
+
+
+  get finishLine(): Array<Vector> {
+    return this._finishLine;
+  }
+
+  get startLine(): Array<Vector> {
+    return this._startLine;
+  }
+
+  get obstacles(): Array<Vector> {
+    return this._obstacles;
   }
 }
