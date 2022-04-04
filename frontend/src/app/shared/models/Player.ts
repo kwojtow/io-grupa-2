@@ -41,11 +41,11 @@ export class Player{
 
         ctx.fill();
         ctx.stroke();
+        
         ctx.fillStyle = 'black'
         ctx.fillRect(leftUpperX + miniFieldWidth+15, leftUpperY + miniFieldWidth*1.5-lineWidth-5, 15 , 10);
         ctx.fillRect(leftUpperX + miniFieldWidth*4-30, leftUpperY + miniFieldWidth*1.5-lineWidth-5, 15 , 10);
         ctx.fillRect(leftUpperX + miniFieldWidth+15, leftUpperY + miniFieldWidth*3.5, 15 , 10);
         ctx.fillRect(leftUpperX + miniFieldWidth*4-30, leftUpperY + miniFieldWidth*3.5, 15 , 10);
-
       }
 }
