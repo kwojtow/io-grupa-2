@@ -35,7 +35,7 @@ export class Player{
     }
 
     public showCurrentVector(ctx: CanvasRenderingContext2D, fieldWidth: number, lineWidth: number): void {
-        ctx.fillStyle = "#00ffaa55";
+        ctx.fillStyle = "#0066ff77";
 
         ctx.fillRect(fieldWidth * (this.currentVector.posX + this.position.posX) + lineWidth,
           fieldWidth * (this.currentVector.posY + this.position.posY) + lineWidth,

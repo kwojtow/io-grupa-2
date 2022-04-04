@@ -27,6 +27,7 @@ export class MapComponent implements OnInit {
 
   private static getExamplePlayers(){
     let player1 = new Player(new Vector(5, 5), 'green');
+    player1.currentVector = new Vector(1, 2);
     let player2 = new Player(new Vector(6, 2), 'red');
     let player3 = new Player(new Vector(12, 9), 'yellow');
     return new Array(player1, player2, player3);
