@@ -42,29 +42,11 @@ export class MapComponent implements OnInit {
   private drawObstacle(ctx: CanvasRenderingContext2D, v: Vector, fieldWidth: number, color: string): void{
 
     ctx.fillStyle = color;
-    const n = fieldWidth/5;
-    const x = v.posX * fieldWidth + this.LINE_WIDTH;
-    const y = v.posY * fieldWidth + this.LINE_WIDTH;
-    const padd = this.LINE_WIDTH * 2;
 
-    ctx.beginPath();
-    ctx.moveTo(x, y);
-    ctx.lineTo(x, y + n);
-    ctx.lineTo(x + fieldWidth - n - padd, y + fieldWidth - padd);
-    ctx.lineTo(x + fieldWidth - padd, y + fieldWidth - padd);
-    ctx.lineTo(x + fieldWidth - padd, y + fieldWidth - n - padd);
-    ctx.lineTo(x + n , y);
-    ctx.fill();
-
-    ctx.beginPath();
-    ctx.moveTo(x + fieldWidth - padd, y);
-    ctx.lineTo(x + fieldWidth - padd, y + n);
-    ctx.lineTo(x + n, y + fieldWidth - padd);
-    ctx.lineTo(x, y + fieldWidth - padd);
-    ctx.lineTo(x , y + fieldWidth - n - padd);
-    ctx.lineTo(x + fieldWidth - n - padd , y);
-    ctx.fill();
-
+    ctx.fillRect(fieldWidth * v.posX + this.LINE_WIDTH,
+      fieldWidth * v.posY + this.LINE_WIDTH,
+      fieldWidth - 2 * this.LINE_WIDTH,
+      fieldWidth - 2 * this.LINE_WIDTH);
   }
 
   private drawCheckerSquare(ctx: CanvasRenderingContext2D, v: Vector, fieldWidth: number, color: string){
