@@ -13,6 +13,7 @@ export class MapComponent implements OnInit {
   LINE_WIDTH = 5;
   FINISH_LINE_COLOR = 'black';
   START_LINE_COLOR = 'blue';
+  OBSTACLE_COLOR = 'black';
 
   constructor() { }
 
@@ -20,7 +21,8 @@ export class MapComponent implements OnInit {
     const width = 13;
     const height = 10;
     return new RaceMap(width, height, [new Vector(1, 1), new Vector(2, 2)],
-      [new Vector(3, 3), new Vector(4, 4)], []);
+      [new Vector(3, 3), new Vector(4, 4)],
+      [new Vector(7, 5), new Vector(8, 6)]);
   }
 
   private static getExamplePlayers(){
@@ -43,6 +45,16 @@ export class MapComponent implements OnInit {
     ctx.moveTo(fromX, fromY);
     ctx.lineTo(toX, toY);
     ctx.stroke();
+  }
+
+  private drawObstacle(ctx: CanvasRenderingContext2D, v: Vector, fieldWidth: number, color: string): void{
+
+    ctx.fillStyle = color;
+
+    ctx.fillRect(fieldWidth * v.posX + this.LINE_WIDTH,
+      fieldWidth * v.posY + this.LINE_WIDTH,
+      fieldWidth - 2 * this.LINE_WIDTH,
+      fieldWidth - 2 * this.LINE_WIDTH);
   }
 
   private drawCheckerSquare(ctx: CanvasRenderingContext2D, v: Vector, fieldWidth: number, color: string){
@@ -68,6 +80,13 @@ export class MapComponent implements OnInit {
     });
     map.finishLine.forEach(v => {
       this.drawCheckerSquare(ctx, v, fieldWidth, this.FINISH_LINE_COLOR);
+    });
+  }
+
+  private drawObstaclesLines(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, map: RaceMap){
+    const fieldWidth = MapComponent.getFieldWith(canvas, map);
+    map.obstacles.forEach(v => {
+      this.drawObstacle(ctx, v, fieldWidth, this.OBSTACLE_COLOR);
     });
   }
 
@@ -102,8 +121,8 @@ export class MapComponent implements OnInit {
     if(ctx != null) {
       this.drawMapNet(canvas, ctx, map);
       this.drawStartAndFinishLines(canvas, ctx, map);
+      this.drawObstaclesLines(canvas, ctx, map);
       this.drawPlayers(canvas, ctx, map, players);
-      // draw obstacles
     }
   }
 }
