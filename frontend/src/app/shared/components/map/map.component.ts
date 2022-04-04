@@ -12,6 +12,7 @@ export class MapComponent implements OnInit {
   LINE_WIDTH = 5;
   FINISH_LINE_COLOR = 'black';
   START_LINE_COLOR = 'blue';
+  OBSTACLE_COLOR = 'black';
 
   constructor() { }
 
@@ -19,7 +20,8 @@ export class MapComponent implements OnInit {
     const width = 13;
     const height = 10;
     return new RaceMap(width, height, [new Vector(1, 1), new Vector(2, 2)],
-      [new Vector(3, 3), new Vector(4, 4)], []);
+      [new Vector(3, 3), new Vector(4, 4)],
+      [new Vector(7, 5), new Vector(8, 6)]);
   }
 
   ngOnInit(): void {
@@ -35,6 +37,34 @@ export class MapComponent implements OnInit {
     ctx.moveTo(fromX, fromY);
     ctx.lineTo(toX, toY);
     ctx.stroke();
+  }
+
+  private drawObstacle(ctx: CanvasRenderingContext2D, v: Vector, fieldWidth: number, color: string): void{
+
+    ctx.fillStyle = color;
+    const n = fieldWidth/5;
+    const x = v.posX * fieldWidth + this.LINE_WIDTH;
+    const y = v.posY * fieldWidth + this.LINE_WIDTH;
+    const padd = this.LINE_WIDTH * 2;
+
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x, y + n);
+    ctx.lineTo(x + fieldWidth - n - padd, y + fieldWidth - padd);
+    ctx.lineTo(x + fieldWidth - padd, y + fieldWidth - padd);
+    ctx.lineTo(x + fieldWidth - padd, y + fieldWidth - n - padd);
+    ctx.lineTo(x + n , y);
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.moveTo(x + fieldWidth - padd, y);
+    ctx.lineTo(x + fieldWidth - padd, y + n);
+    ctx.lineTo(x + n, y + fieldWidth - padd);
+    ctx.lineTo(x, y + fieldWidth - padd);
+    ctx.lineTo(x , y + fieldWidth - n - padd);
+    ctx.lineTo(x + fieldWidth - n - padd , y);
+    ctx.fill();
+
   }
 
   private drawCheckerSquare(ctx: CanvasRenderingContext2D, v: Vector, fieldWidth: number, color: string){
@@ -63,6 +93,13 @@ export class MapComponent implements OnInit {
     });
   }
 
+  private drawObstaclesLines(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, map: RaceMap){
+    const fieldWidth = MapComponent.getFieldWith(canvas, map);
+    map.obstacles.forEach(v => {
+      this.drawObstacle(ctx, v, fieldWidth, this.OBSTACLE_COLOR);
+    });
+  }
+
   private static getFieldWith(canvas: HTMLCanvasElement, map: RaceMap): number{
     const width = canvas.width;
     return Math.round(width/map.mapWidth);
@@ -88,7 +125,7 @@ export class MapComponent implements OnInit {
     if(ctx != null) {
       this.drawMapNet(canvas, ctx, map);
       this.drawStartAndFinishLines(canvas, ctx, map);
-      // draw obstacles
+      this.drawObstaclesLines(canvas, ctx, map);
     }
   }
 }
