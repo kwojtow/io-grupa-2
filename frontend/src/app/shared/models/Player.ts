@@ -2,9 +2,11 @@ import { Vector } from "./Vector";
 
 export class Player{
     constructor( private _position: Vector, 
-                 private _color: string) {
+                 private _color: string, 
+                 private _currentVector: Vector = new Vector(0, 0)) {
         this._color = _color;
         this._position = _position;
+        this._currentVector = _currentVector;
     }
 
     set position(_position: Vector) {
@@ -21,6 +23,14 @@ export class Player{
 
     get color(): string {
         return this._color;
+    }
+
+    set currentVector(_currentVector: Vector) {
+        this._currentVector = _currentVector;
+    }
+
+    get currentVector(): Vector {
+        return this._currentVector;
     }
 
     public drawPlayer(ctx: CanvasRenderingContext2D, fieldWidth: number, lineWidth: number): void{
