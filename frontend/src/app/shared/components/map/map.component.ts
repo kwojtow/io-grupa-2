@@ -1,4 +1,5 @@
 import {Component, OnInit} from '@angular/core';
+import { Player } from '../../models/Player';
 import {RaceMap} from "../../models/RaceMap";
 import {Vector} from "../../models/Vector";
 
@@ -24,10 +25,17 @@ export class MapComponent implements OnInit {
       [new Vector(7, 5), new Vector(8, 6)]);
   }
 
+  private static getExamplePlayers(){
+    let player1 = new Player(new Vector(5, 5), 'green');
+    let player2 = new Player(new Vector(6, 2), 'red');
+    let player3 = new Player(new Vector(12, 9), 'yellow');
+    return new Array(player1, player2, player3);
+  }
+
   ngOnInit(): void {
     const canvas: HTMLElement | null = document.getElementById('canvas');
     if(canvas != null) {
-      this.initMap(<HTMLCanvasElement>canvas, MapComponent.getExampleMap());
+      this.initMap(<HTMLCanvasElement>canvas, MapComponent.getExampleMap(), MapComponent.getExamplePlayers());
     }
   }
 
@@ -101,13 +109,20 @@ export class MapComponent implements OnInit {
     }
 
   }
-  initMap(canvas: HTMLCanvasElement, map: RaceMap){
+
+  private drawPlayers(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, map: RaceMap, players: Array<Player>){
+    const fieldWidth = MapComponent.getFieldWith(canvas, map)
+    players.forEach(player => player.drawPlayer(ctx, fieldWidth, this.LINE_WIDTH));
+  }
+
+  initMap(canvas: HTMLCanvasElement, map: RaceMap, players: Array<Player>){
     const ctx = canvas.getContext("2d");
 
     if(ctx != null) {
       this.drawMapNet(canvas, ctx, map);
       this.drawStartAndFinishLines(canvas, ctx, map);
       this.drawObstaclesLines(canvas, ctx, map);
+      this.drawPlayers(canvas, ctx, map, players);
     }
   }
 }
