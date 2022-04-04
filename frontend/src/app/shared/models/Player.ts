@@ -27,7 +27,6 @@ export class Player{
         const miniFieldWidth = (fieldWidth - lineWidth * 2)/5;
         ctx.beginPath();
         ctx.fillStyle = this.color;
-        ctx.lineCap = 'round';
         let leftUpperX: number =  fieldWidth * this.position.posX + lineWidth;
         let leftUpperY: number = fieldWidth * this.position.posY + lineWidth;
         ctx.moveTo(leftUpperX + miniFieldWidth+10, leftUpperY + miniFieldWidth*1.5); 
