@@ -1,0 +1,49 @@
+.container-fluid{
+    background-color: rgba(78, 42, 106, 100);
+    /* rgb(78, 45, 109); */
+
+  }
+  
+  #register{
+     padding: 10%;
+  }
+  
+  
+  #box{
+      padding: 3%;
+      background-color: white;
+      margin-top: 2%;
+      border-radius: 5%;
+  
+      
+  }
+  
+  #game-name{
+      color:white;
+      font-family: Arial;
+  }
+  
+  #register-button-box{
+      margin-top: 8%;
+      
+  }
+  
+  .button{
+      
+      padding-bottom: 1%;
+      padding-top: 1%;
+      padding-left: 10%;
+      padding-right: 10%;
+      border-radius: 12px;
+      display: inline-block;
+  }
+  
+  
+  .button-register{
+    background-color: rgba(78, 42, 106, 100);
+    color: rgba(255,255,255,100);
+    font-size: 17px;
+        
+  }
+  
+  
