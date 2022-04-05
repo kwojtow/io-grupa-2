@@ -27,6 +27,7 @@ export class MapComponent implements OnInit {
 
   private static getExamplePlayers(){
     let player1 = new Player(new Vector(5, 5), 'green');
+    player1.currentVector = new Vector(1, 2);
     let player2 = new Player(new Vector(6, 2), 'red');
     let player3 = new Player(new Vector(12, 9), 'yellow');
     return new Array(player1, player2, player3);
@@ -111,8 +112,13 @@ export class MapComponent implements OnInit {
   }
 
   private drawPlayers(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, map: RaceMap, players: Array<Player>){
-    const fieldWidth = MapComponent.getFieldWith(canvas, map)
+    const fieldWidth = MapComponent.getFieldWith(canvas, map);
     players.forEach(player => player.drawPlayer(ctx, fieldWidth, this.LINE_WIDTH));
+  }
+
+  private drawPlayerVectors(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, map: RaceMap, player: Player) {
+    const fieldWidth = MapComponent.getFieldWith(canvas, map);
+    player.showCurrentVector(ctx, fieldWidth, this.LINE_WIDTH);
   }
 
   initMap(canvas: HTMLCanvasElement, map: RaceMap, players: Array<Player>){
@@ -123,6 +129,7 @@ export class MapComponent implements OnInit {
       this.drawStartAndFinishLines(canvas, ctx, map);
       this.drawObstaclesLines(canvas, ctx, map);
       this.drawPlayers(canvas, ctx, map, players);
+      this.drawPlayerVectors(canvas, ctx, map, players[0]);
     }
   }
 }

@@ -1,10 +1,13 @@
 import { Vector } from "./Vector";
 
 export class Player{
+    private _currentVector: Vector;
+
     constructor( private _position: Vector, 
                  private _color: string) {
         this._color = _color;
         this._position = _position;
+        this._currentVector = new Vector(0, 0);
     }
 
     set position(_position: Vector) {
@@ -21,6 +24,23 @@ export class Player{
 
     get color(): string {
         return this._color;
+    }
+
+    set currentVector(_currentVector: Vector) {
+        this._currentVector = _currentVector;
+    }
+
+    get currentVector(): Vector {
+        return this._currentVector;
+    }
+
+    public showCurrentVector(ctx: CanvasRenderingContext2D, fieldWidth: number, lineWidth: number): void {
+        ctx.fillStyle = "#0066ff77";
+
+        ctx.fillRect(fieldWidth * (this.currentVector.posX + this.position.posX) + lineWidth,
+          fieldWidth * (this.currentVector.posY + this.position.posY) + lineWidth,
+          fieldWidth - 2 * lineWidth,
+          fieldWidth - 2 * lineWidth);
     }
 
     public drawPlayer(ctx: CanvasRenderingContext2D, fieldWidth: number, lineWidth: number): void{
