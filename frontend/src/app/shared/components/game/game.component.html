@@ -25,8 +25,8 @@
     <button id="leave-game-btn">Opuść grę</button>
   </div>
   <div class="information-bar">
-    <div style="font-size: 35px; font-weight: bold; color: green;">TWÓJ RUCH</div>
-    <div style="font-size: 22px">Pozostalo 5 sekund.</div>
+    <div style="font-size: 35px; font-weight: bold; color: green;"><label>TWÓJ RUCH</label></div>
+    <div [style.color]="this.timer < 4 ? 'red' : 'black'" style="font-size: 20px">Pozostalo {{timer}} sekund.</div>
   </div>
   <div class="board">
     <app-map></app-map>

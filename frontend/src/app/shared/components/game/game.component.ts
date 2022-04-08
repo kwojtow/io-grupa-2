@@ -7,9 +7,9 @@ import { Component, OnInit } from '@angular/core';
 })
 export class GameComponent implements OnInit {
 
-  usersList = new Array('Player1', 'Player2', 'Player3', 'Player1');
+  usersList = new Array('Player1', 'Player2', 'Player3', 'Player1', 'Player1', 'Player2', 'Player3');
 
-
+  timer = 2;
   constructor() { }
 
   ngOnInit(): void {
