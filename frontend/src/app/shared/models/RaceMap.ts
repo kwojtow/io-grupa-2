@@ -1,5 +1,7 @@
 import {Vector} from "./Vector";
 
+
+
 export class RaceMap{
   constructor( private readonly _mapWidth: number,
                private readonly _mapHeight: number,
@@ -34,4 +36,5 @@ export class RaceMap{
   get obstacles(): Array<Vector> {
     return this._obstacles;
   }
+
 }
