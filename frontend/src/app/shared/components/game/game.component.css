@@ -108,7 +108,7 @@ body {
 
 }
 
-@media(max-width: 1000px) {
+@media(max-width: 990px) {
   .container {
     grid-template-rows: 0.5fr 0.5fr 2fr 1.5fr;
     grid-template-areas:
@@ -140,5 +140,11 @@ body {
   }
   .players-list{
     max-height: 75%;
+  }
+}
+@media (max-width: 770px) {
+  .container {
+    grid-template-rows: 0.3fr 0.5fr 1.5fr 1.5fr;
+
   }
 }
