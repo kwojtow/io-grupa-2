@@ -18,12 +18,15 @@ export class MapComponent implements OnInit {
 
   ngOnInit(): void {
     const canvas: HTMLElement | null = document.getElementById('canvas');
-    if(canvas != null) {
-      this.initMap(<HTMLCanvasElement>canvas, this._gameService.game.map, this._gameService.game.players);
-      canvas.addEventListener('mousedown', function(e) {
+    this._gameService.game.subscribe(game => {
+      if(canvas != null) {
+        this.initMap(<HTMLCanvasElement>canvas, game.map, game.players);
+        canvas.addEventListener('mousedown', function(e) {
           MapService.getCursorPosition(<HTMLCanvasElement>canvas, e);
-          })
-    }
+        })
+      }
+    })
+
 
   }
 

@@ -29,7 +29,7 @@
       <div style="font-size: 35px; font-weight: bold; color: green;"><label>TWÓJ RUCH</label></div>
       <div [style.color]="this.timer < 4 ? 'red' : 'black'" style="font-size: 20px">Pozostalo {{this.timer}} sekund.</div>
     </div>
-    <div *ngIf="!(currentPlayer?.name === player?.name)" style="font-size: 35px; font-weight: bold; color: gray;"><label>OCZEKIWANIE NA TURĘ</label></div>
+    <div *ngIf="!(currentPlayer?.name === player?.name)" style="font-size: 35px; font-weight: bold; color: gray;"><label>OCZEKIWANIE NA TWOJĄ TURĘ</label></div>
 
   </div>
   <div class="board">

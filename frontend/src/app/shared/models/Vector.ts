@@ -15,4 +15,12 @@ export class Vector{
   equals(v: Vector): boolean{
     return v.posX == this.posX && v.posY == this.posY;
   }
+
+  set posX(value: number) {
+    this._posX = value;
+  }
+
+  set posY(value: number) {
+    this._posY = value;
+  }
 }

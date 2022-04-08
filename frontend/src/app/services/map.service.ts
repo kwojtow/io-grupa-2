@@ -4,6 +4,7 @@ import {Vector} from "../shared/models/Vector";
 import {Player} from "../shared/models/Player";
 import {MapComponent} from "../shared/components/map/map.component";
 import {GameService} from "./game.service";
+import {Game} from "../shared/models/Game";
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,11 @@ export class MapService {
   START_LINE_COLOR = 'blue';
   OBSTACLE_COLOR = 'black';
 
-  constructor(private _gameService: GameService) { }
+  static game: Game;
+
+  constructor(private _gameService: GameService) {
+    MapService.game = _gameService.game.getValue();
+  }
 
   static getCursorPosition(canvas: HTMLCanvasElement, event: MouseEvent): void {
     const ctx = canvas.getContext('2d');
@@ -23,13 +28,14 @@ export class MapService {
     const x = event.offsetX;
     const y = event.offsetY;
     // @ts-ignore
-    const raceMap = new RaceMap(13, 9, [new Vector(1, 1), new Vector(2, 2)],
-      [new Vector(3, 3), new Vector(4, 4)],
-      [new Vector(7, 5), new Vector(8, 6)]);
+    const raceMap = MapService.game.map;
     if (ctx !== null) {
-      const v = MapService.getIdxPosition(ctx, canvas, rect.width / raceMap.mapWidth, rect.height / raceMap.mapHeight, x, y, MapService.getFieldWith(canvas, raceMap));
+      const v = MapService.getIdxPosition(ctx,
+        canvas,
+        rect.width / raceMap.mapWidth, rect.height / raceMap.mapHeight,
+        x, y);
       console.log(v);
-      // console.log(.getFieldProperty(v))
+      console.log(MapService.game.getFieldProperty(v))
     }
   }
 
@@ -38,11 +44,9 @@ export class MapService {
                         width: number,
                         height: number,
                         cursorPosX: number,
-                        cursorPosY: number,
-                        fieldWidth: number): Vector{
+                        cursorPosY: number): Vector{
     return new Vector(Math.floor(cursorPosX/width),
       Math.floor(cursorPosY/height));
-
   }
 
   private drawLine(ctx: CanvasRenderingContext2D, fromX: number, fromY: number, toX: number, toY: number){
@@ -125,6 +129,8 @@ export class MapService {
     const fieldWidth = MapService.getFieldWith(canvas, map);
     player.showCurrentVector(ctx, fieldWidth, this.LINE_WIDTH);
   }
+
+
 
 
 }

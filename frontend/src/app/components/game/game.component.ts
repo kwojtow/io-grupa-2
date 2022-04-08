@@ -16,8 +16,13 @@ export class GameComponent implements OnInit {
   roomId: number;
 
   constructor(private _gameService: GameService) {
-    this.usersList = _gameService.game.players;
-    this.timer = _gameService.game.settings.roundTime;
+    this.roomId = _gameService.roomId;
+    _gameService.game.subscribe(game => {
+        this.usersList = game.players
+        this.timer = game.settings.roundTime
+      }
+
+    );
     _gameService.playerRound
       .subscribe(player => this.currentPlayer = player);
     this.player = _gameService.player;

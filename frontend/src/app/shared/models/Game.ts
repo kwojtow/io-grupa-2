@@ -52,7 +52,7 @@ export class Game{
         return fieldProperty.FINISH;
       case this.map.startLine.some(v => v.equals(vector)):
         return fieldProperty.START;
-      case this.players.some(p => p.currentVector.equals(vector)):
+      case this.players.some(p => p.position.equals(vector)):
         return fieldProperty.PLAYER;
       // case this._currentPlayer.currentVector.equals(vector): // TODO: possible moves vectors
       //   return fieldProperty.NEXT_VECTOR;
