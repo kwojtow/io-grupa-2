@@ -1,9 +1,8 @@
-import {Component, Inject, OnInit} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, Inject, Injectable, OnInit, ViewChild} from '@angular/core';
 import { Player } from '../../models/Player';
 import {RaceMap} from "../../models/RaceMap";
-import {Vector} from "../../models/Vector";
-import {GameService} from "../../../services/game.service";
-import {MapService} from "../../../services/map.service";
+import {GameService} from "../../../core/services/game.service";
+import {MapService} from "../../../core/services/map.service";
 
 
 @Component({
@@ -11,34 +10,41 @@ import {MapService} from "../../../services/map.service";
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.css']
 })
-export class MapComponent implements OnInit {
+export class MapComponent implements AfterViewInit {
 
   constructor(private _gameService: GameService,
               private _mapService: MapService) { }
 
-  ngOnInit(): void {
-    const canvas: HTMLElement | null = document.getElementById('canvas');
+  @ViewChild('canvasElement') canvasRef: ElementRef;
+  private ctx: CanvasRenderingContext2D | null;
+
+  ngAfterViewInit(): void {
+    const canvas = this.canvasRef.nativeElement;
+    if (canvas != null){
+      canvas.addEventListener('mousedown', function(e: MouseEvent) {
+        MapService.getCursorPosition(canvas, e);
+      });
+    }
     this._gameService.game.subscribe(game => {
       if(canvas != null) {
-        this.initMap(<HTMLCanvasElement>canvas, game.map, game.players);
-        canvas.addEventListener('mousedown', function(e) {
-          MapService.getCursorPosition(<HTMLCanvasElement>canvas, e);
-        })
+        this.initMap(canvas, game.map, game.players);
       }
-    })
-
-
+    });
+    this.ctx = this.getContext(canvas);
   }
 
   initMap(canvas: HTMLCanvasElement, map: RaceMap, players: Array<Player>){
-    const ctx = canvas.getContext("2d");
-
-    if(ctx != null) {
-      this._mapService.drawMapNet(canvas, ctx, map);
-      this._mapService.drawStartAndFinishLines(canvas, ctx, map);
-      this._mapService.drawObstaclesLines(canvas, ctx, map);
-      this._mapService.drawPlayers(canvas, ctx, map, players);
-      this._mapService.drawPlayerVectors(canvas, ctx, map, players[0]);
+    if(this.ctx != null) {
+      this._mapService.drawMapNet(canvas, this.ctx, map);
+      this._mapService.drawStartAndFinishLines(canvas, this.ctx, map);
+      this._mapService.drawObstaclesLines(canvas, this.ctx, map);
+      this._mapService.drawPlayers(canvas, this.ctx, map, players);
+      this._mapService.drawPlayerVectors(canvas, this.ctx, map, players[0]);
     }
   }
+
+  private getContext(canvas: HTMLCanvasElement){
+    return canvas.getContext("2d");
+  }
+
 }

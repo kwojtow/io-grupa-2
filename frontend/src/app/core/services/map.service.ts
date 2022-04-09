@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import {RaceMap} from "../shared/models/RaceMap";
-import {Vector} from "../shared/models/Vector";
-import {Player} from "../shared/models/Player";
-import {MapComponent} from "../shared/components/map/map.component";
+import {RaceMap} from "../../shared/models/RaceMap";
+import {Vector} from "../../shared/models/Vector";
+import {Player} from "../../shared/models/Player";
+import {MapComponent} from "../../shared/components/map/map.component";
 import {GameService} from "./game.service";
-import {Game} from "../shared/models/Game";
+import {Game} from "../../shared/models/Game";
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +16,7 @@ export class MapService {
   START_LINE_COLOR = 'blue';
   OBSTACLE_COLOR = 'black';
 
-  static game: Game;
+  private static game: Game;
 
   constructor(private _gameService: GameService) {
     MapService.game = _gameService.game.getValue();

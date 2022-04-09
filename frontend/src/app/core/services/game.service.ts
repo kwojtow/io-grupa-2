@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import {Game} from "../shared/models/Game";
-import {RaceMap} from "../shared/models/RaceMap";
-import {Vector} from "../shared/models/Vector";
-import {Player} from "../shared/models/Player";
-import {GameSettings} from "../shared/models/GameSettings";
+import {Game} from "../../shared/models/Game";
+import {RaceMap} from "../../shared/models/RaceMap";
+import {Vector} from "../../shared/models/Vector";
+import {Player} from "../../shared/models/Player";
+import {GameSettings} from "../../shared/models/GameSettings";
 import {BehaviorSubject, Subject} from "rxjs";
 import {MockDataProviderService} from "./mock-data-provider.service";
 

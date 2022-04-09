@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import {RaceMap} from "../shared/models/RaceMap";
-import {Vector} from "../shared/models/Vector";
-import {Player} from "../shared/models/Player";
-import {GameSettings} from "../shared/models/GameSettings";
-import {Game} from "../shared/models/Game";
+import {RaceMap} from "../../shared/models/RaceMap";
+import {Vector} from "../../shared/models/Vector";
+import {Player} from "../../shared/models/Player";
+import {GameSettings} from "../../shared/models/GameSettings";
+import {Game} from "../../shared/models/Game";
 import {BehaviorSubject, Subject} from "rxjs";
 import {GameService} from "./game.service";
 
@@ -15,6 +15,7 @@ export class MockDataProviderService {
   private _player: Player;
   private _playerRound: BehaviorSubject<Player>;
   private _roomId: number;
+  static idx = 0;
   private static getExampleMap(){
     const width = 13;
     const height = 9;
@@ -50,11 +51,12 @@ export class MockDataProviderService {
   }
 
   startIntervalChanges(): void{
-    setInterval(function (player: Subject<Player>, players: Player[]){ player.next(players[GameService.idx]); GameService.idx =(GameService.idx+1)%3; }, 5000, this.playerRound, this.game.getValue().players)
+    setInterval(function (player: Subject<Player>, players: Player[]){ player.next(players[GameService.idx]); GameService.idx =(GameService.idx+1)%2; }, 1000, this.playerRound, this.game.getValue().players)
     setInterval(function (game: BehaviorSubject<Game>){
       let newGame = game.getValue();
-      newGame.players[0].position.posX = (newGame.players[0].position.posX + 1) % newGame.map.mapWidth;
+      newGame.players[MockDataProviderService.idx%2].position.posX = (newGame.players[MockDataProviderService.idx%2].position.posX + 1) % newGame.map.mapWidth;
       game.next(newGame);
+      MockDataProviderService.idx += 1;
     }, 1000, this._game)
 
   }
