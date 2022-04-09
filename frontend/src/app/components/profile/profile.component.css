@@ -1,0 +1,176 @@
+.container {  display: grid;
+  grid-template-columns: 2fr 0.6fr 1.3fr 1.3fr;
+  grid-template-rows: 0.1fr 0.6fr 1.7fr;
+  gap: 0px 0px;
+  grid-auto-flow: row;
+  height: 100%;
+  width: 100%;
+}
+body{
+  width: 100vw;
+  height: 100vh;
+}
+.nav-bar {
+  background-color: #630c78;
+  grid-area: 1 / 1 / 2 / 5;
+}
+
+.map-section {
+  width: 95%;
+  margin: auto;
+  height: 95%;
+  border: 1px solid black;
+  display: grid;
+  grid-template-columns: 1fr 1fr 2fr;
+  grid-template-rows: 0.4fr 1.3fr 1fr;
+  gap: 0px 0px;
+  grid-auto-flow: row;
+  grid-template-areas:
+    "choose-map new-map-btn ."
+    "map-preview map-preview map-stats"
+    "map-preview map-preview map-stats";
+  grid-area: 3 / 1 / 4 / 5;
+}
+
+.choose-map {
+  grid-area: choose-map;
+  text-align: center;
+  padding-top: 15px;
+}
+
+.map-section > div{
+  text-align: center;
+  padding-top: 15px;
+}
+#map-select{
+  width:150px;
+  border-radius: 10px;
+  height: 30px;
+
+}
+.new-map-btn {
+  grid-area: new-map-btn;
+
+}
+.new-map-btn>button{
+  background-color: #630c78;
+  color: whitesmoke;
+  width: 150px;
+  height: 35px;
+  font-size: 18px;
+}
+.map-preview {
+  grid-area: map-preview;
+  text-align: center;
+}
+
+
+.map-stats { grid-area: map-stats; }
+
+.map-stats>div{
+  text-align: left;
+  font-size: 23px;
+}
+.user-info {  display: grid;
+  grid-template-columns: 1fr 1.1fr 0.9fr;
+  grid-template-rows: 0.5fr 0.5fr 0.3fr;
+  gap: 0px 0px;
+  grid-auto-flow: row;
+  grid-template-areas:
+    "name ranking avatar"
+    "email ranking avatar"
+    "my-map-label . .";
+  grid-area: 2 / 1 / 3 / 5;
+}
+.user-info>div{
+  text-align: left;
+  padding: 20px 20px 0px;
+  font-size: 30px;
+}
+
+.my-map-label{
+  grid-area: my-map-label;
+}
+.my-map-label>div{
+  padding-top: 20px;
+  padding-left: 10px;
+}
+.avatar { grid-area: avatar; }
+
+.ranking { grid-area: ranking; }
+
+
+.name {
+  grid-area: name;
+}
+.user-info>div>div{
+  text-align: left;
+  padding-left: 20px;
+}
+
+.email {
+  grid-area: email;
+
+}
+
+.play-btn {
+  grid-area: 1 / 3 / 2 / 4;
+  padding: 17px;
+
+}
+div>button{
+  font-size: 22px;
+  border: 1px solid  whitesmoke;
+  width: 80%;
+  height: 90%;
+  border-radius: 15px;
+  font-weight: bold;
+}
+.play-btn>button{
+  background-color: transparent;
+  color: whitesmoke;
+}
+
+.logout-btn {
+  grid-area: 1 / 4 / 2 / 5;
+  padding: 17px;
+}
+.logout-btn> button{
+  color: #630c78;
+  background-color: whitesmoke;
+}
+
+.user-name {
+  text-align: left;
+  padding: 10px 0px 10px 20px;
+  font-size: 40px;
+  font-weight: bold;
+  color: whitesmoke;
+  grid-area: 1 / 1 / 2 / 2;
+}
+
+
+#player-avatar{
+  margin-top: 15px;
+  padding: 30px;
+  text-align: center;
+  border: 1px solid black;
+}
+#player-avatar>svg{
+  width: 100px;
+}
+/*div{*/
+/*  border: 1px solid black;*/
+/*}*/
+
+@media(max-width: 780px) {
+  div{
+    font-size: 50%;
+  }
+
+  .user-name{
+    font-size: 300%;
+  }
+
+
+}
