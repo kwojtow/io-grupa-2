@@ -12,17 +12,15 @@
   <div class="nav-bar"></div>
   <div class="map-section">
     <div class="choose-map">
-      <select id="map-select">
-        <option value="Mapa 1">Mapa 1</option>
-        <option value="Mapa 2">Mapa 2</option>
-        <option value="Mapa 3" selected="selected">Mapa 3</option>
+      <select #selectRef (change)="changeMap(selectRef)" id="map-select">
+        <option *ngFor="let map of mapList; let i = index" value="Mapa 1">Mapa {{i}}</option>
       </select>
     </div>
     <div class="new-map-btn">
       <button (click)="switchToNewMapView()">Utwórz nową</button>
     </div>
     <div class="map-preview">
-      <app-map></app-map>
+      <app-map [map]="this.map"></app-map>
     </div>
     <div class="map-stats">
       <div class="fw-bold stat-info">Liczba rozegranych gier:</div>
@@ -45,16 +43,16 @@
     </div>
     <div class="ranking">
       <div style="font-weight: bold; ">Ranking</div>
-      <div >Pozycja: 43</div>
-      <div >Punkty: 431</div>
+      <div >Pozycja: {{this.user.rankingPosition}}</div>
+      <div >Punkty: {{this.user.rankingPoints}}</div>
     </div>
     <div class="name">
       <div style="font-weight: bold;">Nazwa użytkownika</div>
-      <div >user1</div>
+      <div >{{this.user.username}}</div>
     </div>
     <div class="email">
       <div style="font-weight: bold; ">E-mail</div>
-      <div >user1@email.com</div>
+      <div >{{this.user.email}}</div>
     </div>
   </div>
   <div class="play-btn">
@@ -67,7 +65,8 @@
       Wyloguj
     </button>
   </div>
-  <div class="user-name">Profil user1</div>
+  <div class="user-name">Profil {{this.user.username}}</div>
 </div>
+
 </body>
 </html>
