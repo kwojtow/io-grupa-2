@@ -17,6 +17,7 @@ body{
 
 .map-section {
   width: 95%;
+  overflow: auto;
   margin: auto;
   height: 95%;
   border: 1px solid black;
@@ -200,3 +201,23 @@ div>button{
   }
 
 }
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
