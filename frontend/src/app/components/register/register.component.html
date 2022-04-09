@@ -4,7 +4,8 @@
         <h1 id="game-name">Nazwa Gry</h1>
         <div id ="box" class="col-md-3 align-self-center">
             <h4>Rejestracja</h4>
-        <form action="">
+        <form [formGroup]="signupForm" >
+            
             <div class="form-group">
                 <label for="email"></label>
                 <input 
@@ -12,22 +13,51 @@
                 id="email"
                 class="form-control"
                 placeholder="E-mail"
-                ngModel name="email"
+                formControlName="email"
                 required
-                email
                 >
-            </div>
+            <div *ngIf="signupForm.get('email')?.touched">
+                <div  *ngIf="signupForm.get('email')?.hasError('required')" class="errorMessage">
+                        Pole wymagane
+                </div>
+                <div *ngIf="signupForm.get('email')?.hasError('email')" class="errorMessage">
+                    Niepoprawny format emaila
+                </div>
+                <div *ngIf="signupForm.get('email')?.hasError('minlength')" class="errorMessage">
+                    Email powinien zawierać co najmniej 6 znaków
+                </div>
+                <div *ngIf="signupForm.get('email')?.hasError('maxlength')" class="errorMessage">
+                    Email nie może zawierać więcej niż 40 znaków
+                </div>      
+            </div>  
                 <div class="form-group">
                     <label for="text"></label>
                     <input 
                     type="text"
-                    id="nick"
+                    id="username"
                     class="form-control"
                     placeholder="Login"
-                    ngModel name="nick"
+                    formControlName="username"
                     required
                     >
+                <div *ngIf="signupForm.get('username')?.touched">
+                    <div *ngIf="signupForm.get('username')?.hasError('required')" class="errorMessage">
+                            Pole wymagane
+                    </div>
+                    <div *ngIf="signupForm.get('username')?.hasError('minlength')" class="errorMessage">
+                        Login powinien zawierać co najmniej 3 znaki
+                    </div>
+                    <div *ngIf="signupForm.get('username')?.hasError('maxlength')" class="errorMessage">
+                        Login nie może zawierać więcej niż 20 znaków
+                    </div>
+                </div>  
+                <div *ngIf="showErrorMessage" class="errorMessage">
+                    Podany login jest już zajęty
                 </div>
+
+                </div>
+                </div>
+
                 <div class="form-group">
                     <label for="password"></label>
                     <input 
@@ -35,17 +65,28 @@
                     id="password"
                     class="form-control"
                     placeholder="Hasło"
-                    ngModel name="password"
+                    formControlName="password"
                     required
                     >
                 </div>
-                
-                <div id="register-button-box">
-                    <div  class="col-md-12">
-                        <button class="button button-register" >Zarejestruj się</button>
+                <div *ngIf="signupForm.get('password')?.touched">
+                    <div *ngIf="signupForm.get('password')?.hasError('required')" class="errorMessage">
+                        Pole wymagane
+                    </div>
+                    <div *ngIf="signupForm.get('password')?.hasError('minlength')" class="errorMessage">
+                        Hasło powinien zawierać co najmniej 6 znaków
+                    </div>
+                    <div *ngIf="signupForm.get('password')?.hasError('maxlength')" class="errorMessage">
+                        Login nie może zawierać więcej niż 40 znaków
                     </div>
                 </div>
+                <div id="register-button-box">
+                    <div  class="col-md-12">
+                        <button class="button button-register" (click)="onSubmit()" >Zarejestruj się</button>
+                    </div>
+                    
+                </div>
             </form>
-        </div>  
+        </div>         
     </div>
 </div>

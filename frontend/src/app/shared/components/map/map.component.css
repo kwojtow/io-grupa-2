@@ -1,0 +1,10 @@
+#canvas {
+  border: 5px solid black;
+  width: 50%;
+  margin: auto;
+}
+#canvas:after {
+  content: "";
+  display: block;
+  padding-bottom: 50%;
+}
