@@ -46,7 +46,6 @@ body{
   width:150px;
   border-radius: 10px;
   height: 30px;
-
 }
 .new-map-btn {
   grid-area: new-map-btn;
@@ -171,6 +170,33 @@ div>button{
   .user-name{
     font-size: 300%;
   }
+  div>button{
+    font-size: 12px;
+    padding: 3px;
+  }
+  #player-avatar>svg{
+    width: 30px;
+  }
+  .new-map-btn>button{
+    font-size: 13px;
+    width: 100px;
+  }
+  #map-select{
+    width:100px;
+    font-size: 13px;
+  }
+  .map-section {
 
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 0.2fr 1.3fr 0.9fr;
+    grid-template-areas:
+    "choose-map new-map-btn ."
+    "map-preview map-preview map-preview"
+    "map-stats map-stats map-stats";
+    grid-area: 3 / 1 / 4 / 5;
+  }
+  .stat-info{
+    padding-left: 45px;
+  }
 
 }
