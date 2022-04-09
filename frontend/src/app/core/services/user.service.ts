@@ -22,4 +22,10 @@ export class UserService {
      return this.http.post<User>('http://localhost:8080/auth/signup', user);
    }
 
+   public logUser(user: User){
+     return this.http.post<User>('http://localhost:8080/auth/signin', user);
+   }
+
+
+
 }

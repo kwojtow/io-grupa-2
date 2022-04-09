@@ -9,6 +9,7 @@ import { RegisterSuccessComponent } from './components/register/register-success
 import { MapComponent } from './shared/components/map/map.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { StartPageComponent } from './components/start-page/start-page.component';
 
 
 @NgModule({
@@ -17,7 +18,8 @@ import { HttpClientModule } from '@angular/common/http';
     LoginComponent,
     RegisterComponent,
     RegisterSuccessComponent,
-    MapComponent
+    MapComponent,
+    StartPageComponent
   ],
   imports: [
     BrowserModule,
