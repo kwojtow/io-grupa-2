@@ -4,7 +4,7 @@ public class PlayerState {
 
     private int xCoordinate;
     private int yCoordinate;
-    private Vector vector;
+    private final Vector vector;
 
     public PlayerState(int xCoordinate, int yCoordinate){
         this.xCoordinate = xCoordinate;
@@ -12,12 +12,12 @@ public class PlayerState {
         this.vector = new Vector(0,0);
     }
 
-    public void changePlayerVectorAndMove(int xChange, int yChange){
+    public void updateVectorAndCoordinates(int xChange, int yChange){
         this.vector.changeVector(xChange, yChange);
-        this.makeMove();
+        this.updateCoordinates();
     }
 
-    public void makeMove(){
+    public void updateCoordinates(){
         this.xCoordinate += this.vector.getX();
         this.yCoordinate += this.vector.getY();
     }

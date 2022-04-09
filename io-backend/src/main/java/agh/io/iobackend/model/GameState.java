@@ -5,7 +5,7 @@ import java.util.HashMap;
 public class GameState {
 
     private Long gameId;
-    private HashMap<Long, Player> players;
+    private final HashMap<Long, Player> players;
 
     public GameState(HashMap<Long, Player> players){
         this.players = players;
@@ -18,6 +18,10 @@ public class GameState {
     // the chosen direction
     public void changeGameState(Long playerId, int xChange, int yChange){
         players.get(playerId).changePlayerState(xChange, yChange);
+    }
+
+    public void addPlayerToGame(Long PlayerId, Player player){
+        this.players.put(PlayerId, player);
     }
 
 }

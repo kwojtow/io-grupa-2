@@ -1,19 +1,21 @@
 package agh.io.iobackend.service;
 
 import agh.io.iobackend.model.GameState;
+import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 
+@Service
 public class GameService {
 
     // gameId -> GameState
-    private HashMap<Long, GameState> games;
+    private final HashMap<Long, GameState> games;
 
-    public GameService(){
-
+    public GameService() {
+        this.games = new HashMap<>();
     }
 
-    public GameState getGame(Long gameId){
+    public GameState getGame(Long gameId) {
         return games.get(gameId);
     }
 
@@ -21,4 +23,12 @@ public class GameService {
         gameState.changeGameState(playerId, xChange, yChange);
     }
 
+    public Boolean existsByGameId(Long gameId){
+        return this.getGame(gameId) != null;
+    }
+
+    public void addGame(Long gameId, GameState gameState){
+        this.games.put(gameId, gameState);
+
+    }
 }
