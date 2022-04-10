@@ -1,5 +1,8 @@
 package agh.io.iobackend.model;
 
+
+import org.springframework.data.util.Pair;
+
 public class PlayerState {
 
     private int xCoordinate;
@@ -22,4 +25,7 @@ public class PlayerState {
         this.yCoordinate += this.vector.getY();
     }
 
+    public Pair<Integer, Integer> getPlayerPosition(){
+        return Pair.of(xCoordinate, yCoordinate);
+    }
 }

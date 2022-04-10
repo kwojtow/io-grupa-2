@@ -7,6 +7,7 @@ import agh.io.iobackend.service.GameService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.util.Pair;
 import org.springframework.http.ResponseEntity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -23,7 +24,7 @@ public class GameControllerTest {
     @Test
     void changeVectorAndMoveTest() {
         GameState gameState = new GameState();
-        gameState.addPlayerToGame(1L, new Player(0,0));
+        gameState.addPlayerToGame(1L, new Player(5,5));
         gameService.addGame(1L, gameState);
 
         MoveRequest moveRequest = new MoveRequest();
@@ -32,8 +33,9 @@ public class GameControllerTest {
         moveRequest.setXChange(-1);
         moveRequest.setYChange(1);
 
-        ResponseEntity<String> changePositionResponse = gameController.changePosition(moveRequest);
+        ResponseEntity<Pair<Integer, Integer>> changePositionResponse = gameController.changePosition(moveRequest);
         assertEquals(changePositionResponse.getStatusCodeValue(), 200);
+        assertEquals(gameState.getPlayer(1L).getPlayerState().getPlayerPosition(), Pair.of(4,6));
 
         MoveRequest noGameMoveRequest = new MoveRequest();
         noGameMoveRequest.setGameId(4L);
@@ -41,8 +43,10 @@ public class GameControllerTest {
         noGameMoveRequest.setXChange(-1);
         noGameMoveRequest.setYChange(1);
 
-        ResponseEntity<String> noGameChangePosition = gameController.changePosition(noGameMoveRequest);
+        ResponseEntity<Pair<Integer, Integer>>  noGameChangePosition = gameController.changePosition(noGameMoveRequest);
         assertEquals(noGameChangePosition.getStatusCodeValue(), 400);
+        assertEquals(gameState.getPlayer(1L).getPlayerState().getPlayerPosition(), Pair.of(4,6));
+
     }
 
 

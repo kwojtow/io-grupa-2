@@ -2,9 +2,9 @@ package agh.io.iobackend.model;
 
 public class Player {
 
-    private PlayerState playerState;
-    private Long playerId;
+    private final PlayerState playerState;
     private User user;
+    private Long playerId;
 
     // randomly chosen initial coordinates
     public Player(int xCoordinate, int yCoordinate) {
@@ -16,15 +16,15 @@ public class Player {
         this.user = user;
     }
 
-    public Player(){
-
-    }
-
     public Long getPlayerId() {
         return playerId;
     }
 
     public void changePlayerState(int xChange, int yChange) {
-        this.playerState.updateVectorAndCoordinates(xChange, yChange);
+        playerState.updateVectorAndCoordinates(xChange, yChange);
+    }
+
+    public PlayerState getPlayerState() {
+        return playerState;
     }
 }

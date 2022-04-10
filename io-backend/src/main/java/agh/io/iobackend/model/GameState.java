@@ -1,5 +1,4 @@
 package agh.io.iobackend.model;
-
 import java.util.HashMap;
 
 public class GameState {
@@ -24,4 +23,7 @@ public class GameState {
         this.players.put(PlayerId, player);
     }
 
+    public Player getPlayer(Long userId){
+        return players.get(userId);
+    }
 }

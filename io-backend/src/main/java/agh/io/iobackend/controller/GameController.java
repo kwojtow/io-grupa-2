@@ -6,10 +6,12 @@ import agh.io.iobackend.service.GameService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
 
 @RestController
 public class GameController {
@@ -19,7 +21,7 @@ public class GameController {
     private GameService gameService;
 
     @PostMapping("/move")
-    public ResponseEntity<String> changePosition(@RequestBody MoveRequest moveRequest) {
+    public ResponseEntity<Pair<Integer, Integer>> changePosition(@RequestBody MoveRequest moveRequest) {
 
         int xChange = moveRequest.getXChange();
         int yChange = moveRequest.getYChange();
@@ -27,11 +29,15 @@ public class GameController {
         logger.info("move to insert:" + xChange + " " + yChange);
 
         if (!gameService.existsByGameId(moveRequest.getGameId())){
-            return ResponseEntity.badRequest().body("No such game");
+            return ResponseEntity.badRequest().body(Pair.of(-1,-1));
         }
 
-        gameService.changeGameState(gameService.getGame(moveRequest.getGameId()), moveRequest.getPlayerId(), xChange, yChange);
+        Long gameId = moveRequest.getGameId();
+        Long playerId = moveRequest.getPlayerId();
 
-        return ResponseEntity.ok("Vector changed and move made");
+        gameService.changeGameState(gameService.getGame(gameId), playerId, xChange, yChange);
+        Pair<Integer, Integer> newPos = gameService.getGame(gameId).getPlayer(playerId).getPlayerState().getPlayerPosition();
+
+        return ResponseEntity.ok(newPos);
     }
 }
