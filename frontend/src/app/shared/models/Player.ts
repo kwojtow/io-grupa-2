@@ -1,3 +1,4 @@
+import { RaceMap } from "./RaceMap";
 import { Vector } from "./Vector";
 
 export class Player{
@@ -43,6 +44,28 @@ export class Player{
           fieldWidth * (this.currentVector.posY + this.position.posY) + lineWidth,
           fieldWidth - 2 * lineWidth,
           fieldWidth - 2 * lineWidth);
+    }
+    
+    public showAvailableMove(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, fieldWidth: number, lineWidth: number, map: RaceMap): void {
+        ctx.fillStyle = "#00ff6677";
+        const availableVectorsPaths = new Array<Path2D>();
+        const availableVectors = [new Vector(this.position.posX+1, this.position.posY), new Vector(this.position.posX, this.position.posY+1),
+                                  new Vector(this.position.posX+1, this.position.posY+1), new Vector(this.position.posX-1, this.position.posY),
+                                  new Vector(this.position.posX, this.position.posY-1), new Vector(this.position.posX-1, this.position.posY-1),
+                                  new Vector(this.position.posX+1, this.position.posY-1), new Vector(this.position.posX-1, this.position.posY+1)];
+        const currentVector = this.currentVector;
+        const fieldWidthWithLine = fieldWidth - 2 * lineWidth;
+        for(let vector of availableVectors) {
+            let p = new Path2D();
+            
+            p.rect(fieldWidth * (currentVector.posX + vector.posX) + lineWidth,
+            fieldWidth * (currentVector.posY + vector.posY) + lineWidth,
+            fieldWidthWithLine,
+            fieldWidthWithLine);
+            availableVectorsPaths.push(p);
+            ctx.fill(p);
+        }
+
     }
 
     public drawPlayer(ctx: CanvasRenderingContext2D, fieldWidth: number, lineWidth: number): void{
