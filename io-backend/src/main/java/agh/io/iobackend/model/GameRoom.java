@@ -1,21 +1,25 @@
 package agh.io.iobackend.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
-
-@Entity
 public class GameRoom {
-    @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
-    Long id;
+    private final int roomID;
+    private User gameMaster;
+    private Set<User> players = new HashSet<>();
 
-    GameMap gameMap;
+    public GameRoom(User gameMaster) {
+        this.roomID = 1;
+        this.gameMaster = gameMaster;
+    }
 
-    GameMater gameMater;
+    public void addPlayer(User player) {
+        players.add(player);
+    }
 
-    Set<Player> players;
+    private long generateRoomID() {
+        // TODO use UUID
+        return 1;
+    }
 }
