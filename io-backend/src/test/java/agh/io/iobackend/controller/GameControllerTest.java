@@ -47,7 +47,21 @@ public class GameControllerTest {
         assertEquals(noGameChangePosition.getStatusCodeValue(), 400);
         assertEquals(gameState.getPlayer(1L).getPlayerState().getPlayerPosition(), Pair.of(4,6));
 
+        gameState.addPlayerToGame(2L, new Player(4,5, 1L));
+
+        MoveRequest moveToTakenPosition = new MoveRequest();
+        noGameMoveRequest.setGameId(4L);
+        noGameMoveRequest.setPlayerId(1L);
+        noGameMoveRequest.setXChange(0);
+        noGameMoveRequest.setYChange(-1);
+
+        ResponseEntity<Pair<Integer, Integer>>  takenPositionNoChange = gameController.changePosition(noGameMoveRequest);
+        assertEquals(noGameChangePosition.getStatusCodeValue(), 400);
+        assertEquals(gameState.getPlayer(2L).getPlayerState().getPlayerPosition(), Pair.of(4,5));
+
+
     }
+
 
 
 }

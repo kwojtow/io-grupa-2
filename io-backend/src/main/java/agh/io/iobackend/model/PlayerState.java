@@ -25,6 +25,10 @@ public class PlayerState {
         this.yCoordinate += this.vector.getY();
     }
 
+    public Boolean checkCoordinates(int x, int y){
+        return (this.xCoordinate == x && this.yCoordinate == y);
+    }
+
     public Pair<Integer, Integer> getPlayerPosition(){
         return Pair.of(xCoordinate, yCoordinate);
     }

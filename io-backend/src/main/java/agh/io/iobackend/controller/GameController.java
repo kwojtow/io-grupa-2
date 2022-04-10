@@ -28,12 +28,18 @@ public class GameController {
 
         logger.info("move to insert:" + xChange + " " + yChange);
 
-        if (!gameService.existsByGameId(moveRequest.getGameId())){
+        Long gameId = moveRequest.getGameId();
+        Long playerId = moveRequest.getPlayerId();
+
+        if (!gameService.existsByGameId(gameId)){
             return ResponseEntity.badRequest().body(Pair.of(-1,-1));
         }
 
-        Long gameId = moveRequest.getGameId();
-        Long playerId = moveRequest.getPlayerId();
+        // checks if the car wants to move at the position taken by any other car
+        if (!gameService.canMakeMove(gameId, playerId, xChange, yChange)){
+            logger.error("The position is taken");
+            return ResponseEntity.badRequest().body(Pair.of(-1,-1));
+        }
 
         gameService.changeGameState(gameService.getGame(gameId), playerId, xChange, yChange);
         Pair<Integer, Integer> newPos = gameService.getGame(gameId).getPlayer(playerId).getPlayerState().getPlayerPosition();

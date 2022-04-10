@@ -1,6 +1,7 @@
 package agh.io.iobackend.service;
 
 import agh.io.iobackend.model.GameState;
+import agh.io.iobackend.model.Player;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -29,6 +30,11 @@ public class GameService {
 
     public void addGame(Long gameId, GameState gameState){
         this.games.put(gameId, gameState);
+    }
+
+    public Boolean canMakeMove(Long gameId, Long playerId, int xChange, int yChange){
+      return getGame(gameId).canMakeMove(playerId, xChange, yChange);
+
 
     }
 }
