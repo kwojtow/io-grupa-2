@@ -24,7 +24,7 @@ public class GameControllerTest {
     @Test
     void changeVectorAndMoveTest() {
         GameState gameState = new GameState();
-        gameState.addPlayerToGame(1L, new Player(5,5));
+        gameState.addPlayerToGame(1L, new Player(5,5, 1L));
         gameService.addGame(1L, gameState);
 
         MoveRequest moveRequest = new MoveRequest();

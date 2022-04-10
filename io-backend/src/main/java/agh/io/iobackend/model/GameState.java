@@ -23,7 +23,7 @@ public class GameState {
         this.players.put(PlayerId, player);
     }
 
-    public Player getPlayer(Long userId){
-        return players.get(userId);
+    public Player getPlayer(Long playerId){
+        return players.get(playerId);
     }
 }
