@@ -86,7 +86,7 @@ export class MapService {
   }
 
   drawStartAndFinishLines(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, map: RaceMap): void{
-    const fieldWidth = MapService.getFieldWith(canvas, map);
+    const fieldWidth = MapService.getFieldWidth(canvas, map);
     map.startLine.forEach(v => {
       this.drawCheckerSquare(ctx, v, fieldWidth, this.START_LINE_COLOR);
     });
@@ -96,20 +96,20 @@ export class MapService {
   }
 
   drawObstaclesLines(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, map: RaceMap){
-    const fieldWidth = MapService.getFieldWith(canvas, map);
+    const fieldWidth = MapService.getFieldWidth(canvas, map);
     map.obstacles.forEach(v => {
       this.drawObstacle(ctx, v, fieldWidth, this.OBSTACLE_COLOR);
     });
   }
 
-  private static getFieldWith(canvas: HTMLCanvasElement, map: RaceMap): number{
+  private static getFieldWidth(canvas: HTMLCanvasElement, map: RaceMap): number{
     const width = canvas.width;
     return Math.round(width/map.mapWidth);
   }
 
   drawMapNet(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, map: RaceMap){
     const width = canvas.width;
-    const fieldWidth = MapService.getFieldWith(canvas, map)
+    const fieldWidth = MapService.getFieldWidth(canvas, map)
     const mapHeight = map.mapHeight * fieldWidth;
     canvas.height = mapHeight;
 
@@ -123,13 +123,13 @@ export class MapService {
   }
 
   drawPlayers(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, map: RaceMap, players: Array<Player>){
-    const fieldWidth = MapService.getFieldWith(canvas, map);
+    const fieldWidth = MapService.getFieldWidth(canvas, map);
     players.forEach(player => player.drawPlayer(ctx, fieldWidth, this.LINE_WIDTH));
   }
 
   drawPlayerVectors(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, map: RaceMap, player: Player) {
-    const fieldWidth = MapService.getFieldWith(canvas, map);
-    
+    const fieldWidth = MapService.getFieldWidth(canvas, map);
+
     // current vector
     ctx.fillStyle = "#0066ff77";
     ctx.fillRect(fieldWidth * (player.currentVector.posX + player.position.posX) + this.LINE_WIDTH,
