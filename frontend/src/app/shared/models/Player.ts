@@ -39,10 +39,12 @@ export class Player{
     }
 
     public getAvailableVectors(): Array<Vector>{
-        return [new Vector(this.position.posX+1, this.position.posY), new Vector(this.position.posX, this.position.posY+1),
-            new Vector(this.position.posX+1, this.position.posY+1), new Vector(this.position.posX-1, this.position.posY),
-            new Vector(this.position.posX, this.position.posY-1), new Vector(this.position.posX-1, this.position.posY-1),
-            new Vector(this.position.posX+1, this.position.posY-1), new Vector(this.position.posX-1, this.position.posY+1)];
+        let xpos = this.currentVector.posX + this.position.posX;
+        let ypos = this.currentVector.posY + this.position.posY;
+        return [new Vector(xpos+1, ypos), new Vector(xpos, ypos+1),
+            new Vector(xpos+1, ypos+1), new Vector(xpos-1, ypos),
+            new Vector(xpos, ypos-1), new Vector(xpos-1, ypos-1),
+            new Vector(xpos+1, ypos-1), new Vector(xpos-1, ypos+1)];
     }
 
 
