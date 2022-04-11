@@ -1,25 +1,40 @@
 package agh.io.iobackend.model;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import javax.persistence.*;
 
+@Entity(name = "GameRoom")
 public class GameRoom {
-    private final int roomID;
-    private User gameMaster;
-    private Set<User> players = new HashSet<>();
+    @Id
+    @SequenceGenerator(
+            name = "gameRoom_sequence",
+            sequenceName = "gameRoom_sequence",
+            allocationSize = 1
+    )
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "gameRoom_sequence"
+    )
+    @Column(
+            name = "gameRoomID",
+            updatable = false
+    )
+    private Long gameRoomID;
 
-    public GameRoom(User gameMaster) {
-        this.roomID = 1;
-        this.gameMaster = gameMaster;
-    }
+    @Column(
+            name = "gameMasterID",
+            nullable = false
+    )
+    private Long gameMasterID;
 
-    public void addPlayer(User player) {
-        players.add(player);
-    }
+    @Column(
+            name = "mapID"
+    )
+    private Long mapID;
 
-    private long generateRoomID() {
-        // TODO use UUID
-        return 1;
-    }
+    @Column(
+            name = "roomCode",
+            unique = true,
+            nullable = false
+    )
+    private String roomCode;
 }
