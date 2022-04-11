@@ -25,7 +25,7 @@ export class MapComponent implements AfterViewInit {
         MapService.getCursorPosition(canvas, e);
       });
     }
-    this._gameService.game.subscribe(game => {
+    this._gameService.game.subscribe(game => {    // subscribe game changes (players moves etc)
       if(canvas != null) {
         this.initMap(canvas, game.map, game.players);
       }
