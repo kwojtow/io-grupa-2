@@ -3,13 +3,13 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './navigation/app-routing.module';
 import { AppComponent } from './app.component';
-import { LoginComponent } from './components/login/login.component';
-import { RegisterComponent } from './components/register/register.component';
-import { RegisterSuccessComponent } from './components/register/register-success/register-success.component';
+import { LoginComponent } from './shared/components/login/login.component';
+import { RegisterComponent } from './shared/components/register/register.component';
+import { RegisterSuccessComponent } from './shared/components/register/register-success/register-success.component';
 import { MapComponent } from './shared/components/map/map.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
-import { StartPageComponent } from './components/start-page/start-page.component';
+import { StartPageComponent } from './shared/components/start-page/start-page.component';
 
 
 @NgModule({
@@ -26,10 +26,10 @@ import { StartPageComponent } from './components/start-page/start-page.component
     AppRoutingModule,
     ReactiveFormsModule,
     FormsModule,
-    HttpClientModule  
+    HttpClientModule
   ],
   providers: [
-    
+
   ],
   bootstrap: [AppComponent]
 })

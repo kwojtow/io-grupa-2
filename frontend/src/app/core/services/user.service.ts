@@ -8,18 +8,16 @@ import { User } from 'src/app/shared/models/User';
 export class UserService {
 
   private userUrl: string;
-
-
-
-  constructor(private http: HttpClient) {
   
-    
-   }
+  constructor(private http: HttpClient) {}
 
    public addUser(user: User){
-
-     console.log(user);
-     return this.http.post<User>('http://localhost:8080/auth/signup', user);
+    const requestOptions: Object = {
+      headers: new HttpHeaders().set('Content-Type', 'application/json'),
+      responseType: 'text'
+    }
+    
+     return this.http.post<User>('http://localhost:8080/auth/signup', user, requestOptions);
    }
 
    public logUser(user: User){

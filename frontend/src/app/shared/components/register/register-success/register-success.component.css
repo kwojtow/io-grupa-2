@@ -1,7 +1,6 @@
 .container-fluid{
     background-color: rgba(78, 42, 106, 100);
-    /* rgb(78, 45, 109); */
-
+    min-height: 100%;
   }
   
   #register{
@@ -10,7 +9,7 @@
   
   
   #box{
-      padding: 3%;
+      padding: 2%;
       background-color: white;
       margin-top: 2%;
       border-radius: 5%;
@@ -22,14 +21,19 @@
       color:white;
       font-family: Arial;
   }
+
+  h5{
+      margin-top: 15%;
+      margin-bottom: 10%;
+     
+  }
   
-  #register-button-box{
+  #to-login-button-box{
       margin-top: 8%;
       
   }
   
   .button{
-      
       padding-bottom: 1%;
       padding-top: 1%;
       padding-left: 10%;
@@ -39,17 +43,13 @@
   }
   
   
-  .button-register{
+  .to-login{
+    margin-top: 10%;
+    margin-bottom: 23%;
     background-color: rgba(78, 42, 106, 100);
     color: rgba(255,255,255,100);
     font-size: 17px;
         
   }
-
-
-  .errorMessage{
-color: red;
-  }
-  
   
   

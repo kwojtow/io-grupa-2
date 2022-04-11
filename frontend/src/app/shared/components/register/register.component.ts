@@ -26,24 +26,24 @@ export class RegisterComponent implements OnInit {
   }
 
   onSubmit(){
+  
     if(this.signupForm.valid){
-      this.userService.addUser(this.signupForm.value).subscribe((data) => {
-        console.log(data)  
-
-        }, response => {
-          if(response.error === 'Error: Username is already taken!'){
-            this.showErrorMessage = true;
-          }
-          if(response.status == 200){
-            this.route.navigate(['/success']);
-          }
-          
-        });
-    } else{
+      this.userService.addUser(this.signupForm.value).subscribe(() => {
+          this.route.navigate(['/success'])
+        
+      }, (err) => {
+        if(err.error === 'Error: Username is already taken!'){
+          this.showErrorMessage = true;
+        }
+      });
+    } else {
       this.signupForm.markAllAsTouched();
     }
     
   }
 
 
-}
+    
+  }
+
+
