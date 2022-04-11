@@ -22,7 +22,7 @@ export class MapService {
     MapService.game = _gameService.game.getValue();
   }
 
-  static getCursorPosition(canvas: HTMLCanvasElement, event: MouseEvent): void {
+  static getCursorPosition(canvas: HTMLCanvasElement, event: MouseEvent): Vector {
     const ctx = canvas.getContext('2d');
     const rect = canvas.getBoundingClientRect()
     const x = event.offsetX;
@@ -36,7 +36,9 @@ export class MapService {
         x, y);
       console.log(v);
       console.log(MapService.game.getFieldProperty(v))
+      return v;
     }
+    return new Vector(-1, -1);
   }
 
   static getIdxPosition(ctx: CanvasRenderingContext2D,
@@ -127,7 +129,8 @@ export class MapService {
 
   drawPlayerVectors(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, map: RaceMap, player: Player) {
     const fieldWidth = MapService.getFieldWith(canvas, map);
-    player.showCurrentVector(ctx, fieldWidth, this.LINE_WIDTH);
+    player.showCurrentVector(canvas, ctx, fieldWidth, this.LINE_WIDTH, map);
+    player.showAvailableMove(canvas, ctx, fieldWidth, this.LINE_WIDTH, map);
   }
 
 
