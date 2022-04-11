@@ -129,8 +129,72 @@ export class MapService {
 
   drawPlayerVectors(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, map: RaceMap, player: Player) {
     const fieldWidth = MapService.getFieldWith(canvas, map);
-    player.showCurrentVector(canvas, ctx, fieldWidth, this.LINE_WIDTH, map);
-    player.showAvailableMove(canvas, ctx, fieldWidth, this.LINE_WIDTH, map);
+    
+    // current vector
+    ctx.fillStyle = "#0066ff77";
+    ctx.fillRect(fieldWidth * (player.currentVector.posX + player.position.posX) + this.LINE_WIDTH,
+      fieldWidth * (player.currentVector.posY + player.position.posY) + this.LINE_WIDTH,
+      fieldWidth - 2 * this.LINE_WIDTH,
+      fieldWidth - 2 * this.LINE_WIDTH);
+
+      // next vetors
+      ctx.fillStyle = "#00ff6677";
+      const availableVectorsPaths = new Array<Path2D>();
+      const availableVectors = player.getAvailableVectors();
+      const currentVector = player.currentVector;
+      
+      const currentVectorPath = new Path2D();
+
+      currentVectorPath.rect(fieldWidth * (currentVector.posX + player.position.posX) + this.LINE_WIDTH,
+        fieldWidth * (currentVector.posY + player.position.posY) + this.LINE_WIDTH,
+        fieldWidth - 2 * this.LINE_WIDTH,
+        fieldWidth - 2 * this.LINE_WIDTH);
+      
+      for(let vector of availableVectors) {
+          let p = new Path2D();
+          
+          p.rect(fieldWidth * (currentVector.posX + vector.posX) + this.LINE_WIDTH,
+          fieldWidth * (currentVector.posY + vector.posY) + this.LINE_WIDTH,
+          fieldWidth - 2 * this.LINE_WIDTH,
+          fieldWidth - 2 * this.LINE_WIDTH);
+          availableVectorsPaths.push(p);
+          ctx.fill(p);
+      }
+
+      const lineWidth = this.LINE_WIDTH;
+      // vectors field hover:
+
+      canvas.onmousemove = function(event) {
+        let v = MapService.getCursorPosition(canvas, event);
+        for(let i = 0; i < availableVectorsPaths.length; ++i) {
+            const path = availableVectorsPaths[i];
+            const vector = availableVectors[i];
+            if(ctx.isPointInPath(path, v.posX*fieldWidth + 2*lineWidth, v.posY*fieldWidth + 2*lineWidth)){
+                ctx.fillStyle = "#00ff66ff";
+            }
+            else {
+                ctx.fillStyle = "#00ff6677";
+            }
+            ctx.clearRect(fieldWidth * (currentVector.posX + vector.posX) + lineWidth,
+            fieldWidth * (currentVector.posY + vector.posY) + lineWidth,
+            fieldWidth - 2 * lineWidth,
+            fieldWidth - 2 * lineWidth);
+            ctx.fill(path);
+        }
+
+        if(ctx.isPointInPath(currentVectorPath, v.posX*fieldWidth + 2*lineWidth, v.posY*fieldWidth + 2*lineWidth)){
+            ctx.fillStyle = "#0066ffff";
+        }
+        else {
+            ctx.fillStyle = "#0066ff77";
+        }
+
+        ctx.clearRect(fieldWidth * (player.currentVector.posX + player.position.posX) + lineWidth,
+        fieldWidth * (player.currentVector.posY + player.position.posY) + lineWidth,
+        fieldWidth - 2 * lineWidth,
+        fieldWidth - 2 * lineWidth);
+        ctx.fill(currentVectorPath);
+    }
   }
 
 
