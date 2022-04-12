@@ -1,0 +1,33 @@
+#top-bar{
+    background-color: rgba(78, 42, 106, 100);
+    height: 100px;
+    
+}
+
+#header{
+    color: white;
+}
+
+.btn {
+    border-radius: 20px;
+    font-size: larger;
+    height: 55px;
+    
+    
+}
+
+#buttons{
+    justify-content: right;
+}
+
+.btn-outline-primary{
+    background-color: rgba(78, 42, 106, 100);
+    color: rgba(255, 255, 255, 100);
+    border: 1px solid rgba(255, 255, 255, 100);
+}
+
+.btn-primary{
+    background-color: rgba(255, 255, 255, 100);
+    color: rgba(78, 42, 106, 100);
+    border: 1px solid rgba(255, 255, 255, 100);
+}
