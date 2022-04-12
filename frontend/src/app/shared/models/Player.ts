@@ -41,10 +41,10 @@ export class Player{
     public getAvailableVectors(): Array<Vector>{
         let xpos = this.currentVector.posX + this.position.posX;
         let ypos = this.currentVector.posY + this.position.posY;
-        return [new Vector(xpos+1, ypos), new Vector(xpos, ypos+1),
-            new Vector(xpos+1, ypos+1), new Vector(xpos-1, ypos),
-            new Vector(xpos, ypos-1), new Vector(xpos-1, ypos-1),
-            new Vector(xpos+1, ypos-1), new Vector(xpos-1, ypos+1)];
+        return [new Vector(xpos+1, ypos), new Vector(xpos+1, ypos+1),
+            new Vector(xpos, ypos+1), new Vector(xpos-1, ypos+1),
+            new Vector(xpos-1, ypos), new Vector(xpos-1, ypos-1),
+            new Vector(xpos, ypos-1), new Vector(xpos+1, ypos-1)];
     }
 
 
