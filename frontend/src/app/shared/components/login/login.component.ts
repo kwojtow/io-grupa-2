@@ -31,10 +31,10 @@ export class LoginComponent implements OnInit {
   onSubmit() {
     if (this.signinForm.valid) {
       this.userService.logUser(this.signinForm.value).subscribe(
-        (data) => {
+        () => {
           this.route.navigate(['/start']);
         },
-        (error) => {
+        () => {
           this.showErrorMessage = true;
         }
       );
