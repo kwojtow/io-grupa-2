@@ -29,6 +29,7 @@ public class GameRoom {
     @Column(
             name = "mapID"
     )
+    // TODO mapID will be the foreign key for maps database, where details about the map are stored
     private Long mapID;
 
     @Column(
@@ -36,5 +37,18 @@ public class GameRoom {
             unique = true,
             nullable = false
     )
+    // Game code exchanged by players in order to join the play
     private String roomCode;
+
+    @Column(
+            name = "turnTime"
+    )
+    // Duration of each turn in seconds (for a player to make move)
+    private Integer turnTime;
+
+    @Column(
+            name = "limitOfPlayers"
+    )
+    // Maximal number of players (apart from Game Master)
+    private Integer limitOfPlayers;
 }
