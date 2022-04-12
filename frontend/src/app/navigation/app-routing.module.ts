@@ -7,17 +7,15 @@ import { RegisterComponent } from '../shared/components/register/register.compon
 import { StartPageComponent } from '../shared/components/start-page/start-page.component';
 
 const routes: Routes = [
-  {path: '', component: LoginComponent},
-  {path: 'signin', component: LoginComponent},
-  {path: 'signup', component: RegisterComponent},
-  {path: 'success', component: RegisterSuccessComponent},
-  {path: 'start', component: StartPageComponent }
-
-
+  { path: '', component: LoginComponent },
+  { path: 'signin', component: LoginComponent },
+  { path: 'signup', component: RegisterComponent },
+  { path: 'success', component: RegisterSuccessComponent },
+  { path: 'start', component: StartPageComponent },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}
