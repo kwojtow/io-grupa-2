@@ -62,6 +62,11 @@ public class AuthController {
                     .badRequest()
                     .body("Error: Username is already taken!");
         }
+        if (userService.existsByEmail(signUpRequest.getEmail())){
+            return ResponseEntity
+                    .badRequest()
+                    .body("Error: Email is already taken!");
+        }
         User user = User.builder()
                 .login(signUpRequest.getUsername())
                 .password(encoder.encode(signUpRequest.getPassword()))
