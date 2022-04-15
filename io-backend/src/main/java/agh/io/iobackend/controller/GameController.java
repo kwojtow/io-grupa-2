@@ -13,13 +13,14 @@ import java.util.ArrayList;
 
 
 @RestController
+@RequestMapping("/auth/")
 public class GameController {
     private static final Logger logger = LoggerFactory.getLogger(GameController.class);
 
     @Autowired
     private GameService gameService;
 
-    @PostMapping("/game/{id}/state")
+    @PostMapping("/{id}/state")
     public ResponseEntity<String> changePosition(@RequestBody PlayerMoveRequest playerMove, @PathVariable Long id) {
 
         if (!gameService.existsByGameId(id)){
@@ -35,7 +36,7 @@ public class GameController {
         return ResponseEntity.ok("PLayer moved");
     }
 
-    @GetMapping("/game/{id}/state")
+    @GetMapping("/{id}/state")
     public ResponseEntity<ArrayList<PlayerStateResponse>> getGameState(@PathVariable Long id){
         ArrayList<PlayerStateResponse> playersList = gameService.getPlayerStatesList(id);
         return ResponseEntity.ok(playersList);
