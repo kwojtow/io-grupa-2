@@ -174,6 +174,21 @@ export class MapService {
           fieldWidth - 2 * lineWidth,
           fieldWidth - 2 * lineWidth);
           ctx.fill(currentVectorPath);
+
+        }
+
+        if(ctx.isPointInPath(currentVectorPath, v.posX*fieldWidth + 2*lineWidth, v.posY*fieldWidth + 2*lineWidth)){
+          if(!onObstacle(new Vector(player.currentVector.posX + player.position.posX, player.currentVector.posY + player.position.posY ))){
+            ctx.strokeStyle = '#cc8800';
+            ctx.fillStyle = '#cc8800';
+            ctx.stroke(arrows[arrows.length - 1]);
+            ctx.fill(arrows[arrows.length - 1]);
+          }
+
+        }
+        else {
+          ctx.strokeStyle = '#454545';
+          ctx.stroke(arrows[arrows.length - 1]);
         }
 
         for(let i = 0; i < availableVectorsPaths.length; ++i) {
@@ -195,8 +210,8 @@ export class MapService {
               ctx.fill(path);
             }
             if(ctx.isPointInPath(path, v.posX*fieldWidth + 2*lineWidth, v.posY*fieldWidth + 2*lineWidth)) {
-              ctx.fillStyle = "#000000";
-              ctx.strokeStyle = "#000000";
+              ctx.fillStyle = "#cc8800";
+              ctx.strokeStyle = "#cc8800";
             }
             else{
               ctx.fillStyle = "#454545";
@@ -231,7 +246,7 @@ export class MapService {
 
       ctx.strokeStyle = 'white';
       const arrows = new Array<Path2D> (new Path2D(), new Path2D(), new Path2D(),new Path2D(),
-                                        new Path2D(), new Path2D(), new Path2D(), new Path2D());
+                                        new Path2D(), new Path2D(), new Path2D(), new Path2D(), new Path2D());
       const currentPositionPxVector = new Vector(fieldWidth *(currentVector.posX + player.position.posX),
                                                  fieldWidth *(currentVector.posY + player.position.posY)); 
       
@@ -286,7 +301,8 @@ export class MapService {
         ctx.fill(arrows[i]);
         ctx.stroke(arrows[i]);
       })
-
+      arrows[arrows.length - 1].arc(currentPositionPxVector.posX + fieldWidth/2, currentPositionPxVector.posY + fieldWidth/2,fieldWidth/6,0,Math.PI*2,true);
+      ctx.stroke(arrows[arrows.length - 1]);
       this.highlightAvaliableVectors(canvas, ctx, map, player, availableVectorsPaths, currentVectorPath, onObstacle, arrows);
   }
 
