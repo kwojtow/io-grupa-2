@@ -1,5 +1,7 @@
-package agh.io.iobackend.model;
+package agh.io.iobackend.model.map;
 
+import agh.io.iobackend.model.User;
+import agh.io.iobackend.model.map.GameMap;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,6 +15,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Builder
 @Table(name = "game_map_history")
+//@Proxy(lazy = false) // for tests
 public class GameMapHistory {
 
     @Id

@@ -1,4 +1,4 @@
-package agh.io.iobackend.model;
+package agh.io.iobackend.model.map;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,9 +28,12 @@ public class GameMap {
     @Column(name = "map_id")
     private Long mapId;
 
+    private String name;
+
     // if created by specific User
     private Long userId;
 
-    // TODO other map information
+    @Convert(converter = MapStructureConverter.class)
+    private MapStructure mapStructure;
 
 }

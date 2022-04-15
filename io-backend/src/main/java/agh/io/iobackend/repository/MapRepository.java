@@ -1,6 +1,6 @@
 package agh.io.iobackend.repository;
 
-import agh.io.iobackend.model.GameMap;
+import agh.io.iobackend.model.map.GameMap;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

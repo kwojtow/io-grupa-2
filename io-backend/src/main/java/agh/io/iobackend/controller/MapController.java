@@ -1,20 +1,19 @@
 package agh.io.iobackend.controller;
 
-import agh.io.iobackend.model.GameMap;
-import agh.io.iobackend.model.User;
-import agh.io.iobackend.model.UserDetailsImpl;
+import agh.io.iobackend.model.map.GameMap;
 import agh.io.iobackend.service.MapService;
+import agh.io.iobackend.service.StatisticsService;
 import agh.io.iobackend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
-@RestController("/maps")
+
+@RestController
+@RequestMapping("/map")
 public class MapController {
 
     @Autowired
@@ -23,30 +22,43 @@ public class MapController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/byuser")
-    public List<GameMap> getMapsCreatedByUser(){
-        return mapService.getMapsCreatedByUser(getCurrentUserId());
+    @Autowired
+    private StatisticsService statisticsService;
+
+    @GetMapping("/list")
+    public ResponseEntity<List<GameMap>> getMaps() {
+        return ResponseEntity.ok(mapService.getAllMaps());
     }
 
-    public void getMapsWithTheMostWinsForUser(){
-        // TODO
+    @GetMapping
+    public ResponseEntity<List<GameMap>> getMaps(@RequestParam Long authorId) {
+        return ResponseEntity.ok(mapService.getMapsCreatedByUser(authorId));
     }
 
-    public void getMapsWithTheMostGamesForUser(){
-        // TODO
+    @GetMapping("/{mapId}")
+    public ResponseEntity<GameMap> getMapById(@PathVariable Long mapId) {
+        Optional<GameMap> map = mapService.getMapById(mapId);
+        if (map.isEmpty()) {
+            return ResponseEntity.badRequest().body(null);
+        }
+        return ResponseEntity.ok(map.get());
     }
 
+    @PostMapping
+    public ResponseEntity<Long> saveMap(@RequestBody GameMap gameMap) {
+        GameMap map = mapService.saveMap(gameMap);
+        return ResponseEntity.ok(map.getMapId());
+    }
+
+    @GetMapping("/user-wins")
+    public void getMapsWithTheMostWinsForUser() {
+        statisticsService.getMapsWithTheMostWinsForUser(userService.getCurrentUserId());
+    }
+
+    @GetMapping("/user-games")
+    public void getMapsWithTheMostGamesForUser() {
+        statisticsService.getMapsWithTheMostGamesForUser(userService.getCurrentUserId());
+    }
 
     // TODO getMapRanking
-
-    private Long getCurrentUserId() {
-        Long userId = null;
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (!(authentication instanceof AnonymousAuthenticationToken)) {
-            UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-            userId = userDetails.getUserId();
-        }
-        return userId; // TODO check this implementation
-    }
-
 }
