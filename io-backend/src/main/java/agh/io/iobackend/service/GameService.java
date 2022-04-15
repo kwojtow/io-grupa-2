@@ -36,6 +36,5 @@ public class GameService {
 
     public void addGame(Long gameId, GameState gameState){
         this.games.put(gameId, gameState);
-
     }
 }

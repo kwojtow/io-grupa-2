@@ -1,8 +1,6 @@
 package agh.io.iobackend.model;
-
 import agh.io.iobackend.controller.payload.PlayerMoveRequest;
 import agh.io.iobackend.controller.payload.PlayerStateResponse;
-import org.springframework.data.util.Pair;
 
 import java.util.ArrayList;
 import java.util.HashMap;
