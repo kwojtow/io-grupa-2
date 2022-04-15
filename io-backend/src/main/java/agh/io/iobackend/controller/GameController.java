@@ -1,16 +1,15 @@
 package agh.io.iobackend.controller;
 
-import agh.io.iobackend.controller.payload.MoveRequest;
-import agh.io.iobackend.model.GameState;
+import agh.io.iobackend.controller.payload.PlayerMoveRequest;
+import agh.io.iobackend.controller.payload.PlayerStateResponse;
 import agh.io.iobackend.service.GameService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.util.Pair;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
 
 
 @RestController
@@ -20,24 +19,27 @@ public class GameController {
     @Autowired
     private GameService gameService;
 
-    @PostMapping("/move")
-    public ResponseEntity<Pair<Integer, Integer>> changePosition(@RequestBody MoveRequest moveRequest) {
+    @PostMapping("/game/{id}/state")
+    public ResponseEntity<String> changePosition(@RequestBody PlayerMoveRequest playerMove, @PathVariable Long id) {
 
-        int xChange = moveRequest.getXChange();
-        int yChange = moveRequest.getYChange();
-
-        logger.info("move to insert:" + xChange + " " + yChange);
-
-        if (!gameService.existsByGameId(moveRequest.getGameId())){
-            return ResponseEntity.badRequest().body(Pair.of(-1,-1));
+        if (!gameService.existsByGameId(id)){
+            return ResponseEntity.badRequest().body("Game does not exist");
         }
+        int xCoordinate = playerMove.getXCoordinate();
+        int yCoordinate = playerMove.getYCoordinate();
 
-        Long gameId = moveRequest.getGameId();
-        Long playerId = moveRequest.getPlayerId();
+        logger.info("new position:" + xCoordinate + " " + yCoordinate);
 
-        gameService.changeGameState(gameService.getGame(gameId), playerId, xChange, yChange);
-        Pair<Integer, Integer> newPos = gameService.getGame(gameId).getPlayer(playerId).getPlayerState().getPlayerPosition();
+        gameService.updateGameStateAfterMove(gameService.getGame(id), playerMove);
 
-        return ResponseEntity.ok(newPos);
+        return ResponseEntity.ok("PLayer moved");
+    }
+
+    @GetMapping("/game/{id}/state")
+    public ResponseEntity<ArrayList<PlayerStateResponse>> getGameState(@PathVariable Long id){
+        ArrayList<PlayerStateResponse> playersList = gameService.getPlayerStatesList(id);
+        return ResponseEntity.ok(playersList);
     }
 }
+
+
