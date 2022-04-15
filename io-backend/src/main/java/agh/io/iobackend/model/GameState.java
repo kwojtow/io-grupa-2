@@ -26,6 +26,7 @@ public class GameState {
 
     public GameState() {
         this.players = new HashMap<>();
+        this.playersQueue = new ArrayList<>();
     }
 
     public void changeGameState(PlayerMoveRequest playerMove) {
@@ -53,16 +54,24 @@ public class GameState {
 
     public void addPlayerToGame(Long PlayerId, Player player) {
         this.players.put(PlayerId, player);
+        this.playersQueue.add(player);
     }
 
     public Player getPlayer(Long playerId) {
         return players.get(playerId);
     }
 
+    public Long getCurrentPlayerId(){
+        return this.playersQueue.get(currentPlayerIndex).getPlayerId();
+    }
+
     private void nextPlayerTurn() {
+        currentPlayerIndex = (currentPlayerIndex + 1) % playersQueue.size();
+
         while (playersQueue.get(currentPlayerIndex).getPlayerStatus() != PlayerStatus.WAITING) {
             currentPlayerIndex = (currentPlayerIndex + 1) % playersQueue.size();
         }
         playersQueue.get(currentPlayerIndex).setPlayerStatus(PlayerStatus.PLAYING);
     }
+
 }
