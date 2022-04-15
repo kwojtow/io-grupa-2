@@ -38,13 +38,24 @@ export class Player{
         return this._currentVector;
     }
 
+    public getCurrentVectorPosition(): Vector{
+        return new Vector(this.position.posX + this.currentVector.posX,
+                          this.position.posY + this.currentVector.posY);
+    }
+
+    public getCurrentVectorPositionPx(fieldWidth: number): Vector{
+        return new Vector(this.getCurrentVectorPosition().posX * fieldWidth,
+                          this.getCurrentVectorPosition().posY * fieldWidth);
+    }
+
     public getAvailableVectors(): Array<Vector>{
         let xpos = this.currentVector.posX + this.position.posX;
         let ypos = this.currentVector.posY + this.position.posY;
         return [new Vector(xpos+1, ypos), new Vector(xpos+1, ypos+1),
-            new Vector(xpos, ypos+1), new Vector(xpos-1, ypos+1),
-            new Vector(xpos-1, ypos), new Vector(xpos-1, ypos-1),
-            new Vector(xpos, ypos-1), new Vector(xpos+1, ypos-1)];
+                new Vector(xpos, ypos+1), new Vector(xpos-1, ypos+1),
+                new Vector(xpos-1, ypos), new Vector(xpos-1, ypos-1),
+                new Vector(xpos, ypos-1), new Vector(xpos+1, ypos-1),
+                new Vector(xpos, ypos)];
     }
 
 

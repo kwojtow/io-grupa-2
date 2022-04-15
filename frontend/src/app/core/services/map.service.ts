@@ -20,6 +20,7 @@ export class MapService {
 
   constructor(private _gameService: GameService) {
     MapService.game = _gameService.game.getValue();
+    console.log(_gameService.playerRound);
   }
 
   static getCursorPosition(canvas: HTMLCanvasElement, event: MouseEvent): Vector {
@@ -127,19 +128,28 @@ export class MapService {
     players.forEach(player => player.drawPlayer(ctx, fieldWidth, this.LINE_WIDTH));
   }
 
-  private createArrow(ctx: CanvasRenderingContext2D, fromx: number, fromy: number, 
+  private onObstacle(vector: Vector, map: RaceMap): boolean {
+    const obstacles = map.obstacles;
+    for(let obstacle of obstacles) {
+      if(obstacle.equals(vector)) {
+        return true;
+      }
+    }
+    return false;
+  } 
+
+  private createArrow(fromx: number, fromy: number, 
                       tox: number, toy: number, width: number, headlen: number): Path2D{
 
 
     let angle = Math.atan2(toy-fromy,tox-fromx);
-    tox -= Math.cos(angle) * ((width*1.15));
-    toy -= Math.sin(angle) * ((width*1.15));
+    tox -= Math.cos(angle) * (width*1.15);
+    toy -= Math.sin(angle) * (width*1.15);
 
     let p1 = new Path2D();
 
     p1.moveTo(fromx, fromy);
     p1.lineTo(tox, toy);
-    ctx.lineWidth = width;
 
     let p2 = new Path2D()
     p2.moveTo(tox, toy);
@@ -151,75 +161,76 @@ export class MapService {
     p1.addPath(p2);
 
     return p1;
-}
+  }
+
+  private initArrows(fieldWidth: number, player: Player): Array<Path2D>{
+    const currentVectorPositionPx = player.getCurrentVectorPositionPx(fieldWidth);
+    const arrows = new Array<Path2D> (new Path2D(), new Path2D(), new Path2D(),new Path2D(),
+                                      new Path2D(), new Path2D(), new Path2D(), new Path2D(), new Path2D());
+    
+    const arrowPositions = new Array<Array<Vector>>(
+      [new Vector(fieldWidth*3/4, fieldWidth/2), new Vector(5*fieldWidth/4, fieldWidth/2)],
+      [new Vector(fieldWidth*6/8, fieldWidth*3/4), new Vector(fieldWidth*9/8, fieldWidth*9/8)],
+      [new Vector(fieldWidth/2, fieldWidth*3/4), new Vector(fieldWidth/2, fieldWidth*5/4)],
+      
+      [new Vector(fieldWidth*2/8, fieldWidth*3/4), new Vector(-fieldWidth*1/8, fieldWidth*9/8)],
+      [new Vector(fieldWidth*1/4, fieldWidth/2), new Vector(-1*fieldWidth/4, fieldWidth/2)],
+      [new Vector(fieldWidth*2/8, fieldWidth/4), new Vector(-fieldWidth*1/8, -fieldWidth/8)],
+      [new Vector(fieldWidth/2, fieldWidth/4), new Vector(fieldWidth/2, -fieldWidth/4)],
+      [new Vector(fieldWidth*6/8, fieldWidth/4), new Vector(fieldWidth*9/8, -fieldWidth/8)],
+    );
+
+    arrowPositions.forEach(arrowPosition => {
+      let i = arrowPositions.indexOf(arrowPosition);
+      arrows[i] = 
+        this.createArrow(arrowPosition[0].posX + currentVectorPositionPx.posX, 
+                         arrowPosition[0].posY + currentVectorPositionPx.posY,
+                         arrowPosition[1].posX + currentVectorPositionPx.posX, 
+                         arrowPosition[1].posY + currentVectorPositionPx.posY, 
+                         12, 10
+                        );
+    });
+    arrows[arrows.length - 1].arc(currentVectorPositionPx.posX + fieldWidth/2, 
+    currentVectorPositionPx.posY + fieldWidth/2,
+    fieldWidth/8, 0, Math.PI*2, true);
+
+    return arrows;
+  }
 
   private highlightAvaliableVectors(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, map: RaceMap, player: Player,
-    availableVectorsPaths: Array<Path2D>, currentVectorPath: Path2D, onObstacle: CallableFunction, arrows: Array<Path2D>): void {
+    availableVectorsPaths: Array<Path2D>, arrows: Array<Path2D>): void {
       const lineWidth = this.LINE_WIDTH;
       const fieldWidth = MapService.getFieldWidth(canvas, map);
       const availableVectors = player.getAvailableVectors();
+      let onObstacle = this.onObstacle;
+
       canvas.onmousemove = function(event) {
         let v = MapService.getCursorPosition(canvas, event);
 
-        if(ctx.isPointInPath(currentVectorPath, v.posX*fieldWidth + 2*lineWidth, v.posY*fieldWidth + 2*lineWidth)){
-          ctx.fillStyle = "#0066ffff";
-        }
-        else {
-            ctx.fillStyle = "#0066ff77";
-        }
-
-        if(!onObstacle(new Vector(player.currentVector.posX + player.position.posX, player.currentVector.posY + player.position.posY ))){
-          ctx.clearRect(fieldWidth * (player.currentVector.posX + player.position.posX) + lineWidth,
-          fieldWidth * (player.currentVector.posY + player.position.posY) + lineWidth,
-          fieldWidth - 2 * lineWidth,
-          fieldWidth - 2 * lineWidth);
-          ctx.fill(currentVectorPath);
-
-        }
-
-        if(ctx.isPointInPath(currentVectorPath, v.posX*fieldWidth + 2*lineWidth, v.posY*fieldWidth + 2*lineWidth)){
-          if(!onObstacle(new Vector(player.currentVector.posX + player.position.posX, player.currentVector.posY + player.position.posY ))){
-            ctx.strokeStyle = '#cc8800';
-            ctx.fillStyle = '#cc8800';
-            ctx.stroke(arrows[arrows.length - 1]);
-            ctx.fill(arrows[arrows.length - 1]);
-          }
-
-        }
-        else {
-          ctx.strokeStyle = '#454545';
-          ctx.stroke(arrows[arrows.length - 1]);
-        }
-
-        for(let i = 0; i < availableVectorsPaths.length; ++i) {
+        for(let i = availableVectorsPaths.length-1; i >= 0; --i) {
             const path = availableVectorsPaths[i];
             const vector = availableVectors[i];
+            const isCurrentVector = vector.equals(player.getCurrentVectorPosition());
+            const isPointInPath = ctx.isPointInPath(path, v.posX*fieldWidth + 2*lineWidth, 
+                                                    v.posY*fieldWidth + 2*lineWidth);
+            const isOnObstacle = onObstacle(vector, map);
             
-            if(ctx.isPointInPath(path, v.posX*fieldWidth + 2*lineWidth, v.posY*fieldWidth + 2*lineWidth)){
-                ctx.fillStyle = "#00ff66ff";
-            }
-            else {
-                ctx.fillStyle = "#00ff6677";
-            }
+            if(isPointInPath) ctx.fillStyle =  (isCurrentVector) ? "#0066ffff" : "#00ff66ff";
+            else ctx.fillStyle =  (isCurrentVector) ? "#0066ff77" : "#00ff6677";
             
-            if(!onObstacle(vector)){
+            if(!isOnObstacle){
               ctx.clearRect(fieldWidth * vector.posX + lineWidth,
               fieldWidth * vector.posY + lineWidth,
               fieldWidth - 2 * lineWidth,
               fieldWidth - 2 * lineWidth);
               ctx.fill(path);
             }
-            if(ctx.isPointInPath(path, v.posX*fieldWidth + 2*lineWidth, v.posY*fieldWidth + 2*lineWidth)) {
-              ctx.fillStyle = "#cc8800";
-              ctx.strokeStyle = "#cc8800";
-            }
-            else{
-              ctx.fillStyle = "#454545";
-              ctx.strokeStyle = "#454545";
-            }
+            ctx.fillStyle = (isPointInPath && !isOnObstacle) ? "#cc8800" : "#454545";
+            ctx.strokeStyle = (isPointInPath && !isOnObstacle) ? "#cc8800" : "#454545";
             
-            ctx.fill(arrows[i]);
+            if((!isCurrentVector || isPointInPath) && !isOnObstacle) ctx.fill(arrows[i]);
             ctx.stroke(arrows[i]);
+
         }
       }
 
@@ -230,83 +241,41 @@ export class MapService {
       const fieldWidth = MapService.getFieldWidth(canvas, map);
       const availableVectorsPaths = new Array<Path2D>();
       const availableVectors = player.getAvailableVectors();
-      const currentVector = player.currentVector;
-      // current vector
-      ctx.fillStyle = "#0066ff77";    
-      const currentVectorPath = new Path2D();
 
-      currentVectorPath.rect(fieldWidth * (currentVector.posX + player.position.posX) + this.LINE_WIDTH,
-      fieldWidth * (currentVector.posY + player.position.posY) + this.LINE_WIDTH,
-      fieldWidth - 2 * this.LINE_WIDTH,
-      fieldWidth - 2 * this.LINE_WIDTH);
-
-      ctx.fill(currentVectorPath);
-
-      // arrows
-
-      ctx.strokeStyle = 'white';
-      const arrows = new Array<Path2D> (new Path2D(), new Path2D(), new Path2D(),new Path2D(),
-                                        new Path2D(), new Path2D(), new Path2D(), new Path2D(), new Path2D());
-      const currentPositionPxVector = new Vector(fieldWidth *(currentVector.posX + player.position.posX),
-                                                 fieldWidth *(currentVector.posY + player.position.posY)); 
-      
-      const arrowPositions = new Array<Array<Vector>>(
-        [new Vector(fieldWidth*3/4, fieldWidth/2), new Vector(5*fieldWidth/4, fieldWidth/2)],
-        [new Vector(fieldWidth*6/8, fieldWidth*3/4), new Vector(fieldWidth*9/8, fieldWidth*9/8)],
-        [new Vector(fieldWidth/2, fieldWidth*3/4), new Vector(fieldWidth/2, fieldWidth*5/4)],
-        
-        [new Vector(fieldWidth*2/8, fieldWidth*3/4), new Vector(-fieldWidth*1/8, fieldWidth*9/8)],
-        [new Vector(fieldWidth*1/4, fieldWidth/2), new Vector(-1*fieldWidth/4, fieldWidth/2)],
-        [new Vector(fieldWidth*2/8, fieldWidth/4), new Vector(-fieldWidth*1/8, -fieldWidth/8)],
-        [new Vector(fieldWidth/2, fieldWidth/4), new Vector(fieldWidth/2, -fieldWidth/4)],
-        [new Vector(fieldWidth*6/8, fieldWidth/4), new Vector(fieldWidth*9/8, -fieldWidth/8)],
-      );
-
-      ctx.fillStyle = "#00ff6677";
-
-      let obstacles = map.obstacles;
-      function onObstacle(vector: Vector): boolean {
-        for(let obstacle of obstacles) {
-          if(obstacle.equals(vector)) {
-            return true;
-          }
-        }
-        return false;
-      } 
-
+      // vectors
       for(let vector of availableVectors) {
           let p = new Path2D();
           availableVectorsPaths.push(p);
-          if(!onObstacle(vector)){
+          ctx.fillStyle = (vector.equals(player.getCurrentVectorPosition())) ? "#0066ff77" : "#00ff6677";
+          if(!this.onObstacle(vector, map) || vector.equals(player.getCurrentVectorPosition())){
+            if(this.onObstacle(vector, map)) ctx.fillStyle = "#0066ff77";
             p.rect(fieldWidth * vector.posX + this.LINE_WIDTH,
-            fieldWidth * vector.posY + this.LINE_WIDTH,
-            fieldWidth - 2 * this.LINE_WIDTH,
-            fieldWidth - 2 * this.LINE_WIDTH);
-            
+                   fieldWidth * vector.posY + this.LINE_WIDTH,
+                   fieldWidth - 2 * this.LINE_WIDTH,
+                   fieldWidth - 2 * this.LINE_WIDTH);
             ctx.fill(p);
           }
 
       }
 
-
-      arrowPositions.forEach(arrowPosition => {
+      // arrows
+      const arrows = this.initArrows(fieldWidth, player);
+      arrows.forEach(arrow => {
+        ctx.lineWidth = 10;
         ctx.fillStyle = '#454545';
         ctx.strokeStyle = '#454545';
-        let i = arrowPositions.indexOf(arrowPosition);
-        arrows[i] = 
-          this.createArrow(ctx, arrowPosition[0].posX + currentPositionPxVector.posX, 
-                    arrowPosition[0].posY + currentPositionPxVector.posY,
-                    arrowPosition[1].posX + currentPositionPxVector.posX, 
-                    arrowPosition[1].posY + currentPositionPxVector.posY, 12, 10);
-        ctx.fill(arrows[i]);
-        ctx.stroke(arrows[i]);
+        let i = arrows.indexOf(arrow);
+        if(i == arrows.length-1) {
+          ctx.stroke(arrows[i]);
+        }
+        else {
+          ctx.fill(arrows[i]);
+          ctx.stroke(arrows[i]);
+        }
+
       })
-      arrows[arrows.length - 1].arc(currentPositionPxVector.posX + fieldWidth/2, currentPositionPxVector.posY + fieldWidth/2,fieldWidth/6,0,Math.PI*2,true);
-      ctx.stroke(arrows[arrows.length - 1]);
-      this.highlightAvaliableVectors(canvas, ctx, map, player, availableVectorsPaths, currentVectorPath, onObstacle, arrows);
+      this.highlightAvaliableVectors(canvas, ctx, map, player, availableVectorsPaths, arrows);
   }
-
-
 
 
 }
