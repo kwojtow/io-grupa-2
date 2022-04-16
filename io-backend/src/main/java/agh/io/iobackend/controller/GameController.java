@@ -1,5 +1,6 @@
 package agh.io.iobackend.controller;
 
+import agh.io.iobackend.controller.payload.PlayerInitialCoord;
 import agh.io.iobackend.controller.payload.PlayerMoveRequest;
 import agh.io.iobackend.controller.payload.PlayerStateResponse;
 import agh.io.iobackend.service.GameService;
@@ -13,7 +14,7 @@ import java.util.ArrayList;
 
 
 @RestController
-@RequestMapping("/auth/")
+@RequestMapping("/game/")
 public class GameController {
     private static final Logger logger = LoggerFactory.getLogger(GameController.class);
 
@@ -40,6 +41,17 @@ public class GameController {
     public ResponseEntity<ArrayList<PlayerStateResponse>> getGameState(@PathVariable Long id){
         ArrayList<PlayerStateResponse> playersList = gameService.getPlayerStatesList(id);
         return ResponseEntity.ok(playersList);
+    }
+
+    @GetMapping("/{id}/game-started") // teraz to jest room-id
+    public ResponseEntity<Boolean> checkIfGameStarted(@PathVariable Long id) {
+        return ResponseEntity.ok(gameService.getGame(id).getGameStarted());
+    }
+
+    @PostMapping("/{id}") // game id (ale teraz to jest room id)
+    public ResponseEntity<String> startGame(@RequestBody ArrayList<PlayerInitialCoord> playerInitialCoordList, @PathVariable Long id) {
+        gameService.startGame(id, playerInitialCoordList);
+        return ResponseEntity.ok("Game created");
     }
 }
 
