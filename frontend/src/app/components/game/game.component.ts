@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {GameService} from "../../core/services/game.service";
 import {Player} from "../../shared/models/Player";
 import {interval, mergeMap} from "rxjs";
+import {PlayerState} from "../../shared/models/PlayerState";
 
 @Component({
   selector: 'app-game',
@@ -25,14 +26,20 @@ export class GameComponent implements OnInit {
   }
   updateGameState(){
     interval(500)
-      .pipe(mergeMap(() => this._gameService.getGameState()))// TODO: interval 0.5sec
+      .pipe(mergeMap(() => this._gameService.getMockGameState())) // to test: getMockGameState()  // TODO: refactor
       .subscribe(playersList => {
-        console.log('update!')
-        this._gameService.updateMap(playersList);
-        this.currentPlayer = playersList[0]; // TODO!
+        this.playersList.forEach(player => {
+          // @ts-ignore
+          return player.updateState(playersList.filter(player1 => player1.playerId === player.playerId).pop());
+        })
+        this._gameService.updateMap(this.playersList);
+        // @ts-ignore
+        this.currentPlayer = this.playersList.find(player => {
+          // @ts-ignore
+          const id = playersList.find(p1 => p1.playerStatus === 'PLAYING').playerId;
+          return player.playerId === id;
+        })
       })
-
-
   }
   ngOnInit(): void {
   }

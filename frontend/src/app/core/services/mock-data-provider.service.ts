@@ -6,6 +6,7 @@ import {GameSettings} from "../../shared/models/GameSettings";
 import {Game} from "../../shared/models/Game";
 import {BehaviorSubject, Observable, Subject} from "rxjs";
 import {GameService} from "./game.service";
+import {PlayerState} from "../../shared/models/PlayerState";
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,7 @@ export class MockDataProviderService {
   private _player: Player;
   private _playerRound: BehaviorSubject<Player>;
   private _roomId: number;
-  private _gameState: BehaviorSubject<Array<Player>>;
+  private _gameState: BehaviorSubject<Array<PlayerState>>;
   private _playersList: Array<Player>;
   static idx = 0;
   private static getExampleMap(){
@@ -27,15 +28,15 @@ export class MockDataProviderService {
   }
 
   private static getExamplePlayers(){
-    let player1 = new Player('Player1', new Vector(5, 4), 'green');
+    let player1 = new Player(1,'Player1', new Vector(5, 5), 'green');
     player1.currentVector = new Vector(1, 2);
-    let player2 = new Player('Player2',new Vector(6, 2), 'red');
-    let player3 = new Player('Player3',new Vector(3, 3), 'yellow');
+    let player2 = new Player(2,'Player2',new Vector(6, 2), 'red');
+    let player3 = new Player(3,'Player3',new Vector(8, 1), 'yellow');
     return new Array(player1, player2, player3);
   }
 
   getExamplePlayer(): Player{
-    return new Player('Player1', new Vector(5, 5), 'green');
+    return new Player(1, 'Player1', new Vector(5, 5), 'green');
   }
 
   private static getExampleGameSettings(): GameSettings{
@@ -46,41 +47,35 @@ export class MockDataProviderService {
   }
 
   getGame(): Game {
-    return new Game(123, MockDataProviderService.getExampleMap(),
+    return new Game(1, MockDataProviderService.getExampleMap(),
       MockDataProviderService.getExamplePlayers(),
       MockDataProviderService.getExampleGameSettings());
   }
 
-  getGameState(): Observable<Array<Player>> {
+  getGameState(): Observable<Array<PlayerState>> {
     return this._gameState;
-  }
-  setExampleData(){
-    const players = MockDataProviderService.getExamplePlayers();
-    this._player = players[0];
-    this._playerRound = new BehaviorSubject<Player>(players[1]);
-    this._roomId = 12345;
   }
 
   startIntervalChanges(): void{
-    // setInterval(function (player: Subject<Player>,
-    //                       players: Player[]){
-    //   player.next(players[GameService.idx]);
-    //   GameService.idx =(GameService.idx+1)%2;
-    //   },
-    //   1000, this.playerRound, this.game.players);
-
-    setInterval(function (playersList: Array<Player>, gameState: BehaviorSubject<Array<Player>>){
-      playersList[MockDataProviderService.idx%2].position.posX = (playersList[MockDataProviderService.idx%2].position.posX + 1) % MockDataProviderService.getExampleMap().mapWidth;
+    setInterval(function (playersList: Array<Player>, gameState: BehaviorSubject<Array<PlayerState>>){
+      playersList[MockDataProviderService.idx%3].position.posX = (playersList[MockDataProviderService.idx%3].position.posX + 1) % MockDataProviderService.getExampleMap().mapWidth;
+      playersList[(MockDataProviderService.idx)%3].playerStatus = 'WAITING';
+      playersList[(MockDataProviderService.idx + 1)%3].playerStatus = 'PLAYING';
       MockDataProviderService.idx += 1;
+      gameState.next(MockDataProviderService.mapPlayersToPlayersStates(playersList));
     }, 2000, this._playersList, this._gameState)
 
   }
-
+  static mapPlayersToPlayersStates(players: Array<Player>): Array<PlayerState>{
+    return players.map(player => {
+      return new PlayerState(player.playerId, player.playerStatus, player.position.posX, player.position.posY);
+    });
+  }
   constructor() {
     this._playersList = MockDataProviderService.getExamplePlayers();
-    this._gameState = new BehaviorSubject<Array<Player>>(this._playersList);
-
-
+    this._playersList[0].playerStatus = 'PLAYING';
+    this._gameState = new BehaviorSubject<Array<PlayerState>>(MockDataProviderService
+      .mapPlayersToPlayersStates(this._playersList));
   }
 
 
