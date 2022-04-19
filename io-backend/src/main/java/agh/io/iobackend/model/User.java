@@ -38,6 +38,4 @@ public class User {
 
     private String password;
 
-    // TODO user needs an avatar
-
 }

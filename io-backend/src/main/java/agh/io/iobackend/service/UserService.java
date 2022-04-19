@@ -28,6 +28,10 @@ public class UserService implements UserDetailsService {
         return userRepository.existsByLogin(login);
     }
 
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<User> user = userRepository.findByLogin(username);

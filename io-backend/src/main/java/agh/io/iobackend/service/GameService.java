@@ -1,8 +1,11 @@
 package agh.io.iobackend.service;
 
+import agh.io.iobackend.controller.payload.PlayerMoveRequest;
+import agh.io.iobackend.controller.payload.PlayerStateResponse;
 import agh.io.iobackend.model.GameState;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 @Service
@@ -19,8 +22,12 @@ public class GameService {
         return games.get(gameId);
     }
 
-    public void changeGameState(GameState gameState, Long playerId, int xChange, int yChange) {
-        gameState.changeGameState(playerId, xChange, yChange);
+    public ArrayList<PlayerStateResponse> getPlayerStatesList(Long gameId){
+        return getGame(gameId).getPlayerStatesList();
+    }
+
+    public void updateGameStateAfterMove(GameState gameState, PlayerMoveRequest playerMove) {
+        gameState.changeGameState(playerMove);
     }
 
     public Boolean existsByGameId(Long gameId){
@@ -29,6 +36,5 @@ public class GameService {
 
     public void addGame(Long gameId, GameState gameState){
         this.games.put(gameId, gameState);
-
     }
 }
