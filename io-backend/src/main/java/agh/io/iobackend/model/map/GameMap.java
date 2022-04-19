@@ -30,6 +30,10 @@ public class GameMap {
 
     private String name;
 
+    private Integer width;
+
+    private Integer height;
+
     // if created by specific User
     private Long userId;
 

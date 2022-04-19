@@ -66,6 +66,8 @@ class MapControllerTest {
         gameMap.setName("super-map");
         gameMap.setUserId(userId);
         gameMap.setMapStructure(mapStructure);
+        gameMap.setWidth(10);
+        gameMap.setHeight(10);
 
         ResponseEntity<Long> saveMapResponse = mapController.saveMap(gameMap);
         assertEquals(200, saveMapResponse.getStatusCodeValue());
@@ -77,6 +79,8 @@ class MapControllerTest {
         assertEquals(gameMap.getMapId(), mapResponse.getMapId());
         assertEquals(gameMap.getName(), mapResponse.getName());
         assertEquals(gameMap.getUserId(), mapResponse.getUserId());
+        assertEquals(gameMap.getHeight(), mapResponse.getHeight());
+        assertEquals(gameMap.getWidth(), mapResponse.getWidth());
 
         ResponseEntity<List<GameMap>> userMapsResponse = mapController.getMaps();
         assertEquals(200, userMapsResponse.getStatusCodeValue());
@@ -85,5 +89,7 @@ class MapControllerTest {
         assertEquals(gameMap.getName(), userMaps.get(0).getName());
         assertEquals(gameMap.getMapId(), userMaps.get(0).getMapId());
         assertEquals(gameMap.getUserId(), userMaps.get(0).getUserId());
+        assertEquals(gameMap.getHeight(), userMaps.get(0).getHeight());
+        assertEquals(gameMap.getWidth(), userMaps.get(0).getWidth());
     }
 }
