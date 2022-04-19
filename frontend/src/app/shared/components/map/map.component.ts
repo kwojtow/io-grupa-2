@@ -1,8 +1,9 @@
-import {AfterViewInit, Component, ElementRef, Inject, Injectable, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, ElementRef, Inject, Injectable, Input, OnInit, ViewChild} from '@angular/core';
 import { Player } from '../../models/Player';
 import {RaceMap} from "../../models/RaceMap";
 import {GameService} from "../../../core/services/game.service";
 import {MapService} from "../../../core/services/map.service";
+import {BehaviorSubject} from "rxjs";
 
 
 @Component({
@@ -20,27 +21,17 @@ export class MapComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     const canvas = this.canvasRef.nativeElement;
+    this.ctx = this.getContext(canvas);
+    this._mapService.canvas = this.canvasRef.nativeElement;
+    // @ts-ignore
+    this._mapService.ctx = this.ctx;
+
     if (canvas != null){
       canvas.addEventListener('mousedown', function(e: MouseEvent) {
         MapService.getCursorPosition(canvas, e);
       });
     }
-    this._gameService.game.subscribe(game => {    // subscribe game changes (players moves etc)
-      if(canvas != null) {
-        this.initMap(canvas, game.map, game.players);
-      }
-    });
-    this.ctx = this.getContext(canvas);
-  }
-
-  initMap(canvas: HTMLCanvasElement, map: RaceMap, players: Array<Player>){
-    if(this.ctx != null) {
-      this._mapService.drawMapNet(canvas, this.ctx, map);
-      this._mapService.drawStartAndFinishLines(canvas, this.ctx, map);
-      this._mapService.drawObstaclesLines(canvas, this.ctx, map);
-      this._mapService.drawPlayers(canvas, this.ctx, map, players);
-      this._mapService.drawPlayerVectors(canvas, this.ctx, map, players[0]);
-    }
+    this._mapService.initMap(this._mapService.map, []);
   }
 
   private getContext(canvas: HTMLCanvasElement){

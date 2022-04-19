@@ -4,8 +4,9 @@ import {RaceMap} from "../../shared/models/RaceMap";
 import {Vector} from "../../shared/models/Vector";
 import {Player} from "../../shared/models/Player";
 import {GameSettings} from "../../shared/models/GameSettings";
-import {BehaviorSubject, Subject} from "rxjs";
+import {BehaviorSubject, Observable, Subject} from "rxjs";
 import {MockDataProviderService} from "./mock-data-provider.service";
+import {MapService} from "./map.service";
 
 @Injectable({
   providedIn: 'root'
@@ -13,21 +14,35 @@ import {MockDataProviderService} from "./mock-data-provider.service";
 export class GameService {
   private _player: Player;                        // authorized user
   private _playerRound: BehaviorSubject<Player>; // player currently playing
-  private _game: BehaviorSubject<Game>;
-  private _roomId: number;
+  private _game: Game;                          // TODO: set game when game starting
+  private _gameId: number;
   static idx = 1;
 
-  constructor(private mockDataProvider: MockDataProviderService) {
+  constructor(private mockDataProvider: MockDataProviderService,
+              private _mapService: MapService) {
     mockDataProvider.setExampleData();
-    this._player = mockDataProvider.player;
-    this._game = mockDataProvider.game;
-    this._playerRound = mockDataProvider.playerRound;
-    this._roomId = 12345;
+    this.setGameInfo(mockDataProvider.getPlayer(), mockDataProvider.getGame());
+    this.updateGameState();
     mockDataProvider.startIntervalChanges();
+
   }
-
-
-  get game(): BehaviorSubject<Game> {
+  setGameInfo(player: Player, game: Game){
+    this._player = player;    // auth user from userService
+    this._game =   game;
+    this._mapService.map = game.map;
+    this._gameId = game.gameId;
+  }
+  updateGameState(){
+    this._playerRound = this.mockDataProvider.playerRound; //GameState GET in every 0.5sec
+    this.mockDataProvider.game;
+  }
+  getGameState(): Observable<Array<Player>>{
+    return this.mockDataProvider.getGameState();
+  }
+  updateMap(playersList: Array<Player>){
+    this._mapService.initMap(this.game.map, playersList);
+  }
+  get game(): Game {
     return this._game;
   }
 
@@ -39,7 +54,8 @@ export class GameService {
     return this._player;
   }
 
-  get roomId(): number {
-    return this._roomId;
+  get gameId(): number {
+    return this._gameId;
   }
+
 }

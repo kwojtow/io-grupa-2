@@ -14,7 +14,8 @@ export enum fieldProperty{
 
 export class Game{
 
-  constructor(private _map: RaceMap, private _players: Player[], private _settings: GameSettings) {
+  constructor(private _gameId: number, private _map: RaceMap, private _players: Player[], private _settings: GameSettings) {
+    this._gameId = _gameId;
     this._map = _map;
     this._players = _players;
     this._settings = _settings;
@@ -42,6 +43,10 @@ export class Game{
 
   set settings(value: GameSettings) {
     this._settings = value;
+  }
+
+  get gameId(): number {
+    return this._gameId;
   }
 
   getFieldProperty(vector: Vector): fieldProperty{
