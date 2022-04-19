@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { GameRoomDto } from '../shared/models/GameRoomDto';
@@ -7,6 +8,7 @@ import { User } from '../shared/models/User';
 import { Vector } from '../shared/models/Vector';
 import { MapService } from './map.service';
 import { UserService } from './user.service';
+import { catchError, retry } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +16,8 @@ import { UserService } from './user.service';
 export class GameRoomService {
   idCounter = 0;
   changes : BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+
+  gameRoomDto : GameRoomDto;
 
   mockRoomsList : GameRoomDto[] = new Array(
     {
@@ -50,11 +54,22 @@ export class GameRoomService {
   );
 
 
-  constructor(private mapService: MapService, private userServiece : UserService) { }
+  constructor(private mapService: MapService, private userServiece : UserService, private http: HttpClient) { }
 
   getGameRoom(id : number) : GameRoomDto{
     console.log(this.mockRoomsList)
     return this.mockRoomsList[id]
+  }
+
+  getGameRoom2(id: number) : GameRoomDto {
+    this.http.get<GameRoomDto>("/game-room/" + id).subscribe((data: GameRoomDto) => this.gameRoomDto = {
+      id: data.id,
+      mapDto: data.mapDto,
+      playersLimit: data.playersLimit,
+      roundTime: data.roundTime,
+      usersList: data.usersList,
+      owner: data.owner  })
+      return this.gameRoomDto;
   }
 
   joinGameRoom(id : number){

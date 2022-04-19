@@ -8,6 +8,7 @@ import { GameRoomComponent } from './shared/components/game-room/game-room.compo
 import { CreateGameRoomComponent } from './shared/components/create-game-room/create-game-room.component';
 import { JoinGameRoomComponent } from './shared/components/join-game-room/join-game-room.component';
 import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { FormsModule } from '@angular/forms';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    FormsModule
+    FormsModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]
