@@ -15,16 +15,13 @@ import {HttpClient} from "@angular/common/http";
 })
 export class GameService {
   private _player: Player;                        // authorized user
-  private _game: Game;                          // TODO: set game when game starting
+  private _game: Game;
   private _gameId: number;
-  static idx = 1;
 
   constructor(private mockDataProvider: MockDataProviderService,
               private _mapService: MapService,
               private _httpClient: HttpClient) {
-    this.setGameInfo(mockDataProvider.getPlayer(), mockDataProvider.getGame());
-    mockDataProvider.startIntervalChanges();
-
+    this.setGameInfo(mockDataProvider.getPlayer(), mockDataProvider.getGame()); // TODO: set game when game starting
   }
   setGameInfo(player: Player, game: Game){
     this._player = player;    // auth user from userService

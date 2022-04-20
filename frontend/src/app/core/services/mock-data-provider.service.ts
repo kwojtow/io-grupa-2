@@ -47,6 +47,7 @@ export class MockDataProviderService {
   }
 
   getGame(): Game {
+    this.startIntervalChanges();
     return new Game(1, MockDataProviderService.getExampleMap(),
       MockDataProviderService.getExamplePlayers(),
       MockDataProviderService.getExampleGameSettings());

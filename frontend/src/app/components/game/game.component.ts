@@ -13,20 +13,23 @@ export class GameComponent implements OnInit {
 
   playersList: Player[];
   timer: number;
-  currentPlayer: Player;
-  player: Player;
+  currentPlayer: Player; //currently playing
+  player: Player;       // authorized user
   gameId: number;
 
   constructor(private _gameService: GameService) {
+
     this.gameId = _gameService.gameId;
     this.playersList = _gameService.game.players;
-    this.timer = this._gameService.game.settings.roundTime;   // TODO: timer animation
     this.player = _gameService.player;
+
     this.updateGameState();
+    this.timer = this._gameService.game.settings.roundTime;   // TODO: timer animation
+
   }
   updateGameState(){
     interval(500) // GET game state in every 0.5s
-      .pipe(mergeMap(() => this._gameService.getMockGameState())) // to test: getMockGameState()
+      .pipe(mergeMap(() => this._gameService.getGameState())) // to test: getMockGameState()
       .subscribe(playersStates => {
         this.updatePlayersStates(this.playersList, playersStates);
         this._gameService.updateMap(this.playersList);
