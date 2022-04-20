@@ -29,18 +29,14 @@ public class GameRoomController {
     public ResponseEntity<GameRoomResponse> createRoom(@RequestBody GameRoomRequest gameRoomRequest) {
         GameRoom gameRoom = new GameRoom(gameRoomRequest.getMapId(), gameRoomRequest.getPlayersLimit(),
                 gameRoomRequest.getRoundTime(), gameRoomRequest.getGameMasterId());
-
+        // czy potrzebna jest ta nowa zmienna?
+        GameRoom savedGameRoom = gameRoomService.createGameRoom(gameRoom);
         GameRoomResponse gameRoomResponse = new GameRoomResponse();
-        gameRoomResponse.setRoomId(gameRoom.getGameRoomID());
+        gameRoomResponse.setRoomId(savedGameRoom.getGameRoomID());
         gameRoomResponse.setGameMasterId(gameRoomRequest.getGameMasterId());
         gameRoomResponse.setRoundTime(gameRoomRequest.getRoundTime());
         gameRoomResponse.setPlayersLimit(gameRoomRequest.getPlayersLimit());
         gameRoomResponse.setMapId(gameRoomRequest.getMapId());
-
-        gameService.createGame(gameRoomRequest, gameRoom.getGameRoomID());
-        // na razie ustawiam gameId na roomId
-        // ale trzeba ulepszyc tworzenie gier
-        // zwracac gameID i wtedy wiedza gdzie pytac o game-started
 
         return ResponseEntity.ok(gameRoomResponse);
     }
@@ -59,13 +55,27 @@ public class GameRoomController {
         return ResponseEntity.ok(gameRoomResponse);
     }
 
+    @GetMapping("/{id}/game") // zwraca id gry - aktualnie to jest nadal roomId
+    public ResponseEntity<Long> createGame(@PathVariable Long id) throws GameRoomNotFoundException {
+        GameRoom gameRoom = gameRoomService.getGameRoom(id);
+        gameService.createGame(gameRoom);
+        gameRoom.setGameStarted(true);
+
+        // szkic pozniejszych zmian z nowa klasa Game podobna do GameRoom
+//        Game game = new Game(id, gameRoom.getMapID(), gameRoom.getGameMasterID());
+//        Game savedGame = gameService.createGame(game);
+//        return ResponseEntity.ok(savedGame.getGameId());
+
+        return ResponseEntity.ok(id);
+
+    }
+
     @DeleteMapping("/{id}") // room id
     public ResponseEntity<String> deleteRoom(@PathVariable Long id) throws GameRoomNotFoundException {
         gameRoomService.deleteGameRoom(id);
         gameService.deleteGame(id);
         return ResponseEntity.ok("Room deleted");
     }
-
 
     @GetMapping("/{id}/users-list") // room id
     public ResponseEntity<List<Long>> getUserListInRoom(@PathVariable Long id) throws GameRoomNotFoundException {
@@ -85,4 +95,10 @@ public class GameRoomController {
         gameRoom.addPlayer(user);
         return ResponseEntity.ok("User added");
     }
+
+    @GetMapping("/{id}/game-started") // room-id
+    public ResponseEntity<Boolean> checkIfGameStarted(@PathVariable Long id) throws GameRoomNotFoundException {
+        return ResponseEntity.ok(gameRoomService.getGameRoom(id).getGameStarted());
+    }
+
 }

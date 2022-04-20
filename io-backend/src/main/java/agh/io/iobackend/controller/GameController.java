@@ -43,12 +43,7 @@ public class GameController {
         return ResponseEntity.ok(playersList);
     }
 
-    @GetMapping("/{id}/game-started") // teraz to jest room-id
-    public ResponseEntity<Boolean> checkIfGameStarted(@PathVariable Long id) {
-        return ResponseEntity.ok(gameService.getGame(id).getGameStarted());
-    }
-
-    @PostMapping("/{id}") // game id (ale teraz to jest room id)
+    @PostMapping("/{id}") // game id - poczatkowe wspolrzedne
     public ResponseEntity<String> startGame(@RequestBody ArrayList<PlayerInitialCoord> playerInitialCoordList, @PathVariable Long id) {
         gameService.startGame(id, playerInitialCoordList);
         return ResponseEntity.ok("Game created");

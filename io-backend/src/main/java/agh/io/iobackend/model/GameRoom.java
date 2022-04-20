@@ -1,7 +1,6 @@
 package agh.io.iobackend.model;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity(name = "GameRoom")
@@ -38,6 +37,10 @@ public class GameRoom {
     @Column(name = "limitOfPlayers")
     // Maximal number of players (apart from Game Master)
     private Integer limitOfPlayers;
+
+    @Column(name = "gameStarted")
+    // Maximal number of players (apart from Game Master)
+    private Boolean gameStarted;
 
     @ElementCollection
     @Column(name = "userList")
@@ -82,6 +85,13 @@ public class GameRoom {
         return roundTime;
     }
 
+    public Boolean getGameStarted(){
+        return this.gameStarted;
+    }
+
+    public void setGameStarted(Boolean gameStarted){
+        this.gameStarted = gameStarted;
+    }
     public Long getMapID() {
         return mapID;
     }
