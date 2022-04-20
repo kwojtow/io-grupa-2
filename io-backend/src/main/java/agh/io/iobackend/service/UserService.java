@@ -39,8 +39,16 @@ public class UserService implements UserDetailsService {
         return user.map(UserDetailsImpl::new).get();
     }
 
-    public User getCurrentUser(){
+    public User getCurrentUser() {
         return userRepository.getById(getCurrentUserId());
+    }
+
+    public Optional<User> getUserById(Long userId) {
+        return userRepository.findById(userId);
+    }
+
+    public Optional<User> getUserByLogin(String login) {
+        return userRepository.findByLogin(login);
     }
 
     public Long getCurrentUserId() {
