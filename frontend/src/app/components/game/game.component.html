@@ -24,7 +24,7 @@
   <div class="options">
     <button (click)="leaveGame()" id="leave-game-btn">Opuść grę</button>
   </div>
-  <div class="information-bar">
+  <div class="information-bar" style="height: 80px;">
     <div *ngIf="currentPlayer?.name === player?.name">
       <div style="font-size: 25px; font-weight: bold; color: green;"><label>TWÓJ RUCH</label></div>
       <div [style.color]="this.timer < 4 ? 'red' : 'black'" style="font-size: 30px">Pozostalo {{this.timer}} sekund.</div>
