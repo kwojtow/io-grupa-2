@@ -1,6 +1,9 @@
 package agh.io.iobackend.model;
 
+import agh.io.iobackend.model.map.GameMap;
+
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity(name = "GameRoom")
@@ -26,9 +29,8 @@ public class GameRoom {
             nullable = false)
     private Long gameMasterID;
 
-    @Column(name = "mapID")
-    // TODO mapID will be the foreign key for maps database, where details about the map are stored
-    private Long mapID;
+    @OneToOne
+    private GameMap gameMap;
 
     @Column(name = "roundTime")
     // Duration of each turn in seconds (for a player to make move)
@@ -42,38 +44,38 @@ public class GameRoom {
     // Maximal number of players (apart from Game Master)
     private Boolean gameStarted;
 
-    @ElementCollection
-    @Column(name = "userList")
-    private List<Long> userList;
+    @OneToMany
+    private List<User> userList;
 
 //    @ElementCollection
 //    @Column(name = "gamesList")
 //    private List<Long> gamesList; // kiedy bedzie wiecej gier w 1 pokoju
 
-    public GameRoom(Long mapId, int playersLimit, int roundTime, Long gameMasterId) {
-        this.mapID = mapId;
+    public GameRoom(GameMap map, int playersLimit, int roundTime, Long gameMasterId) {
+        this.gameMap = map;
         this.limitOfPlayers = playersLimit;
         this.roundTime = roundTime;
         this.gameMasterID = gameMasterId;
+        this.userList = new ArrayList<>();
     }
 
     public GameRoom() {
 
     }
 
-    public void removePlayer(Long userId){
-        this.userList.remove(userId);
+    public void removePlayer(User user) {
+        userList.remove(user);
     }
 
-    public void addPlayer(Long userId){
-        this.userList.add(userId);
+    public void addPlayer(User user) {
+        userList.add(user);
     }
 
-    public Long getGameRoomID(){
-        return getGameRoomID();
+    public Long getGameRoomID() {
+        return gameRoomID;
     }
 
-    public Long getGameMasterID(){
+    public Long getGameMasterID() {
         return gameMasterID;
     }
 
@@ -85,18 +87,19 @@ public class GameRoom {
         return roundTime;
     }
 
-    public Boolean getGameStarted(){
+    public Boolean getGameStarted() {
         return this.gameStarted;
     }
 
-    public void setGameStarted(Boolean gameStarted){
+    public void setGameStarted(Boolean gameStarted) {
         this.gameStarted = gameStarted;
     }
-    public Long getMapID() {
-        return mapID;
+
+    public GameMap getGameMap() {
+        return gameMap;
     }
 
-    public List<Long> getUserList(){
-        return this.userList;
+    public List<User> getUserList() {
+        return userList;
     }
 }

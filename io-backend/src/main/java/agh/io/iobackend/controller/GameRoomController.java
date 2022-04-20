@@ -5,29 +5,43 @@ import agh.io.iobackend.controller.payload.GameRoomRequest;
 import agh.io.iobackend.controller.payload.GameRoomResponse;
 import agh.io.iobackend.exceptions.GameRoomNotFoundException;
 import agh.io.iobackend.model.GameRoom;
+import agh.io.iobackend.model.User;
 import agh.io.iobackend.service.GameRoomService;
 import agh.io.iobackend.service.GameService;
+import agh.io.iobackend.service.MapService;
+import agh.io.iobackend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.transaction.Transactional;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/game-room")
+@Transactional // for tests, because of "org.hibernate.LazyInitializationException"
 public class GameRoomController {
 
     @Autowired
-    GameRoomService gameRoomService;
+    private GameRoomService gameRoomService;
 
     @Autowired
-    GameService gameService;
+    private GameService gameService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private MapService mapService;
 
     // TODO sprawdz czy gra istnieje, czy uzytkownik istnieje
     // TODO gameId generowane jako inne niz roomId
+    // TODO obsługa błędów
 
     @PostMapping("")
     public ResponseEntity<GameRoomResponse> createRoom(@RequestBody GameRoomRequest gameRoomRequest) {
-        GameRoom gameRoom = new GameRoom(gameRoomRequest.getMapId(), gameRoomRequest.getPlayersLimit(),
+        GameRoom gameRoom = new GameRoom(mapService.getMapById(gameRoomRequest.getMapId()).get(), gameRoomRequest.getPlayersLimit(),
                 gameRoomRequest.getRoundTime(), gameRoomRequest.getGameMasterId());
         // czy potrzebna jest ta nowa zmienna?
         GameRoom savedGameRoom = gameRoomService.createGameRoom(gameRoom);
@@ -50,7 +64,7 @@ public class GameRoomController {
         gameRoomResponse.setGameMasterId(gameRoom.getGameMasterID());
         gameRoomResponse.setRoundTime(gameRoom.getRoundTime());
         gameRoomResponse.setPlayersLimit(gameRoom.getLimitOfPlayers());
-        gameRoomResponse.setMapId(gameRoom.getMapID());
+        gameRoomResponse.setMapId(gameRoom.getGameMap().getMapId());
 
         return ResponseEntity.ok(gameRoomResponse);
     }
@@ -80,19 +94,19 @@ public class GameRoomController {
     @GetMapping("/{id}/users-list") // room id
     public ResponseEntity<List<Long>> getUserListInRoom(@PathVariable Long id) throws GameRoomNotFoundException {
         GameRoom gameRoom = gameRoomService.getGameRoom(id);
-        return ResponseEntity.ok(gameRoom.getUserList());
+        return ResponseEntity.ok(gameRoom.getUserList().stream().map(User::getUserId).collect(Collectors.toList()));
     }
 
     @DeleteMapping("/{id}/users-list/{user}") // room id
     public void leaveGameRoom(@PathVariable Long id, @PathVariable Long user) throws GameRoomNotFoundException {
         GameRoom gameRoom = gameRoomService.getGameRoom(id);
-        gameRoom.removePlayer(user);
+        gameRoom.removePlayer(userService.getUserById(user));
     }
 
     @PostMapping("/{id}/users-list/{user}") // room id
     public ResponseEntity<String> joinGameRoom(@PathVariable Long id, @PathVariable Long user) throws GameRoomNotFoundException {
         GameRoom gameRoom = gameRoomService.getGameRoom(id);
-        gameRoom.addPlayer(user);
+        gameRoom.addPlayer(userService.getUserById(user));
         return ResponseEntity.ok("User added");
     }
 

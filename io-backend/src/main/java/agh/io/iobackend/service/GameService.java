@@ -1,10 +1,8 @@
 package agh.io.iobackend.service;
 
-import agh.io.iobackend.controller.payload.GameRoomRequest;
 import agh.io.iobackend.controller.payload.PlayerInitialCoord;
 import agh.io.iobackend.controller.payload.PlayerMoveRequest;
 import agh.io.iobackend.controller.payload.PlayerStateResponse;
-import agh.io.iobackend.exceptions.NoGameFoundException;
 import agh.io.iobackend.model.GameRoom;
 import agh.io.iobackend.model.GameState;
 import agh.io.iobackend.repository.GameRepository;
@@ -13,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Optional;
 
 @Service
 public class GameService {
@@ -44,7 +41,7 @@ public class GameService {
 
     // funkcja do czasu az bedzie lepsza obsługa gier i gra sama wygeneruje sobie Id
     public void createGame(GameRoom gameRoom){
-        GameState gameState = new GameState(gameRoom.getGameRoomID(), gameRoom.getGameRoomID(), gameRoom.getMapID(), gameRoom.getGameMasterID());
+        GameState gameState = new GameState(gameRoom.getGameRoomID(), gameRoom.getGameRoomID(), gameRoom.getGameMap(), gameRoom.getGameMasterID());
         addGame(gameRoom.getGameRoomID(), gameState);
     }
 

@@ -43,6 +43,10 @@ public class UserService implements UserDetailsService {
         return userRepository.getById(getCurrentUserId());
     }
 
+    public User getUserById(Long userId){
+        return userRepository.getById(userId);
+    }
+
     public Long getCurrentUserId() {
         Long userId = null;
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -50,7 +54,6 @@ public class UserService implements UserDetailsService {
             UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
             userId = userDetails.getUserId();
         }
-        return userId; // TODO check this implementation
+        return userId;
     }
-
 }

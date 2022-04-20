@@ -2,6 +2,7 @@ package agh.io.iobackend.model;
 import agh.io.iobackend.controller.payload.PlayerInitialCoord;
 import agh.io.iobackend.controller.payload.PlayerMoveRequest;
 import agh.io.iobackend.controller.payload.PlayerStateResponse;
+import agh.io.iobackend.model.map.GameMap;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,17 +11,17 @@ public class GameState {
 
     private Long gameId;
     private Long gameRoomId;
-    private Long mapId;
+    private GameMap gameMap;
     private Long gameMasterId;
     private HashMap<Long, Player> players = new HashMap<>();
     private int currentPlayerIndex;
     private final ArrayList<Long> playersQueue;
     private Boolean gameStarted;
 
-    public GameState(Long gameId, Long gameRoomId, Long mapId, Long gameMasterId) {
+    public GameState(Long gameId, Long gameRoomId, GameMap gameMap, Long gameMasterId) {
         this.gameId = gameId;
         this.gameRoomId = gameRoomId;
-        this.mapId = mapId;
+        this.gameMap = gameMap;
         this.gameMasterId = gameMasterId;
         this.gameStarted = false;
         this.players = new HashMap<>();
