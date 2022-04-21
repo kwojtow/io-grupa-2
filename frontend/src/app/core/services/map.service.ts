@@ -162,10 +162,18 @@ export class MapService {
     players.forEach(player => this.drawPlayer(player, ctx, fieldWidth, this.LINE_WIDTH));
   }
 
+  /**
+   * function that check if there is an obstacle or a player on the field with 
+   * given vector 
+   */
   private onObstacle(vector: Vector, map: RaceMap): boolean {
     const obstacles = map.obstacles;
+    const players = MapService.game.players;
     for(let obstacle of obstacles) {
       if(obstacle.equals(vector)) return true;
+    }
+    for(let player of players) {
+      if(player.position.equals(vector)) return true;
     }
     return false;
   } 
