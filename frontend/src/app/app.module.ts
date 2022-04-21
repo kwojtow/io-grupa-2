@@ -10,7 +10,6 @@ import { MapComponent } from './shared/components/map/map.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { StartPageComponent } from './components/start-page/start-page.component';
-
 import { GameComponent } from './components/game/game.component';
 
 @NgModule({
