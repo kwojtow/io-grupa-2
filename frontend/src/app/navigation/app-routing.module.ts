@@ -5,6 +5,7 @@ import { LoginComponent } from '../components/login/login.component';
 import { RegisterSuccessComponent } from '../components/register/register-success/register-success.component';
 import { RegisterComponent } from '../components/register/register.component';
 import { StartPageComponent } from '../components/start-page/start-page.component';
+import {GameComponent} from "../components/game/game.component";
 
 const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -12,6 +13,7 @@ const routes: Routes = [
   { path: 'signup', component: RegisterComponent },
   { path: 'success', component: RegisterSuccessComponent },
   { path: 'start', component: StartPageComponent },
+  { path: 'game', component: GameComponent}
 ];
 
 @NgModule({

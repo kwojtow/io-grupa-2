@@ -26,6 +26,7 @@ import { GameComponent } from './components/game/game.component';
   imports: [
     BrowserModule,
     AppRoutingModule,
+    AppRoutingModule,
     ReactiveFormsModule,
     FormsModule,
     HttpClientModule
