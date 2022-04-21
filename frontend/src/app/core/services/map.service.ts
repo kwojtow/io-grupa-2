@@ -278,19 +278,24 @@ export class MapService {
           else ctx.fillStyle =  (isCurrentVector) ? "#0066ff77" : "#00ff6677";
 
           if(!isOnObstacle){
-            canvas.style.cursor = 'pointer';
             ctx.clearRect(fieldWidth * vector.posX + lineWidth,
             fieldWidth * vector.posY + lineWidth,
             fieldWidth - 2 * lineWidth,
             fieldWidth - 2 * lineWidth);
             ctx.fill(path);
           }
-          ctx.fillStyle = (isPointInPath && !isOnObstacle) ? "#cc8800" : "#454545";
-          ctx.strokeStyle = (isPointInPath && !isOnObstacle) ? "#cc8800" : "#454545";
+          if(isPointInPath && !isOnObstacle){
+            ctx.fillStyle = "#ff9900";
+            ctx.strokeStyle = "#ff9900";
+            canvas.style.cursor = 'pointer';
+          }
+          else{
+            ctx.fillStyle = "#454545";
+            ctx.strokeStyle = "#454545";
+          }
 
           if((!isCurrentVector || isPointInPath) && !isOnObstacle) ctx.fill(arrows[i]);
           ctx.stroke(arrows[i]);
-
       }
     }
   }
@@ -320,15 +325,21 @@ export class MapService {
           else ctx.fillStyle =  (isCurrentVector) ? "#0066ff77" : "#00ff6677";
 
           if(!isOnObstacle){
-            canvas.style.cursor = 'grabbing';
             ctx.clearRect(fieldWidth * vector.posX + lineWidth,
             fieldWidth * vector.posY + lineWidth,
             fieldWidth - 2 * lineWidth,
             fieldWidth - 2 * lineWidth);
             ctx.fill(path);
           }
-          ctx.fillStyle = (isPointInPath && !isOnObstacle) ? "#ff9900" : "#454545";
-          ctx.strokeStyle = (isPointInPath && !isOnObstacle) ? "#ff9900" : "#454545";
+          if(isPointInPath && !isOnObstacle){
+            ctx.fillStyle = "#ff9900";
+            ctx.strokeStyle = "#ff9900";
+            canvas.style.cursor = 'grabbing';
+          }
+          else{
+            ctx.fillStyle = "#454545";
+            ctx.strokeStyle = "#454545";
+          }
 
           if((!isCurrentVector || isPointInPath) && !isOnObstacle) ctx.fill(arrows[i]);
           ctx.stroke(arrows[i]);
