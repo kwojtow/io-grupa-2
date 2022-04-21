@@ -1,0 +1,150 @@
+.container {  display: grid;
+  height: 100%;
+  width: 100%;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-rows: 0.5fr 0.5fr 2.5fr 1fr;
+  gap: 0px 0px;
+  grid-auto-flow: row;
+  grid-template-areas:
+    "room-id room-id room-id room-id"
+    "information-bar information-bar information-bar players-list"
+    "board board board players-list"
+    "board board board options";
+}
+
+.room-id {
+  grid-area: room-id;
+  font-size: 40px;
+  font-weight: bold;
+  display: table;
+  padding-left: 5%;
+  background-color: #630c78;
+  color: white;
+}
+
+.players-list {
+  grid-area: players-list;
+  text-align: center;
+  padding: 20px;
+}
+
+.options {
+  grid-area: options;
+  text-align: center;
+}
+
+.information-bar {
+  grid-area: information-bar;
+  text-align: center;
+}
+
+.board {
+  grid-area: board;
+  padding: 10px;
+}
+
+body {
+  padding: 0;
+  margin: 0;
+  width: 100vw;
+  height: 100vh;
+}
+/*div{*/
+/*  border: 1px solid black;*/
+/*}*/
+#leave-game-btn{
+  color: white;
+  background-color: red;
+  height: 50px;
+  padding-left: 15px;
+  padding-right: 15px;
+  border-radius: 20px;
+  border:  none;
+  font-size: 21px;
+  margin-top: 10%;
+}
+.player-list-element{
+  border: 1px solid #d5d5d5;
+  list-style: none;
+  text-align: left;
+  max-width: 250px;
+}
+.player-list-element > label{
+  font-size: 25px;
+  padding: 15px;
+}
+
+.player-avatar>svg{
+  width: 35px;
+}
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+@media(max-width: 1200px) {
+  .player-list-element > label{
+    font-size: 15px;
+    padding: 10px;
+  }
+
+  .player-avatar>svg{
+    width: 25px;
+  }
+
+}
+
+@media(max-width: 990px) {
+  .container {
+    grid-template-rows: 0.5fr 0.5fr 2fr 1.5fr;
+    grid-template-areas:
+    "room-id room-id room-id room-id"
+    "information-bar information-bar information-bar information-bar"
+    "board board board board"
+    "players-list players-list players-list options";
+  }
+
+  .player-list-element {
+    display: inline-block;
+    padding: 15px;
+
+  }
+
+  .player-list-element > label {
+    display: inline;
+  }
+
+  #leave-game-btn {
+    font-size: 15px;
+  }
+
+  .room-id {
+    font-size: 30px;
+  }
+  .information-bar > div > label{
+    font-size: 25px;
+  }
+  .players-list{
+    max-height: 75%;
+  }
+}
+@media (max-width: 770px) {
+  .container {
+    grid-template-rows: 0.3fr 0.5fr 1.5fr 1.5fr;
+
+  }
+}

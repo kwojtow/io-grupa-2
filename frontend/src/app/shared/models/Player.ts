@@ -1,10 +1,17 @@
+import { MapService } from "src/app/core/services/map.service";
+import { RaceMap } from "./RaceMap";
 import { Vector } from "./Vector";
 
 export class Player{
-    constructor( private _position: Vector, 
+    private _currentVector: Vector;
+
+    constructor(private _name: string,
+                private _position: Vector,
                  private _color: string) {
+        this._name = _name;
         this._color = _color;
         this._position = _position;
+        this._currentVector = new Vector(0, 0);
     }
 
     set position(_position: Vector) {
@@ -23,29 +30,35 @@ export class Player{
         return this._color;
     }
 
-    public drawPlayer(ctx: CanvasRenderingContext2D, fieldWidth: number, lineWidth: number): void{
-        const miniFieldWidth = (fieldWidth - lineWidth * 2)/5;
-        ctx.beginPath();
-        ctx.fillStyle = this.color;
-        let leftUpperX: number =  fieldWidth * this.position.posX + lineWidth;
-        let leftUpperY: number = fieldWidth * this.position.posY + lineWidth;
-        ctx.moveTo(leftUpperX + miniFieldWidth+10, leftUpperY + miniFieldWidth*1.5); 
-        ctx.lineTo(leftUpperX + miniFieldWidth*4-10, leftUpperY + miniFieldWidth*1.5); 
-        ctx.quadraticCurveTo(leftUpperX + miniFieldWidth*4-10, leftUpperY + miniFieldWidth*1.5, leftUpperX + miniFieldWidth*4, leftUpperY + miniFieldWidth*1.5+10); 
-        ctx.lineTo(leftUpperX + miniFieldWidth*4, leftUpperY + miniFieldWidth*3.5 - 10); 
-        ctx.quadraticCurveTo(leftUpperX + miniFieldWidth*4, leftUpperY + miniFieldWidth*3, leftUpperX + miniFieldWidth*4-10, leftUpperY + miniFieldWidth*3.5); 
-        ctx.lineTo(leftUpperX + miniFieldWidth+10, leftUpperY + miniFieldWidth*3.5); 
-        ctx.quadraticCurveTo(leftUpperX + miniFieldWidth+10, leftUpperY + miniFieldWidth*3.5, leftUpperX + miniFieldWidth, leftUpperY + miniFieldWidth*3.5-10); 
-        ctx.lineTo(leftUpperX + miniFieldWidth, leftUpperY + miniFieldWidth*1.5+10); 
-        ctx.quadraticCurveTo(leftUpperX + miniFieldWidth, leftUpperY + miniFieldWidth*1.5+10, leftUpperX + miniFieldWidth+10, leftUpperY + miniFieldWidth*1.5);
+    set currentVector(_currentVector: Vector) {
+        this._currentVector = _currentVector;
+    }
 
-        ctx.fill();
-        ctx.stroke();
-        
-        ctx.fillStyle = 'black'
-        ctx.fillRect(leftUpperX + miniFieldWidth+15, leftUpperY + miniFieldWidth*1.5-lineWidth-5, 15 , 10);
-        ctx.fillRect(leftUpperX + miniFieldWidth*4-30, leftUpperY + miniFieldWidth*1.5-lineWidth-5, 15 , 10);
-        ctx.fillRect(leftUpperX + miniFieldWidth+15, leftUpperY + miniFieldWidth*3.5, 15 , 10);
-        ctx.fillRect(leftUpperX + miniFieldWidth*4-30, leftUpperY + miniFieldWidth*3.5, 15 , 10);
-      }
+    get currentVector(): Vector {
+        return this._currentVector;
+    }
+
+    public getCurrentVectorPosition(): Vector{
+        return new Vector(this.position.posX + this.currentVector.posX,
+                          this.position.posY + this.currentVector.posY);
+    }
+
+    public getCurrentVectorPositionPx(fieldWidth: number): Vector{
+        return new Vector(this.getCurrentVectorPosition().posX * fieldWidth,
+                          this.getCurrentVectorPosition().posY * fieldWidth);
+    }
+
+    public getAvailableVectors(): Array<Vector>{
+        let xpos = this.currentVector.posX + this.position.posX;
+        let ypos = this.currentVector.posY + this.position.posY;
+        return [new Vector(xpos+1, ypos), new Vector(xpos+1, ypos+1),
+                new Vector(xpos, ypos+1), new Vector(xpos-1, ypos+1),
+                new Vector(xpos-1, ypos), new Vector(xpos-1, ypos-1),
+                new Vector(xpos, ypos-1), new Vector(xpos+1, ypos-1),
+                new Vector(xpos, ypos)];
+    }
+
+    get name(): string {
+        return this._name;
+    }
 }

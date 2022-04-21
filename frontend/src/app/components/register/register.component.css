@@ -14,8 +14,6 @@
   background-color: white;
   margin-top: 2%;
   border-radius: 5%;
-
-
 }
 
 #game-name {
@@ -25,11 +23,10 @@
 
 #register-button-box {
   margin-top: 8%;
-
+  margin-bottom: 7%;
 }
 
 .button {
-
   padding-bottom: 1%;
   padding-top: 1%;
   padding-left: 10%;
@@ -43,7 +40,12 @@
   background-color: rgba(78, 42, 106, 100);
   color: rgba(255, 255, 255, 100);
   font-size: 17px;
+}
 
+.button-login {
+  color: rgba(78, 42, 106, 100);
+  background-color: rgba(255, 255, 255, 100);
+  border: 1px solid rgba(78, 42, 106, 100);
 }
 
 

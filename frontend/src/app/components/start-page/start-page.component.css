@@ -31,3 +31,39 @@
     color: rgba(78, 42, 106, 100);
     border: 1px solid rgba(255, 255, 255, 100);
 }
+
+.col-md-3{
+    border: 1px solid rgba(187,187,187,100);
+    text-align: center;
+    margin: 2%;
+    box-shadow: 7px 7px 6px 0px rgba(0,0,0,0.4);
+    padding: 1%;
+}
+
+
+#min{
+    margin-left: -80px;
+}
+
+#cards{
+    margin-top: 5%;
+}
+
+.description{
+    color: rgba(16,16,16,100);
+    font-size:30px;
+    margin-top: 20%;
+}
+
+.cardView{
+    margin-top: 20%;
+    margin-bottom: 15%;
+}
+
+span{
+    font-size: 128px;
+}
+
+#randomGame{
+    transform: rotate(45deg);
+}

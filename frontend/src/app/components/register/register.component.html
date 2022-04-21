@@ -4,8 +4,11 @@
     <div id="box" class="col-md-3 align-self-center">
       <h4>Rejestracja</h4>
       <form [formGroup]="signupForm">
-        <div *ngIf="showErrorMessage" class="errorMessage">
+        <div *ngIf="showLoginErrorMessage" class="errorMessage">
           Podany login jest już zajęty
+        </div>
+        <div *ngIf="showEmailErrorMessage" class="errorMessage">
+          Podany adres e-mail jest już zajęty
         </div>
         <div class="form-group">
           <label for="email"></label>
@@ -73,10 +76,8 @@
                 Login nie może zawierać więcej niż 20 znaków
               </div>
             </div>
-            
           </div>
         </div>
-
         <div class="form-group">
           <label for="password"></label>
           <input
@@ -108,10 +109,40 @@
             Login nie może zawierać więcej niż 40 znaków
           </div>
         </div>
+        <div class="form-group">
+          <label for="password"></label>
+          <input
+            type="password"
+            id="password"
+            class="form-control"
+            placeholder="Powtórz hasło"
+            formControlName="confirmPassword"
+            required
+          />
+        </div>
+        <div *ngIf="signupForm.get('confirmPassword')?.touched">
+          <div
+            *ngIf="signupForm.get('confirmPassword')?.hasError('required')"
+            class="errorMessage"
+          >
+            Pole wymagane
+          </div>
+          <div *ngIf="signupForm.hasError('notSame')" class="errorMessage">
+            Podane hasła muszą być identyczne
+          </div>
+        </div>
         <div id="register-button-box">
           <div class="col-md-12">
             <button class="button button-register" (click)="onSubmit()">
               Zarejestruj się
+            </button>
+          </div>
+        </div>
+        <div>
+          <p>Masz już konto?</p>
+          <div class="col-md-12">
+            <button class="button button-login" [routerLink]="'/signin'">
+              Zaloguj się
             </button>
           </div>
         </div>

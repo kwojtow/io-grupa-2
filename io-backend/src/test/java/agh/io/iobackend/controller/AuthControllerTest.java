@@ -21,7 +21,7 @@ class AuthControllerTest {
     void registrationAndLoginTest(){
         SignupRequest signupRequest = new SignupRequest();
         signupRequest.setUsername("username");
-        signupRequest.setEmail("email@gmail.com");
+        signupRequest.setEmail("super-email@gmail.com");
         signupRequest.setPassword("super-secret");
 
         ResponseEntity<String> signupResponse = authController.registerUser(signupRequest);
