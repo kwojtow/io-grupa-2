@@ -166,15 +166,15 @@ export class MapService {
                                       new Path2D(), new Path2D(), new Path2D(), new Path2D(), new Path2D());
     
     const arrowPositions = new Array<Array<Vector>>(
-      [new Vector(fieldWidth*3/4, fieldWidth/2), new Vector(5*fieldWidth/4, fieldWidth/2)],
-      [new Vector(fieldWidth*6/8, fieldWidth*3/4), new Vector(fieldWidth*9/8, fieldWidth*9/8)],
-      [new Vector(fieldWidth/2, fieldWidth*3/4), new Vector(fieldWidth/2, fieldWidth*5/4)],
+      [new Vector(fieldWidth*3/4, fieldWidth/2), new Vector(6*fieldWidth/4, fieldWidth/2)],
+      [new Vector(fieldWidth*6/8, fieldWidth*3/4), new Vector(fieldWidth*5/4, fieldWidth*5/4)],
+      [new Vector(fieldWidth/2, fieldWidth*3/4), new Vector(fieldWidth/2, fieldWidth*6/4)],
       
-      [new Vector(fieldWidth*2/8, fieldWidth*3/4), new Vector(-fieldWidth*1/8, fieldWidth*9/8)],
-      [new Vector(fieldWidth*1/4, fieldWidth/2), new Vector(-1*fieldWidth/4, fieldWidth/2)],
-      [new Vector(fieldWidth*2/8, fieldWidth/4), new Vector(-fieldWidth*1/8, -fieldWidth/8)],
-      [new Vector(fieldWidth/2, fieldWidth/4), new Vector(fieldWidth/2, -fieldWidth/4)],
-      [new Vector(fieldWidth*6/8, fieldWidth/4), new Vector(fieldWidth*9/8, -fieldWidth/8)],
+      [new Vector(fieldWidth*2/8, fieldWidth*3/4), new Vector(-fieldWidth*1/4, fieldWidth*5/4)],
+      [new Vector(fieldWidth*1/4, fieldWidth/2), new Vector(-fieldWidth/2, fieldWidth/2)],
+      [new Vector(fieldWidth*2/8, fieldWidth/4), new Vector(-fieldWidth/4, -fieldWidth/4)],
+      [new Vector(fieldWidth/2, fieldWidth/4), new Vector(fieldWidth/2, -fieldWidth/2)],
+      [new Vector(fieldWidth*6/8, fieldWidth/4), new Vector(fieldWidth*5/4, -fieldWidth/4)],
     );
     const arrowWidth = 12;
     const arrowHeadLen = 10;
