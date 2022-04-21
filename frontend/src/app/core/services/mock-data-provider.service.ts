@@ -4,8 +4,7 @@ import {Vector} from "../../shared/models/Vector";
 import {Player} from "../../shared/models/Player";
 import {GameSettings} from "../../shared/models/GameSettings";
 import {Game} from "../../shared/models/Game";
-import {BehaviorSubject, Observable, Subject} from "rxjs";
-import {GameService} from "./game.service";
+import {BehaviorSubject, Observable} from "rxjs";
 import {PlayerState} from "../../shared/models/PlayerState";
 
 @Injectable({

@@ -14,7 +14,7 @@ export class MapService {
   START_LINE_COLOR = 'blue';
   OBSTACLE_COLOR = 'black';
 
-  private static game: Game;
+  static game: Game;
   private _map: RaceMap;
   private _canvas: HTMLCanvasElement;
   private _ctx: CanvasRenderingContext2D;
@@ -34,8 +34,7 @@ export class MapService {
         canvas,
         rect.width / raceMap.mapWidth, rect.height / raceMap.mapHeight,
         x, y);
-      console.log(v);
-      console.log(MapService.game.getFieldProperty(v))
+
       return v;
     }
     return new Vector(-1, -1);
@@ -51,14 +50,16 @@ export class MapService {
       Math.floor(cursorPosY/height));
   }
 
-  initMap(map: RaceMap, players: Array<Player>){
+  initMap(map: RaceMap, players: Array<Player>, isMyTurn: boolean, player?: Player,){
     if(this._ctx != null) {
       this.drawMapNet(this._canvas, this._ctx, map);
       this.drawStartAndFinishLines(this._canvas, this._ctx, map);
       this.drawObstaclesLines(this._canvas, this._ctx, map);
       if(players.length > 0){
         this.drawPlayers(this._canvas, this._ctx, map, players);
-        this.drawPlayerVectors(this._canvas, this._ctx, map, players[0]);
+        let currentPlayer = players.find(p => p.playerId === player.playerId);
+        if(isMyTurn && currentPlayer !== null)
+          this.drawPlayerVectors(this._canvas, this._ctx, map, currentPlayer);
       }
     }
   }

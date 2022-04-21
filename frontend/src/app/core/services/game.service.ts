@@ -1,10 +1,7 @@
 import { Injectable } from '@angular/core';
 import {Game} from "../../shared/models/Game";
-import {RaceMap} from "../../shared/models/RaceMap";
-import {Vector} from "../../shared/models/Vector";
 import {Player} from "../../shared/models/Player";
-import {GameSettings} from "../../shared/models/GameSettings";
-import {BehaviorSubject, map, Observable, Subject} from "rxjs";
+import { map, Observable} from "rxjs";
 import {MockDataProviderService} from "./mock-data-provider.service";
 import {MapService} from "./map.service";
 import {PlayerState} from "../../shared/models/PlayerState";
@@ -18,6 +15,7 @@ export class GameService {
   readonly REFRESH_TIME = 500;
 
   private _player: Player;                        // authorized user
+  currentPlayer: Player;                          // currently playing user
   private _game: Game;
 
   constructor(private mockDataProvider: MockDataProviderService,
@@ -29,6 +27,7 @@ export class GameService {
   setGameInfo(player: Player, game: Game){
     this._player = player;
     this._game =   game;
+    MapService.game = game;
     this._mapService.map = game.map;
   }
 
@@ -47,8 +46,21 @@ export class GameService {
         })
       );
   }
+  updateCurrentPlaying(players: Array<Player>): Player | undefined{
+    this.currentPlayer = players.find(player => player.playerStatus === 'PLAYING');
+    return this.currentPlayer;
+  }
+  updatePlayersStates(playersStates: Array<PlayerState>){
+    playersStates.forEach(playerState => {
+      this._game.players.find(player => player.playerId === playerState.playerId)?.updateState(playerState);
+    })
+    return this._game.players;
+  }
+  isMyTurn(): boolean{
+    return this.currentPlayer?.playerId === this.player?.playerId;
+  }
   updateMap(playersList: Array<Player>){
-    this._mapService.initMap(this.game.map, playersList);
+    this._mapService.initMap(this.game.map, playersList, this.isMyTurn(), this.player);
   }
   get game(): Game {
     return this._game;

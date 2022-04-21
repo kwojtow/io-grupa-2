@@ -29,24 +29,14 @@ export class GameComponent implements OnInit {
   }
   updateGameState(){
     timer(0, this._gameService.REFRESH_TIME) // GET game state in every 0.5s
-      .pipe(mergeMap(() => this._gameService.getGameState())) // to test: getMockGameState()
+      .pipe(mergeMap(() => this._gameService.getMockGameState())) // to test: getMockGameState()
       .subscribe(playersStates => {
-        this.updatePlayersStates(this.playersList, playersStates);
+        this.playersList = this._gameService.updatePlayersStates(playersStates);
+        this.currentPlayer = this._gameService.updateCurrentPlaying(this.playersList);
         this._gameService.updateMap(this.playersList);
-        // @ts-ignore
-        this.currentPlayer = this.getCurrentPlaying(this.playersList);
       })
   }
   ngOnInit(): void {
-  }
-
-  updatePlayersStates(players: Array<Player>, playersStates: Array<PlayerState>){
-    playersStates.forEach(playerState => {
-      players.find(player => player.playerId === playerState.playerId)?.updateState(playerState);
-    })
-  }
-  getCurrentPlaying(players: Array<Player>): Player | undefined{
-    return players.find(player => player.playerStatus === 'PLAYING');
   }
 
   leaveGame() {
