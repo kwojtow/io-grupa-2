@@ -57,6 +57,7 @@ export class MapService {
       this.drawObstaclesLines(this._canvas, this._ctx, map);
       if(players.length > 0){
         this.drawPlayers(this._canvas, this._ctx, map, players);
+        this.canvas.removeAllListeners('mousemove');
         let currentPlayer = players.find(p => p.playerId === player.playerId);
         if(isMyTurn && currentPlayer !== null)
           this.drawPlayerVectors(this._canvas, this._ctx, map, currentPlayer);
