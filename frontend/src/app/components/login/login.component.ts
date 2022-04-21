@@ -1,6 +1,7 @@
 import { Component, ElementRef, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { DataService } from 'src/app/core/services/data.service';
 import { UserService } from 'src/app/core/services/user.service';
 
 @Component({
@@ -17,6 +18,7 @@ export class LoginComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private userService: UserService,
+    private dataService: DataService,
     private route: Router
   ) {}
 
@@ -26,12 +28,14 @@ export class LoginComponent implements OnInit {
       username: ['', [Validators.required]],
       password: ['', [Validators.required]],
     });
+    this.dataService.currentUserName.subscribe();
   }
 
   onSubmit() {
     if (this.signinForm.valid) {
       this.userService.logUser(this.signinForm.value).subscribe(
         () => {
+          this.dataService.setUserName(this.signinForm.value.username);
           this.route.navigate(['/start']);
         },
         () => {

@@ -11,6 +11,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { StartPageComponent } from './components/start-page/start-page.component';
 import { GameComponent } from './components/game/game.component';
+import { CreateRoomComponent } from './components/create-room/create-room.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { GameComponent } from './components/game/game.component';
     MapComponent,
     StartPageComponent,
     MapComponent,
-    GameComponent
+    GameComponent,
+    CreateRoomComponent
   ],
   imports: [
     BrowserModule,
