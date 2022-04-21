@@ -17,7 +17,7 @@ import java.util.ArrayList;
 /*
 This class is responsible for generating example data.
  */
-@Component
+//@Component // <- comment out if you want to generate some data during application startup
 public class DataGenerator {
 
     @Autowired
