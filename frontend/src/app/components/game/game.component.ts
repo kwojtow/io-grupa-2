@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {GameService} from "../../core/services/game.service";
 import {Player} from "../../shared/models/Player";
-import {interval, mergeMap} from "rxjs";
+import {interval, mergeMap, Observable, timer} from "rxjs";
 import {PlayerState} from "../../shared/models/PlayerState";
 
 @Component({
@@ -19,16 +19,16 @@ export class GameComponent implements OnInit {
 
   constructor(private _gameService: GameService) {
 
-    this.gameId = _gameService.gameId;
+    this.gameId = _gameService.game.gameId;
     this.playersList = _gameService.game.players;
     this.player = _gameService.player;
 
-    this.updateGameState();
     this.timer = this._gameService.game.settings.roundTime;   // TODO: timer animation
 
+    this.updateGameState();
   }
   updateGameState(){
-    interval(500) // GET game state in every 0.5s
+    timer(0, this._gameService.REFRESH_TIME) // GET game state in every 0.5s
       .pipe(mergeMap(() => this._gameService.getGameState())) // to test: getMockGameState()
       .subscribe(playersStates => {
         this.updatePlayersStates(this.playersList, playersStates);

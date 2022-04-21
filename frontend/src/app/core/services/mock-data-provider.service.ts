@@ -16,7 +16,7 @@ export class MockDataProviderService {
   private _player: Player;
   private _playerRound: BehaviorSubject<Player>;
   private _roomId: number;
-  private _gameState: BehaviorSubject<Array<PlayerState>>;
+  private static _gameState: Array<PlayerState>;
   private _playersList: Array<Player>;
   static idx = 0;
   private static getExampleMap(){
@@ -54,17 +54,17 @@ export class MockDataProviderService {
   }
 
   getGameState(): Observable<Array<PlayerState>> {
-    return this._gameState;
+    return new BehaviorSubject(MockDataProviderService._gameState);
   }
 
   startIntervalChanges(): void{
-    setInterval(function (playersList: Array<Player>, gameState: BehaviorSubject<Array<PlayerState>>){
+    setInterval(function (playersList: Array<Player>){
       playersList[MockDataProviderService.idx%3].position.posX = (playersList[MockDataProviderService.idx%3].position.posX + 1) % MockDataProviderService.getExampleMap().mapWidth;
       playersList[(MockDataProviderService.idx)%3].playerStatus = 'WAITING';
       playersList[(MockDataProviderService.idx + 1)%3].playerStatus = 'PLAYING';
       MockDataProviderService.idx += 1;
-      gameState.next(MockDataProviderService.mapPlayersToPlayersStates(playersList));
-    }, 2000, this._playersList, this._gameState)
+      MockDataProviderService._gameState = MockDataProviderService.mapPlayersToPlayersStates(playersList);
+    }, 2000, this._playersList)
 
   }
   static mapPlayersToPlayersStates(players: Array<Player>): Array<PlayerState>{
@@ -75,8 +75,8 @@ export class MockDataProviderService {
   constructor() {
     this._playersList = MockDataProviderService.getExamplePlayers();
     this._playersList[0].playerStatus = 'PLAYING';
-    this._gameState = new BehaviorSubject<Array<PlayerState>>(MockDataProviderService
-      .mapPlayersToPlayersStates(this._playersList));
+    MockDataProviderService._gameState =MockDataProviderService
+      .mapPlayersToPlayersStates(this._playersList);
   }
 
 
