@@ -15,7 +15,7 @@ export class GameService {
   readonly REFRESH_TIME = 500;
 
   private _player: Player;                        // authorized user
-  currentPlayer: Player;                          // currently playing user
+  authorizedPlayer: Player;                          // currently playing user
   private _game: Game;
 
   constructor(private mockDataProvider: MockDataProviderService,
@@ -24,8 +24,8 @@ export class GameService {
     this.setGameInfo(mockDataProvider.getPlayer(), //TODO: set authorized user
       mockDataProvider.getGame()); // TODO: set game when game starting
   }
-  setGameInfo(player: Player, game: Game){
-    this._player = player;
+  setGameInfo(authorizedPlayer: Player, game: Game){
+    this._player = authorizedPlayer;
     this._game =   game;
     MapService.game = game;
     this._mapService.map = game.map;
@@ -47,8 +47,8 @@ export class GameService {
       );
   }
   updateCurrentPlaying(players: Array<Player>): Player | undefined{
-    this.currentPlayer = players.find(player => player.playerStatus === 'PLAYING');
-    return this.currentPlayer;
+    this.authorizedPlayer = players.find(player => player.playerStatus === 'PLAYING');
+    return this.authorizedPlayer;
   }
   updatePlayersStates(playersStates: Array<PlayerState>){
     playersStates.forEach(playerState => {
@@ -57,7 +57,7 @@ export class GameService {
     return this._game.players;
   }
   isMyTurn(): boolean{
-    return this.currentPlayer?.playerId === this.player?.playerId;
+    return this.authorizedPlayer?.playerId === this.player?.playerId;
   }
   updateMap(playersList: Array<Player>){
     this._mapService.initMap(this.game.map, playersList, this.isMyTurn(), this.player);

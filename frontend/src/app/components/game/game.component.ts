@@ -14,14 +14,14 @@ export class GameComponent implements OnInit {
   playersList: Player[];
   timer: number;
   currentPlayer: Player; //currently playing
-  player: Player;       // authorized user
+  authorizedPlayer: Player;       // authorized user
   gameId: number;
 
   constructor(private _gameService: GameService) {
 
     this.gameId = _gameService.game.gameId;
     this.playersList = _gameService.game.players;
-    this.player = _gameService.player;
+    this.authorizedPlayer = _gameService.player;
 
     this.timer = this._gameService.game.settings.roundTime;   // TODO: timer animation
 
