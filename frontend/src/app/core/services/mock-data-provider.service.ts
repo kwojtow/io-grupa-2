@@ -31,7 +31,9 @@ export class MockDataProviderService {
     player1.currentVector = new Vector(1, 2);
     let player2 = new Player(2,'Player2',new Vector(6, 2), 'red');
     let player3 = new Player(3,'Player3',new Vector(8, 1), 'yellow');
-    return new Array(player1, player2, player3);
+    let player4 = new Player(4,'Player4',new Vector(4, 0), 'pink');
+    player4.playerStatus = 'LOST';
+    return new Array(player1, player2, player3, player4);
   }
 
   getExamplePlayer(): Player{
