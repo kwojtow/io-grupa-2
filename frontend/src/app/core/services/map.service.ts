@@ -3,6 +3,7 @@ import {RaceMap} from "../../shared/models/RaceMap";
 import {Vector} from "../../shared/models/Vector";
 import {Player} from "../../shared/models/Player";
 import {Game} from "../../shared/models/Game";
+import {BehaviorSubject} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -15,11 +16,12 @@ export class MapService {
   OBSTACLE_COLOR = 'black';
 
   static game: Game;
-  private _map: RaceMap;
+  private _map: BehaviorSubject<RaceMap>;
   private _canvas: HTMLCanvasElement;
   private _ctx: CanvasRenderingContext2D;
 
   constructor() {
+    this._map = new BehaviorSubject<RaceMap>(undefined);
   }
 
   static getCursorPosition(canvas: HTMLCanvasElement, event: MouseEvent): Vector {
@@ -332,11 +334,8 @@ export class MapService {
       this.highlightAvaliableVectors(canvas, ctx, map, player, availableVectorsPaths, arrows);
   }
 
-  get map(): RaceMap {
+  get map(): BehaviorSubject<RaceMap> {
     return this._map;
-  }
-  set map(value: RaceMap) {
-    this._map = value;
   }
 
   get canvas(): HTMLCanvasElement {

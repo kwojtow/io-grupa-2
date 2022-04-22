@@ -22,7 +22,7 @@ import { ProfileComponent } from './components/profile/profile.component';
     MapComponent,
     StartPageComponent,
     MapComponent,
-    GameComponent
+    GameComponent,
     ProfileComponent
   ],
   imports: [

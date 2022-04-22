@@ -31,7 +31,10 @@ export class MapComponent implements AfterViewInit {
         MapService.getCursorPosition(canvas, e);
       });
     }
-    this._mapService.initMap(this._mapService.map, [], false);
+    this._mapService.map.subscribe(map => {
+      this._mapService.initMap(map, [], false);
+    })
+
   }
 
   private getContext(canvas: HTMLCanvasElement){
