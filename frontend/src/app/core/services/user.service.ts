@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { User } from 'src/app/shared/models/User';
+import { JwtResponse } from 'src/app/shared/models/JwtResponse';
 
 @Injectable({
   providedIn: 'root',
@@ -24,6 +25,6 @@ export class UserService {
   }
 
   public logUser(user: User) {
-    return this.http.post<User>('http://localhost:8080/auth/signin', user);
+    return this.http.post<JwtResponse>('http://localhost:8080/auth/signin', user);
   }
 }
