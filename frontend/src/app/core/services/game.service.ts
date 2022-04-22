@@ -5,7 +5,8 @@ import { map, Observable} from "rxjs";
 import {MockDataProviderService} from "./mock-data-provider.service";
 import {MapService} from "./map.service";
 import {PlayerState} from "../../shared/models/PlayerState";
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
+import { Vector } from 'src/app/shared/models/Vector';
 
 @Injectable({
   providedIn: 'root'
@@ -45,6 +46,42 @@ export class GameService {
               playerState.ycoordinate))
         })
       );
+  }
+  postPlayerNewPosition(player: Player) {
+    console.log('asdf')
+    const playerPositionInfo = {
+      playerId: player.playerId,
+      xCoordinate: player.position.posX,
+      yCoordinate: player.position.posY,
+      vector: player.currentVector,
+      playerStatus: player.playerStatus
+    };
+    // const headers = {
+    //   'Access-Control-Allow-Origin': '*',
+    //   'Access-Control-Allow-Methods': 'GET, PUT, POST, OPTIONS',
+    //   'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept, API-Key, Authorization, X-Test',
+    //   'Access-Control-Max-Age': '240',
+    //   'Access-Control-Allow-Credentials': 'true',
+    //   'Content-Type': 'application/json',
+    //   'Authorization': 'aspdofijdsfpa' 
+      
+    //   // 'Access-Control-Allow-Origin': 'http://localhost:8080/game/1/state'
+    // };
+
+    const options = {
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json',
+        Authorization: 'my-auth-token',
+
+        'access-control-allow-origin': '*',
+        'Access-Control-Allow-Methods': 'GET, PUT, POST, OPTIONS',
+      'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept, API-Key, Authorization, X-Test',
+      'Access-Control-Max-Age': '240',
+      'Access-Control-Allow-Credentials': 'true'
+      })
+    };
+    return this._httpClient.post<any>(this.API_URL + '/game/' + this._game.gameId + '/state', playerPositionInfo, options).
+    subscribe(res => console.log(res));
   }
   updateCurrentPlaying(players: Array<Player>): Player | undefined{
     this.authorizedPlayer = players.find(player => player.playerStatus === 'PLAYING');
