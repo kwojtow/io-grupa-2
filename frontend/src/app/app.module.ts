@@ -21,22 +21,24 @@ import { ProfileComponent } from './components/profile/profile.component';
     RegisterSuccessComponent,
     MapComponent,
     StartPageComponent,
+    MapComponent,
+    GameComponent,
+    ProfileComponent,
     GameRoomComponent,
     CreateGameRoomComponent,
-    JoinGameRoomComponent,
-    GameComponent,
-    ProfileComponent
+    JoinGameRoomComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    FormsModule,
-    HttpClientModule,
+    AppRoutingModule,
     ReactiveFormsModule,
     FormsModule,
     HttpClientModule
   ],
-  providers: [],
+  providers: [
+
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
