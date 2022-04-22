@@ -3,18 +3,10 @@ import {Player} from "./Player";
 import {GameSettings} from "./GameSettings";
 import {Vector} from "./Vector";
 
-export enum fieldProperty{
-  PLAYER,
-  OBSTACLE,
-  FINISH,
-  START,
-  NEXT_VECTOR,
-  PLAIN
-}
-
 export class Game{
 
-  constructor(private _map: RaceMap, private _players: Player[], private _settings: GameSettings) {
+  constructor(private _gameId: number, private _map: RaceMap, private _players: Player[], private _settings: GameSettings) {
+    this._gameId = _gameId;
     this._map = _map;
     this._players = _players;
     this._settings = _settings;
@@ -44,20 +36,8 @@ export class Game{
     this._settings = value;
   }
 
-  getFieldProperty(vector: Vector): fieldProperty{
-    switch(true){
-      case this.map.obstacles.some(v => v.equals(vector)):
-        return fieldProperty.OBSTACLE;
-      case this.map.finishLine.some(v => v.equals(vector)):
-        return fieldProperty.FINISH;
-      case this.map.startLine.some(v => v.equals(vector)):
-        return fieldProperty.START;
-      case this.players.some(p => p.position.equals(vector)):
-        return fieldProperty.PLAYER;
-      // case this._currentPlayer.currentVector.equals(vector): // TODO: possible moves vectors
-      //   return fieldProperty.NEXT_VECTOR;
-    }
-    return fieldProperty.PLAIN;
+  get gameId(): number {
+    return this._gameId;
   }
 
 }

@@ -28,6 +28,7 @@ import { CreateRoomComponent } from './components/create-room/create-room.compon
   imports: [
     BrowserModule,
     AppRoutingModule,
+    AppRoutingModule,
     ReactiveFormsModule,
     FormsModule,
     HttpClientModule

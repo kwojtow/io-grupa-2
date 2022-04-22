@@ -34,8 +34,8 @@ export class LoginComponent implements OnInit {
   onSubmit() {
     if (this.signinForm.valid) {
       this.userService.logUser(this.signinForm.value).subscribe(
-        () => {
-          this.dataService.setUserName(this.signinForm.value.username);
+        (response) => {
+          window.localStorage.setItem('jwtResponse', JSON.stringify(response));
           this.route.navigate(['/start']);
         },
         () => {
