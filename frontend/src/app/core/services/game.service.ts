@@ -7,6 +7,7 @@ import {MapService} from "./map.service";
 import {PlayerState} from "../../shared/models/PlayerState";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import { Vector } from 'src/app/shared/models/Vector';
+import { JwtResponse } from 'src/app/shared/models/JwtResponse';
 
 @Injectable({
   providedIn: 'root'
@@ -48,24 +49,30 @@ export class GameService {
       );
   }
   postPlayerNewPosition(player: Player) {
-    player.playerStatus = 'PLAYING';
-    player.position.posY = 5;
-    const playerPositionInfo = {
-      playerId: player.playerId,
-      xcoordinate: player.position.posX,
-      ycoordinate: player.position.posY,
-      vector: {x: player.currentVector.posX, y: player.currentVector.posY},
-      playerstatus: player.playerStatus
-    };
-
-    const requestOptions: Object = {
-      headers: new HttpHeaders().set('Content-Type', 'application/json')
-                                .set('Authorization', 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJoYWhhIiwiaWF0IjoxNjUwNjI2NTc5LCJleHAiOjE2NTA2MjY5Mzl9._7wiKF8oLk9q89ZuHsDznkA7qq-LpeaZ4TDqWgztFPBvU8gpanCR7gcnN219jPAW5YJdsytSQtXzEronX6rSVA')
-    };
-    return this._httpClient.post<any>(this.API_URL + '/game/' + this._game.gameId + '/state', 
-                                      playerPositionInfo, 
-                                      requestOptions
-                                      ).subscribe(res => console.log(res));
+    
+    player.getChangedPosition().subscribe(() => {
+      const playerPositionInfo = {
+        playerId: player.playerId,
+        xcoordinate: player.position.posX,
+        ycoordinate: player.position.posY,
+        vector: {x: player.currentVector.posX, y: player.currentVector.posY},
+        playerStatus: player.playerStatus
+      };
+      const jwt = localStorage.getItem('jwtResponse');
+      if(jwt !== null){
+        const jwtJson = JSON.parse(jwt);
+        const token = jwtJson['type'] + ' ' + jwtJson['token'];
+        console.log(token);
+        const requestOptions: Object = {
+          headers: new HttpHeaders().set('Content-Type', 'application/json')
+                                    .set('Authorization', token)
+        };
+        return this._httpClient.post<any>(this.API_URL + '/game/' + this._game.gameId + '/state', 
+                                          playerPositionInfo, 
+                                          requestOptions
+                                          ).subscribe(res => console.log(res));
+      }
+    })
   }
   updateCurrentPlaying(players: Array<Player>): Player | undefined{
     this.authorizedPlayer = players.find(player => player.playerStatus === 'PLAYING');
