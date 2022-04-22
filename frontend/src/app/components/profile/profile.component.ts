@@ -6,6 +6,7 @@ import {BehaviorSubject, Subject} from "rxjs";
 import {User} from "../../shared/models/User";
 import {MapService} from "../../core/services/map.service";
 import {Vector} from "../../shared/models/Vector";
+import {UserStatistics} from "../../shared/models/UserStatistics";
 
 @Component({
   selector: 'app-profile',
@@ -16,6 +17,8 @@ export class ProfileComponent implements OnInit {
 
   mapList = new Array<RaceMap>();
   user: User;
+  mapListsCategories = new Array<string>( 'Moje mapy', 'Najlepsze mapy', 'Najczęstsze mapy');
+  chosenCategory = 'Moje mapy';
   private getExampleMap(i: number, j: number){
     const width = 13;
     const height = 10;
@@ -29,7 +32,7 @@ export class ProfileComponent implements OnInit {
       this.mapList[i] = this.getExampleMap(i, i+3);
     }
     this._mapService.map.next(this.mapList[0]);
-    this.user = new User('User1', 'pwoiegwe', 'User1@email.com', 32, 12345);
+    this.user = new User('User1', 'pwoiegwe', 'User1@email.com', new UserStatistics(12, 12355, 2, 5));
   }
 
   ngOnInit(): void {
@@ -51,6 +54,9 @@ export class ProfileComponent implements OnInit {
     this._mapService.map.next(this.mapList[selectRef.selectedIndex]);
   }
 
-
+  changeMapCategory(selectRef: HTMLSelectElement) {
+    this.chosenCategory = this.mapListsCategories[selectRef.selectedIndex];
+    // TODO: update mapList
+  }
 
 }

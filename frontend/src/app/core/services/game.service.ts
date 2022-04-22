@@ -21,11 +21,13 @@ export class GameService {
   constructor(private mockDataProvider: MockDataProviderService,
               private _mapService: MapService,
               private _httpClient: HttpClient) {
-    this.setGameInfo(mockDataProvider.getPlayer(), //TODO: set authorized user
-      mockDataProvider.getGame()); // TODO: set game when game starting
+    // Mock data to test game view (to delete)
+    this.setGameInfo(mockDataProvider.getPlayer(),
+      mockDataProvider.getGame());
   }
-  setGameInfo(authorizedPlayer: Player, game: Game){
-    this._player = authorizedPlayer;
+    // TODO: set game when game starting
+    setGameInfo(authorizedPlayer: Player, game: Game){
+    this._player = authorizedPlayer;  //TODO: set authorized user
     this._game =   game;
     MapService.game = game;
     this._mapService.map.next(game.map);

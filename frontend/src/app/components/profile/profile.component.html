@@ -11,8 +11,13 @@
 <div class="container">
   <div class="nav-bar"></div>
   <div class="map-section">
+    <div class="choose-map-category">
+      <select #selectRefCat (change)="changeMapCategory(selectRefCat)" class="map-select">
+        <option *ngFor="let category of mapListsCategories; let i = index" value="Mapa 1">{{category}}</option>
+      </select>
+    </div>
     <div class="choose-map">
-      <select #selectRef (change)="changeMap(selectRef)" id="map-select">
+      <select #selectRefMap (change)="changeMap(selectRefMap)" class="map-select">
         <option *ngFor="let map of mapList; let i = index" value="Mapa 1">Mapa {{i}}</option>
       </select>
     </div>
@@ -23,16 +28,21 @@
       <app-map></app-map>
     </div>
     <div class="map-stats">
-      <div class="fw-bold stat-info">Liczba rozegranych gier:</div>
-      <div class="stat-info">12345</div>
-      <div class="fw-bold stat-info">Ocena</div>
-      <div class="stat-info">9.5/10</div>
+      <div>
+        <div class="fw-bold stat-info">Liczba rozegranych gier</div>
+        <div class="stat-info">12345</div>
+      </div>
+      <div>
+        <div class="fw-bold stat-info">Ocena</div>
+        <div class="stat-info">9.5/10</div>
+      </div>
+
 
     </div>
   </div>
   <div class="user-info">
     <div class="my-map-label" style="font-weight: bold">
-      <div>Moje mapy</div>
+      <div>{{chosenCategory}}</div>
     </div>
     <div class="avatar">
       <div style="font-weight: bold;">Awatar</div>
@@ -43,8 +53,10 @@
     </div>
     <div class="ranking">
       <div style="font-weight: bold; ">Ranking</div>
-      <div >Pozycja: {{this.user.rankingPosition}}</div>
-      <div >Punkty: {{this.user.rankingPoints}}</div>
+      <div >Pozycja: {{this.user.statistics.rankingPosition}}</div>
+      <div >Punkty: {{this.user.statistics.rankingPoints}}</div>
+      <div style="font-weight: bold; ">Rozegrane/wygrane gry</div>
+      <div > {{user.statistics.winGamesNumber}}/{{user.statistics.gamesNumber}} </div>
     </div>
     <div class="name">
       <div style="font-weight: bold;">Nazwa użytkownika</div>

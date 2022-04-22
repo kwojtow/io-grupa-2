@@ -1,19 +1,17 @@
+import {UserStatistics} from "./UserStatistics";
+
 export class User{
   private _username: string;
   private _password: string;
   private _email: string;
-  private _rankingPosition: number;
-  private _rankingPoints: number;
+  private _statistics: UserStatistics;
 
-
-  constructor(username: string, password: string, email: string, rankingPostition: number, rankingPoints: number) {
+  constructor(username: string, password: string, email: string, statistics?: UserStatistics) {
     this._username = username;
     this._password = password;
     this._email = email;
-    this._rankingPosition = rankingPostition;
-    this._rankingPoints = rankingPoints;
+    this._statistics = statistics;
   }
-
 
   get username(): string {
     return this._username;
@@ -39,19 +37,11 @@ export class User{
     this._email = value;
   }
 
-  get rankingPosition(): number {
-    return this._rankingPosition;
+  get statistics(): UserStatistics {
+    return this._statistics;
   }
 
-  set rankingPosition(value: number) {
-    this._rankingPosition = value;
-  }
-
-  get rankingPoints(): number {
-    return this._rankingPoints;
-  }
-
-  set rankingPoints(value: number) {
-    this._rankingPoints = value;
+  set statistics(value: UserStatistics) {
+    this._statistics = value;
   }
 }
