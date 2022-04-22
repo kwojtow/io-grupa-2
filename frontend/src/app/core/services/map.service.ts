@@ -335,6 +335,8 @@ export class MapService {
             ctx.fillStyle = "#ff9900";
             ctx.strokeStyle = "#ff9900";
             canvas.style.cursor = 'grabbing';
+            player.setNewVector(new Vector(2,-3));
+            console.log(player.position);
           }
           else{
             ctx.fillStyle = "#454545";
