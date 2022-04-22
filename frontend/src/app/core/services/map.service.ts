@@ -140,6 +140,12 @@ export class MapService {
 
   public drawPlayer(player: Player, ctx: CanvasRenderingContext2D, fieldWidth: number, lineWidth: number): void{
     const miniFieldWidth = (fieldWidth - lineWidth * 2)/5;
+    
+    if(player.playerStatus == "PLAYING") {
+      ctx.fillStyle = "#ffaa0088";
+      ctx.fillRect(fieldWidth*player.position.posX, fieldWidth*player.position.posY, fieldWidth, fieldWidth);
+    }
+
     let car = new Path2D();
     ctx.fillStyle = player.color;
     let leftUpperX: number =  fieldWidth * player.position.posX + lineWidth;
@@ -335,8 +341,8 @@ export class MapService {
             ctx.fillStyle = "#ff9900";
             ctx.strokeStyle = "#ff9900";
             canvas.style.cursor = 'grabbing';
-            player.setNewVector(new Vector(2,-3));
-            console.log(player.position);
+            player.setNewVector(new Vector(availableVectors[i].posX - player.position.posX,
+                                           availableVectors[i].posY - player.position.posY));
           }
           else{
             ctx.fillStyle = "#454545";
