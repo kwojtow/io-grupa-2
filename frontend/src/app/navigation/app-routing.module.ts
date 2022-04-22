@@ -9,6 +9,7 @@ import {GameComponent} from "../components/game/game.component";
 import { CreateGameRoomComponent } from '../components/create-game-room/create-game-room.component';
 import { GameRoomComponent } from '../components/game-room/game-room.component';
 import { JoinGameRoomComponent } from '../components/join-game-room/join-game-room.component';
+import {ProfileComponent} from "../components/profile/profile.component";
 
 const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -20,6 +21,7 @@ const routes: Routes = [
   { path: 'create-game-room', component: CreateGameRoomComponent},
   { path: 'join-game-room', component: JoinGameRoomComponent},
   { path: 'game-room/:id', component: GameRoomComponent },
+  { path: 'profile', component: ProfileComponent}
 ];
 
 @NgModule({
