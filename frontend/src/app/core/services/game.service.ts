@@ -30,7 +30,7 @@ export class GameService {
     this._player = authorizedPlayer;
     this._game =   game;
     MapService.game = game;
-    this._mapService.map = game.map;
+    this._mapService.map.next(game.map);
   }
 
   getMockGameState(): Observable<Array<PlayerState>>{

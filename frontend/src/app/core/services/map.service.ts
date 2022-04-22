@@ -3,6 +3,7 @@ import {RaceMap} from "../../shared/models/RaceMap";
 import {Vector} from "../../shared/models/Vector";
 import {Player} from "../../shared/models/Player";
 import {Game} from "../../shared/models/Game";
+import {BehaviorSubject} from "rxjs";
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { MapResponse } from 'src/app/payload/MapResponse';
@@ -18,11 +19,12 @@ export class MapService {
   OBSTACLE_COLOR = 'black';
 
   static game: Game;
-  private _map: RaceMap;
+  private _map: BehaviorSubject<RaceMap>;
   private _canvas: HTMLCanvasElement;
   private _ctx: CanvasRenderingContext2D;
 
   constructor(private http : HttpClient) {
+    this._map = new BehaviorSubject<RaceMap>(undefined);
   }
 
   getMap(id: number) : Observable<MapResponse> {
@@ -164,7 +166,7 @@ export class MapService {
 
   public drawPlayer(player: Player, ctx: CanvasRenderingContext2D, fieldWidth: number, lineWidth: number): void{
     const miniFieldWidth = (fieldWidth - lineWidth * 2)/5;
-    
+
     if(player.playerStatus == "PLAYING") {
       ctx.fillStyle = "#ffaa0088";
       ctx.fillRect(fieldWidth*player.position.posX, fieldWidth*player.position.posY, fieldWidth, fieldWidth);
@@ -343,7 +345,7 @@ export class MapService {
       let v = MapService.getCursorPosition(canvas, event);
 
       for(let i = availableVectorsPaths.length-1; i >= 0; --i) {
-          
+
           const path = availableVectorsPaths[i];
           const vector = availableVectors[i];
           const isCurrentVector = vector.equals(player.getCurrentVectorPosition());
@@ -418,16 +420,12 @@ export class MapService {
         }
 
       })
-      
       this.highlightAvaliableVectors(canvas, ctx, map, player, availableVectorsPaths, arrows);
       this.changePosition(canvas, ctx, map, player, availableVectorsPaths, arrows);
   }
 
-  get map(): RaceMap {
+  get map(): BehaviorSubject<RaceMap> {
     return this._map;
-  }
-  set map(value: RaceMap) {
-    this._map = value;
   }
 
   get canvas(): HTMLCanvasElement {

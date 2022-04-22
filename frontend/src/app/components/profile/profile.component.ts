@@ -4,6 +4,8 @@ import {RaceMap} from "../../shared/models/RaceMap";
 import {MapComponent} from "../../shared/components/map/map.component";
 import {BehaviorSubject, Subject} from "rxjs";
 import {User} from "../../shared/models/User";
+import {MapService} from "../../core/services/map.service";
+import {Vector} from "../../shared/models/Vector";
 
 @Component({
   selector: 'app-profile',
@@ -13,14 +15,20 @@ import {User} from "../../shared/models/User";
 export class ProfileComponent implements OnInit {
 
   mapList = new Array<RaceMap>();
-  map: BehaviorSubject<RaceMap>;
   user: User;
-
-  constructor(private router: Router) {
+  private getExampleMap(i: number, j: number){
+    const width = 13;
+    const height = 10;
+    return new RaceMap(width, height, [new Vector(1, 1), new Vector(2, 2)],
+      [new Vector((3 + i)%width, (3+j)%height), new Vector(4, 4)],
+      [new Vector((7 + j)%width, 5), new Vector(8, 6)]);
+  }
+  constructor(private router: Router,
+              private _mapService: MapService) {
     for(let i = 0; i < 4; i ++){
-      this.mapList[i] = MapComponent.getExampleMap(i, i+3);
+      this.mapList[i] = this.getExampleMap(i, i+3);
     }
-    this.map = new BehaviorSubject<RaceMap>(this.mapList[0]);
+    this._mapService.map.next(this.mapList[0]);
     this.user = new User('User1', 'pwoiegwe', 'User1@email.com', 32, 12345);
   }
 
@@ -40,7 +48,7 @@ export class ProfileComponent implements OnInit {
   }
 
   changeMap(selectRef: HTMLSelectElement) {
-    this.map.next(this.mapList[selectRef.selectedIndex]);
+    this._mapService.map.next(this.mapList[selectRef.selectedIndex]);
   }
 
 
