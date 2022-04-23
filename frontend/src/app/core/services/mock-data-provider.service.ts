@@ -21,7 +21,7 @@ export class MockDataProviderService {
   private static getExampleMap(){
     const width = 13;
     const height = 9;
-    return new RaceMap(width, height, [new Vector(1, 1), new Vector(2, 2)],
+    return new RaceMap(1, 'Map Name', 1, width, height, [new Vector(1, 1), new Vector(2, 2)],
       [new Vector(3, 3), new Vector(4, 4)],
       [new Vector(7, 5), new Vector(8, 6)]);
   }

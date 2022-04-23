@@ -1,47 +1,27 @@
 export class UserStatistics{
-  private _rankingPosition: number;
-  private _rankingPoints: number;
-  private _winGamesNumber: number;
-  private _gamesNumber: number;
+
+  private _userWins: number;
+  private _userGames: number;
 
 
-  constructor(rankingPosition: number, rankingPoints: number, winGamesNumber: number, gamesNumber: number) {
-    this._rankingPosition = rankingPosition;
-    this._rankingPoints = rankingPoints;
-    this._winGamesNumber = winGamesNumber;
-    this._gamesNumber = gamesNumber;
+  constructor(winGamesNumber: number, gamesNumber: number) {
+    this._userWins = winGamesNumber;
+    this._userGames = gamesNumber;
   }
 
-
-  get rankingPosition(): number {
-    return this._rankingPosition;
+  get userWins(): number {
+    return this._userWins;
   }
 
-  set rankingPosition(value: number) {
-    this._rankingPosition = value;
+  set userWins(value: number) {
+    this._userWins = value;
   }
 
-  get rankingPoints(): number {
-    return this._rankingPoints;
+  get userGames(): number {
+    return this._userGames;
   }
 
-  set rankingPoints(value: number) {
-    this._rankingPoints = value;
-  }
-
-  get winGamesNumber(): number {
-    return this._winGamesNumber;
-  }
-
-  set winGamesNumber(value: number) {
-    this._winGamesNumber = value;
-  }
-
-  get gamesNumber(): number {
-    return this._gamesNumber;
-  }
-
-  set gamesNumber(value: number) {
-    this._gamesNumber = value;
+  set userGames(value: number) {
+    this._userGames = value;
   }
 }

@@ -24,8 +24,8 @@ export class GameService {
               private _mapService: MapService,
               private _httpClient: HttpClient) {
     // Mock data to test game view (to delete)
-    this.setGameInfo(mockDataProvider.getPlayer(),
-      mockDataProvider.getGame());
+    // this.setGameInfo(mockDataProvider.getPlayer(),
+    //   mockDataProvider.getGame());
   }
     // TODO: set game when game starting
     setGameInfo(authorizedPlayer: Player, game: Game){

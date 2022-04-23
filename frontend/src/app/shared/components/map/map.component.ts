@@ -1,10 +1,6 @@
-import {AfterViewInit, Component, ElementRef, Inject, Injectable, Input, OnInit, ViewChild} from '@angular/core';
-import { Player } from '../../models/Player';
-import {RaceMap} from "../../models/RaceMap";
+import {AfterViewInit, Component, ElementRef, ViewChild} from '@angular/core';
 import {GameService} from "../../../core/services/game.service";
 import {MapService} from "../../../core/services/map.service";
-import {BehaviorSubject} from "rxjs";
-
 
 @Component({
   selector: 'app-map',
@@ -32,7 +28,8 @@ export class MapComponent implements AfterViewInit {
       });
     }
     this._mapService.map.subscribe(map => {
-      this._mapService.initMap(map, [], false);
+      if(map !== undefined)
+        this._mapService.initMap(map, [], false);
     })
 
   }
