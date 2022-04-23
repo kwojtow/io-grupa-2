@@ -6,6 +6,7 @@ import {MockDataProviderService} from "./mock-data-provider.service";
 import {MapService} from "./map.service";
 import {PlayerState} from "../../shared/models/PlayerState";
 import {HttpClient} from "@angular/common/http";
+import {UserService} from "./user.service";
 
 @Injectable({
   providedIn: 'root'
@@ -20,10 +21,11 @@ export class GameService {
 
   constructor(private mockDataProvider: MockDataProviderService,
               private _mapService: MapService,
-              private _httpClient: HttpClient) {
+              private _httpClient: HttpClient,
+              private _userService: UserService) {
     // Mock data to test game view (to delete)
-    // this.setGameInfo(mockDataProvider.getPlayer(),
-    //   mockDataProvider.getGame());
+    this.setGameInfo(mockDataProvider.getPlayer(),
+      mockDataProvider.getGame());
   }
     // TODO: set game when game starting
     setGameInfo(authorizedPlayer: Player, game: Game){
@@ -37,7 +39,8 @@ export class GameService {
     return this.mockDataProvider.getGameState();
   }
   getGameState(): Observable<Array<PlayerState>>{
-    return this._httpClient.get<Array<any>>(this.API_URL + '/game/' + this._game.gameId + '/state')
+    return this._httpClient.get<Array<any>>(this.API_URL + '/game/' + this._game.gameId + '/state',
+      this._userService.getAuthorizationHeaders())
       .pipe(
         map(playersList => {
           return playersList.map(playerState =>

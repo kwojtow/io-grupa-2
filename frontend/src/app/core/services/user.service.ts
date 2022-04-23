@@ -35,28 +35,43 @@ export class UserService {
     return this.http.post<JwtResponse>('http://localhost:8080/auth/signin', user);
   }
 
+  getAuthorizationHeaders() {
+    const jwt = localStorage.getItem('jwtResponse');
+    let requestOptions;
+    if (jwt !== null) {
+      const jwtJson = JSON.parse(jwt);
+      const token = jwtJson['type'] + ' ' + jwtJson['token'];
+      requestOptions = {
+        headers: new HttpHeaders().set('Content-Type', 'application/json')
+          .set('Authorization', token)
+
+      };
+      return requestOptions;
+    }
+  }
+
   public getUser() { // TODO: ??
-    return this.http.get<User>('http://localhost:8080/user');
+    return this.http.get<User>('http://localhost:8080/user', this.getAuthorizationHeaders());
   }
 
   public getUserStats(userId: number) {
-    return this.http.get<UserStatistics>('http://localhost:8080/statistics/user/' + userId)
+    return this.http.get<UserStatistics>('http://localhost:8080/statistics/user/' + userId, this.getAuthorizationHeaders())
   }
 
   public getUserRanksInfo(userId: number) {
-    return this.http.get<UserRanks>('http://localhost:8080/user/' + userId + '/ranks')
+    return this.http.get<UserRanks>('http://localhost:8080/user/' + userId + '/ranks', this.getAuthorizationHeaders())
   }
 
   //TODO
   public getMapsWithMostWins() {
-    return this.http.get<any>('http://localhost:8080/map/user-wins')
+    return this.http.get<any>('http://localhost:8080/map/user-wins', this.getAuthorizationHeaders())
   }
   //TODO
   public getMapsWithMostGames() {
   }
 
   public getUserMaps(authorId: number): Observable<Array<RaceMap>> {
-    return this.http.get<any>('http://localhost:8080/map?authorId=' + authorId)
+    return this.http.get<any>('http://localhost:8080/map?authorId=' + authorId, this.getAuthorizationHeaders())
       .pipe(map(mapsList => {
         return mapsList.map((mapResponse: { mapId: number; name: string; userId: number; width: number; height: number; mapStructure: { finishLine: any[]; startLine: any[]; obstacles: any[]; }; }) =>
           new RaceMap(
