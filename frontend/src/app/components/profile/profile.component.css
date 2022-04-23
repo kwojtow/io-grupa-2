@@ -172,13 +172,9 @@ div>button{
   padding-left: 50px;
 }
 
-@media(max-width: 1000px){
-  
-}
 
 @media(max-width: 1200px){
   .map-section {
-
     grid-template-columns: 1fr 1fr 1fr;
     grid-template-rows: 0.2fr 1.3fr 0.9fr;
     grid-template-areas:
@@ -196,7 +192,8 @@ div>button{
     margin-right: 40px;
   }
 }
-@media(max-width: 780px) {
+
+@media(max-width: 1000px) {
   div{
     font-size: 50%;
   }
