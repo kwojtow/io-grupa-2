@@ -5,12 +5,10 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root'
 })
 export class DataService {
-  private userName = new BehaviorSubject<string>("");
-  currentUserName = this.userName.asObservable();
+  dialogStatus: boolean;
 
-  constructor() { }
 
-  setUserName(userName : string){
-    this.userName.next(userName);
+  updateStatus(status: boolean){
+    this.dialogStatus = status;
   }
 }

@@ -9,10 +9,15 @@ import { DataService } from 'src/app/core/services/data.service';
 export class StartPageComponent implements OnInit {
   userName: string;
 
-  constructor(private dataService: DataService) { }
+  constructor(public dataService: DataService) { }
 
   ngOnInit(): void {
-    this.dataService.currentUserName.subscribe(username => this.userName = username);
+    this.userName = JSON.parse(window.localStorage.getItem('jwtResponse')).username;
+   
+  }
+
+  changeDialogStatus(){
+    this.dataService.updateStatus(true);
   }
 
 }

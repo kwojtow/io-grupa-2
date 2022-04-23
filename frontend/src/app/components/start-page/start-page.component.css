@@ -54,8 +54,18 @@
     margin-left: -80px;
 }
 
-#cards{
-    margin-top: 5%;
+
+#content{
+    height: 80vh;
+    padding: 5%;
+}
+
+.dialog{
+    z-index: 2;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    width: 90%;
 }
 
 .description{

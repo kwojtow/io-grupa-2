@@ -7,6 +7,7 @@ import { RegisterSuccessComponent } from '../components/register/register-succes
 import { RegisterComponent } from '../components/register/register.component';
 import { StartPageComponent } from '../components/start-page/start-page.component';
 import {GameComponent} from "../components/game/game.component";
+import { JoinGameComponent } from '../components/start-page/join-game/join-game.component';
 
 const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -14,7 +15,7 @@ const routes: Routes = [
   { path: 'signup', component: RegisterComponent },
   { path: 'success', component: RegisterSuccessComponent },
   { path: 'start', component: StartPageComponent },
-  { path: 'create_room', component: CreateRoomComponent}
+  { path: 'create_room', component: CreateRoomComponent},
   { path: 'game', component: GameComponent}
 ];
 

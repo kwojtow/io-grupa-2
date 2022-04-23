@@ -6,6 +6,10 @@
       <button class="btn btn-primary px-5 mx-3" [routerLink]="'/signin'">Wyloguj</button>
     </div>
   </div>
+  <div id="content" class="container-fluid">
+    <div class="dialog" *ngIf="this.dataService.dialogStatus">
+      <app-join-game></app-join-game>
+    </div>
   <div id="cards" class="row justify-content-center">
     <div class="col-md-3" [routerLink]="'/create_room'">
       <div class="cardView">
@@ -15,7 +19,8 @@
           <p class="description">Utwórz nową rozgrywkę</p>
       </div>
     </div>
-    <div class="col-md-3">
+    
+    <div class="col-md-3" (click)="changeDialogStatus()">
       <div class="cardView">
         <span class="material-icons">
           navigate_next 
@@ -35,6 +40,7 @@
       </div>
     </div>
   </div>
+</div>
 </div>
 
 <link
