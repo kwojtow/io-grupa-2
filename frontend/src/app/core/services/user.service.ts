@@ -85,6 +85,8 @@ export class UserService {
   }
   //TODO
   public getMapsWithMostGames() {
+    return this.http.get<any>(this.API_URL + '/map/user-games', this.getAuthorizationHeaders())
+
   }
 
   public getUserMaps(authorId: number): Observable<Array<RaceMap>> {

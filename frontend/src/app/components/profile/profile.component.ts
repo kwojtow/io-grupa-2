@@ -2,7 +2,7 @@ import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {Router} from "@angular/router";
 import {RaceMap} from "../../shared/models/RaceMap";
 import {MapComponent} from "../../shared/components/map/map.component";
-import {BehaviorSubject, Subject} from "rxjs";
+import {BehaviorSubject, Observable, Subject} from "rxjs";
 import {User} from "../../shared/models/User";
 import {MapService} from "../../core/services/map.service";
 import {Vector} from "../../shared/models/Vector";
@@ -72,7 +72,18 @@ export class ProfileComponent implements OnInit {
 
   changeMapCategory(selectRef: HTMLSelectElement) {
     this.chosenCategory = this.mapListsCategories[selectRef.selectedIndex];
-    // TODO: update mapList
+    let mapListObs: Observable<Array<RaceMap>>;
+    if(selectRef.selectedIndex === 0){
+      mapListObs = this._userService.getUserMaps(this.user.userId);
+    }else if(selectRef.selectedIndex === 1){
+      mapListObs = this._userService.getMapsWithMostWins();
+    }else if(selectRef.selectedIndex){
+      mapListObs = this._userService.getMapsWithMostGames();
+    }
+    mapListObs.subscribe(mapList => {
+      this.mapList = mapList
+      if(this.mapList.length > 0) this._mapService.map.next(this.mapList[0]);
+    });
   }
 
 }
