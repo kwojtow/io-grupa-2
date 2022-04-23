@@ -53,18 +53,18 @@
     </div>
     <div class="ranking">
       <div style="font-weight: bold; ">Ranking</div>
-      <div >Pozycja: {{this.user.statistics.rankingPosition}}</div>
-      <div >Punkty: {{this.user.statistics.rankingPoints}}</div>
+      <div >Pozycja: {{this.user?.ranks?.rankingPosition}}</div>
+      <div >Punkty: {{this.user?.ranks?.points}}</div>
       <div style="font-weight: bold; ">Rozegrane/wygrane gry</div>
-      <div > {{user.statistics.winGamesNumber}}/{{user.statistics.gamesNumber}} </div>
+      <div > {{user?.statistics?.userWins}}/{{user?.statistics?.userGames}} </div>
     </div>
     <div class="name">
       <div style="font-weight: bold;">Nazwa użytkownika</div>
-      <div >{{this.user.username}}</div>
+      <div >{{this.user?.login}}</div>
     </div>
     <div class="email">
       <div style="font-weight: bold; ">E-mail</div>
-      <div >{{this.user.email}}</div>
+      <div >{{this.user?.email}}</div>
     </div>
   </div>
   <div class="play-btn">
@@ -77,7 +77,7 @@
       Wyloguj
     </button>
   </div>
-  <div class="user-name">Profil {{this.user.username}}</div>
+  <div class="user-name">Profil {{this.user?.login}}</div>
 </div>
 
 </body>
