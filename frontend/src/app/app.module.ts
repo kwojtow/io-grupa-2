@@ -12,6 +12,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { StartPageComponent } from './components/start-page/start-page.component';
 import { GameComponent } from './components/game/game.component';
 import { ProfileComponent } from './components/profile/profile.component';
+import {CreateMapComponent} from "./components/create-map/create-map.component";
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import { ProfileComponent } from './components/profile/profile.component';
     MapComponent,
     GameComponent,
     ProfileComponent,
+    CreateMapComponent,
     GameRoomComponent,
     CreateGameRoomComponent,
     JoinGameRoomComponent
