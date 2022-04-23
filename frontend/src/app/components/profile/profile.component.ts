@@ -63,7 +63,7 @@ export class ProfileComponent implements OnInit {
   }
 
   switchToNewMapView() {
-    //router.navigate(['newMapView']) // TODO
+    this.router.navigate(['create'])
   }
 
   changeMap(selectRef: HTMLSelectElement) {
