@@ -3,6 +3,7 @@ import {GameService} from "../../core/services/game.service";
 import {Player} from "../../shared/models/Player";
 import {interval, mergeMap, Observable, timer} from "rxjs";
 import {PlayerState} from "../../shared/models/PlayerState";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-game',
@@ -17,7 +18,8 @@ export class GameComponent implements OnInit {
   authorizedPlayer: Player;       // authorized user
   gameId: number;
 
-  constructor(private _gameService: GameService) {
+  constructor(private _gameService: GameService,
+              private router: Router) {
 
     this.gameId = _gameService.game.gameId;
     this.playersList = _gameService.game.players;
@@ -34,7 +36,12 @@ export class GameComponent implements OnInit {
         this.playersList = this._gameService.updatePlayersStates(playersStates);
         this.currentPlayer = this._gameService.updateCurrentPlaying(this.playersList);
         this._gameService.updateMap(this.playersList);
-      })
+      },
+        error => {
+          if(error.status === 401){
+            this.router.navigate(['/']);
+          }
+        })
   }
   ngOnInit(): void {
   }
