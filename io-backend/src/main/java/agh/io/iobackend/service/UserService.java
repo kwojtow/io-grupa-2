@@ -39,12 +39,16 @@ public class UserService implements UserDetailsService {
         return user.map(UserDetailsImpl::new).get();
     }
 
-    public User getCurrentUser(){
+    public User getCurrentUser() {
         return userRepository.getById(getCurrentUserId());
     }
 
-    public User getUserById(Long userId){
-        return userRepository.getById(userId);
+    public Optional<User> getUserById(Long userId) {
+        return userRepository.findById(userId);
+    }
+
+    public Optional<User> getUserByLogin(String login) {
+        return userRepository.findByLogin(login);
     }
 
     public Long getCurrentUserId() {
@@ -54,6 +58,6 @@ public class UserService implements UserDetailsService {
             UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
             userId = userDetails.getUserId();
         }
-        return userId;
+        return userId; // TODO check this implementation
     }
 }

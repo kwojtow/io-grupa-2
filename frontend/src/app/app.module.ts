@@ -13,6 +13,11 @@ import { HttpClientModule } from '@angular/common/http';
 @NgModule({
   declarations: [
     AppComponent,
+    LoginComponent,
+    RegisterComponent,
+    RegisterSuccessComponent,
+    MapComponent,
+    StartPageComponent,
     MapComponent,
     GameRoomComponent,
     CreateGameRoomComponent,
@@ -22,6 +27,9 @@ import { HttpClientModule } from '@angular/common/http';
   imports: [
     BrowserModule,
     AppRoutingModule,
+    FormsModule,
+    HttpClientModule
+    ReactiveFormsModule,
     FormsModule,
     HttpClientModule
   ],

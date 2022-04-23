@@ -1,77 +1,84 @@
+import { MapService } from "src/app/core/services/map.service";
+import { RaceMap } from "./RaceMap";
 import { Vector } from "./Vector";
+import {PlayerState} from "./PlayerState";
 
 export class Player{
-    private _currentVector: Vector;
-
-    constructor(private _name: string,
-                private _position: Vector,
-                 private _color: string) {
-        this._name = _name;
-        this._color = _color;
-        this._position = _position;
-        this._currentVector = new Vector(0, 0);
+  private _currentVector: Vector;
+  private _playerStatus: string;
+  constructor(private _playerId: number,
+              private _name: string,
+              private _position: Vector,
+               private _color: string) {
+      this._playerId = _playerId;
+      this._name = _name;
+      this._color = _color;
+      this._position = _position;
+      this._currentVector = new Vector(0, 0);
+      this._playerStatus = 'WAITING';
+    }
+  updateState(newState: PlayerState){
+    if(newState.playerId === this._playerId){
+      this._playerStatus = newState.playerStatus;
+      this._position = newState.currentPosition;
+      }
     }
 
-    set position(_position: Vector) {
-        this._position = _position;
+  set position(_position: Vector) {
+      this._position = _position;
     }
 
-    get position(): Vector {
-        return this._position;
+  get position(): Vector {
+      return this._position;
     }
 
-    set color(_color: string) {
-        this._color = _color;
+  set color(_color: string) {
+      this._color = _color;
     }
 
-    get color(): string {
-        return this._color;
+  get color(): string {
+      return this._color;
     }
 
-    set currentVector(_currentVector: Vector) {
-        this._currentVector = _currentVector;
+  set currentVector(_currentVector: Vector) {
+      this._currentVector = _currentVector;
     }
 
-    get currentVector(): Vector {
+  get playerId(): number {
+    return this._playerId;
+    }
+
+  get currentVector(): Vector {
         return this._currentVector;
     }
 
-    public showCurrentVector(ctx: CanvasRenderingContext2D, fieldWidth: number, lineWidth: number): void {
-        ctx.fillStyle = "#0066ff77";
-
-        ctx.fillRect(fieldWidth * (this.currentVector.posX + this.position.posX) + lineWidth,
-          fieldWidth * (this.currentVector.posY + this.position.posY) + lineWidth,
-          fieldWidth - 2 * lineWidth,
-          fieldWidth - 2 * lineWidth);
+  public getCurrentVectorPosition(): Vector{
+      return new Vector(this.position.posX + this.currentVector.posX,
+                        this.position.posY + this.currentVector.posY);
     }
 
-    public drawPlayer(ctx: CanvasRenderingContext2D, fieldWidth: number, lineWidth: number): void{
-        const miniFieldWidth = (fieldWidth - lineWidth * 2)/5;
-        ctx.beginPath();
-        ctx.fillStyle = this.color;
-        let leftUpperX: number =  fieldWidth * this.position.posX + lineWidth;
-        let leftUpperY: number = fieldWidth * this.position.posY + lineWidth;
-        ctx.moveTo(leftUpperX + miniFieldWidth+10, leftUpperY + miniFieldWidth*1.5);
-        ctx.lineTo(leftUpperX + miniFieldWidth*4-10, leftUpperY + miniFieldWidth*1.5);
-        ctx.quadraticCurveTo(leftUpperX + miniFieldWidth*4-10, leftUpperY + miniFieldWidth*1.5, leftUpperX + miniFieldWidth*4, leftUpperY + miniFieldWidth*1.5+10);
-        ctx.lineTo(leftUpperX + miniFieldWidth*4, leftUpperY + miniFieldWidth*3.5 - 10);
-        ctx.quadraticCurveTo(leftUpperX + miniFieldWidth*4, leftUpperY + miniFieldWidth*3, leftUpperX + miniFieldWidth*4-10, leftUpperY + miniFieldWidth*3.5);
-        ctx.lineTo(leftUpperX + miniFieldWidth+10, leftUpperY + miniFieldWidth*3.5);
-        ctx.quadraticCurveTo(leftUpperX + miniFieldWidth+10, leftUpperY + miniFieldWidth*3.5, leftUpperX + miniFieldWidth, leftUpperY + miniFieldWidth*3.5-10);
-        ctx.lineTo(leftUpperX + miniFieldWidth, leftUpperY + miniFieldWidth*1.5+10);
-        ctx.quadraticCurveTo(leftUpperX + miniFieldWidth, leftUpperY + miniFieldWidth*1.5+10, leftUpperX + miniFieldWidth+10, leftUpperY + miniFieldWidth*1.5);
 
-        ctx.fill();
-        ctx.stroke();
-
-        ctx.fillStyle = 'black'
-        ctx.fillRect(leftUpperX + miniFieldWidth+15, leftUpperY + miniFieldWidth*1.5-lineWidth-5, 15 , 10);
-        ctx.fillRect(leftUpperX + miniFieldWidth*4-30, leftUpperY + miniFieldWidth*1.5-lineWidth-5, 15 , 10);
-        ctx.fillRect(leftUpperX + miniFieldWidth+15, leftUpperY + miniFieldWidth*3.5, 15 , 10);
-        ctx.fillRect(leftUpperX + miniFieldWidth*4-30, leftUpperY + miniFieldWidth*3.5, 15 , 10);
+  public getCurrentVectorPositionPx(fieldWidth: number): Vector{
+    return new Vector(this.getCurrentVectorPosition().posX * fieldWidth,
+                        this.getCurrentVectorPosition().posY * fieldWidth);
     }
-
+  public getAvailableVectors(): Array<Vector> {
+    let xpos = this.currentVector.posX + this.position.posX;
+    let ypos = this.currentVector.posY + this.position.posY;
+    return [new Vector(xpos + 1, ypos), new Vector(xpos + 1, ypos + 1),
+      new Vector(xpos, ypos + 1), new Vector(xpos - 1, ypos + 1),
+      new Vector(xpos - 1, ypos), new Vector(xpos - 1, ypos - 1),
+      new Vector(xpos, ypos - 1), new Vector(xpos + 1, ypos - 1),
+      new Vector(xpos, ypos)];
+    }
   get name(): string {
     return this._name;
-  }
+    }
+  get playerStatus(): string {
+    return this._playerStatus;
+    }
+
+  set playerStatus(value: string) {
+    this._playerStatus = value;
+    }
 }
