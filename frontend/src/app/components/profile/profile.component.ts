@@ -42,7 +42,13 @@ export class ProfileComponent implements OnInit {
         this.mapList = mapList
         if(this.mapList.length > 0) this._mapService.map.next(this.mapList[0]);
       });
-    });
+    },
+    error => {
+      if(error.status === 401){
+        this.router.navigate(['/']);
+      }
+    }
+    );
   }
 
   ngOnInit(): void {
@@ -53,7 +59,7 @@ export class ProfileComponent implements OnInit {
   }
 
   logout() {
-    //TODO
+    this.router.navigate(['/']).then(() => localStorage.clear());
   }
 
   switchToNewMapView() {
