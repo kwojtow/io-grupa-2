@@ -7,6 +7,7 @@ import { RegisterComponent } from '../components/register/register.component';
 import { StartPageComponent } from '../components/start-page/start-page.component';
 import {GameComponent} from "../components/game/game.component";
 import {ProfileComponent} from "../components/profile/profile.component";
+import {CreateMapComponent} from "../components/create-map/create-map.component";
 
 const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -15,7 +16,8 @@ const routes: Routes = [
   { path: 'success', component: RegisterSuccessComponent },
   { path: 'start', component: StartPageComponent },
   { path: 'game', component: GameComponent},
-  { path: 'profile', component: ProfileComponent}
+  { path: 'profile', component: ProfileComponent},
+  { path: 'create', component: CreateMapComponent}
 ];
 
 @NgModule({
