@@ -47,6 +47,6 @@ export class GameComponent implements OnInit {
   }
 
   leaveGame() {
-    //TODO: leave game
+    this.router.navigate(['start'])
   }
 }
