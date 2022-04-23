@@ -5,6 +5,7 @@ import { map, Observable} from "rxjs";
 import {MockDataProviderService} from "./mock-data-provider.service";
 import {MapService} from "./map.service";
 import {PlayerState} from "../../shared/models/PlayerState";
+import {UserService} from "./user.service";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import { Vector } from 'src/app/shared/models/Vector';
 import { JwtResponse } from 'src/app/shared/models/JwtResponse';
@@ -22,7 +23,8 @@ export class GameService {
 
   constructor(private mockDataProvider: MockDataProviderService,
               private _mapService: MapService,
-              private _httpClient: HttpClient) {
+              private _httpClient: HttpClient,
+              private _userService: UserService) {
     // Mock data to test game view (to delete)
     // this.setGameInfo(mockDataProvider.getPlayer(),
     //   mockDataProvider.getGame());
@@ -39,7 +41,8 @@ export class GameService {
     return this.mockDataProvider.getGameState();
   }
   getGameState(): Observable<Array<PlayerState>>{
-    return this._httpClient.get<Array<any>>(this.API_URL + '/game/' + this._game.gameId + '/state')
+    return this._httpClient.get<Array<any>>(this.API_URL + '/game/' + this._game.gameId + '/state',
+      this._userService.getAuthorizationHeaders())
       .pipe(
         map(playersList => {
           return playersList.map(playerState =>
@@ -51,7 +54,7 @@ export class GameService {
       );
   }
   postPlayerNewPosition(player: Player) {
-    
+
     player.getChangedPosition().subscribe(() => {
       const playerPositionInfo = {
         playerId: player.playerId,
@@ -69,8 +72,8 @@ export class GameService {
           headers: new HttpHeaders().set('Content-Type', 'application/json')
                                     .set('Authorization', token)
         };
-        return this._httpClient.post<any>(this.API_URL + '/game/' + this._game.gameId + '/state', 
-                                          playerPositionInfo, 
+        return this._httpClient.post<any>(this.API_URL + '/game/' + this._game.gameId + '/state',
+                                          playerPositionInfo,
                                           requestOptions
                                           ).subscribe(res => console.log(res));
       }
