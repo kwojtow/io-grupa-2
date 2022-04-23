@@ -55,7 +55,7 @@ export class ProfileComponent implements OnInit {
   }
 
   switchToStartView() {
-    //router.navigate(['startView']) // TODO
+    this.router.navigate(['start']);
   }
 
   logout() {
