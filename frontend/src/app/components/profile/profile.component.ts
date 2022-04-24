@@ -5,6 +5,7 @@ import {User} from "../../shared/models/User";
 import {MapService} from "../../core/services/map.service";
 import {UserService} from "../../core/services/user.service";
 import {MapResponse} from "../../shared/models/MapResponse";
+import {MockDataProviderService} from "../../core/services/mock-data-provider.service";
 
 @Component({
   selector: 'app-profile',
@@ -23,25 +24,34 @@ export class ProfileComponent implements OnInit {
 
   constructor(private router: Router,
               private _mapService: MapService,
-              private _userService: UserService) {
+              private _userService: UserService,
+              private _mockData: MockDataProviderService) {
+    this.getProfileData();
+    // this.getMockProfileData();
 
-    this._userService.getUser().subscribe(user => {
-      this.user = user
-      this._userService.getUserStats(user.userId).subscribe(stats => this.user.statistics = stats);
-      this._userService.getUserRanksInfo(user.userId).subscribe(ranks => this.user.ranks = ranks);
-      this._userService.getUserMaps(user.userId).subscribe(mapList => {
-        this.mapList = mapList
-        if(this.mapList.length > 0) this._mapService.map.next(this.mapList[0].raceMap);
-      });
-    },
-    error => {
-      if(error.status === 401){
-        this.router.navigate(['/']).then();
-      }
-    }
-    );
+  }
+  private getMockProfileData(){
+    this.mapList = this._mockData.getExampleMapResponseList(3);
+    this.user = this._mockData.getExampleUser();
   }
 
+  private getProfileData(){
+    this._userService.getUser().subscribe(user => {
+        this.user = user
+        this._userService.getUserStats(user.userId).subscribe(stats => this.user.statistics = stats);
+        this._userService.getUserRanksInfo(user.userId).subscribe(ranks => this.user.ranks = ranks);
+        this._userService.getUserMaps(user.userId).subscribe(mapList => {
+          this.mapList = mapList
+          if(this.mapList.length > 0) this._mapService.map.next(this.mapList[0].raceMap);
+        });
+      },
+      error => {
+        if(error.status === 401){
+          this.router.navigate(['/']).then();
+        }
+      }
+    );
+  }
   ngOnInit(): void {
   }
 
