@@ -1,1 +1,61 @@
-<p>create-room works!</p>
+<div class="container-fluid m-0 p-0">
+  <div
+    id="top-bar"
+    class="container-fluid d-flex justify-content-between align-items-center"
+  >
+    <h1 id="header">Tworzenie pokoju</h1>
+    <div>
+      <button class="btn btn-primary px-5 mx-3" [routerLink]="'/start'">
+        Anuluj
+      </button>
+    </div>
+  </div>
+  <div id="content" class="container-fluid">
+    <div id="settings">
+      <div class="row">
+        <div class="col-md-6">
+          <label for="max-gamers">Maksymalna ilość graczy</label>
+          <div>
+            <select id="max-gamers" class="form-select form-select-sm">
+              <option *ngFor="let max of maxGamers">{{ max }}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <label for="round-time">Czas rundy</label>
+          <div>
+            <select id="round-time" class="form-select form-select-sm">
+              <option *ngFor="let time of roundTime">{{ time }}s</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-10 border d-flex flex-row align-items-center m-3">
+      <div class="ml-6 m-5" style="max-width: 50%">
+        <label for="max-gamers">Mapa</label>
+        <div class="mb-5">
+          <select id="max-gamers" class="form-select form-select-sm">
+            <option *ngFor="let max of maxGamers">{{ max }}</option>
+          </select>
+        </div>
+        <app-map class="w-100"></app-map>
+      </div>
+      <div class="ml-6 d-flex flex-column justify-content-around m-5">
+        <h6 clas="h6">Liczba rozegranych gier:</h6>
+        <span class="mb-4"></span>
+        <h6 clas="h6">Ocena:</h6>
+        <span class="mb-4"></span>
+        <h6 clas="h6">Autor:</h6>
+        <span class="mb-4"></span>
+      </div>
+    </div>
+    <div class="row">
+        <div id="button-box" class="col-md-4">
+            <button class="button to-login">Utwórz pokój</button>
+        </div>
+    </div>
+  </div>
+</div>
