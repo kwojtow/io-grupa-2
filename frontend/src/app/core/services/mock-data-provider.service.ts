@@ -6,6 +6,10 @@ import {GameSettings} from "../../shared/models/GameSettings";
 import {Game} from "../../shared/models/Game";
 import {BehaviorSubject, Observable} from "rxjs";
 import {PlayerState} from "../../shared/models/PlayerState";
+import {MapResponse} from "../../shared/models/MapResponse";
+import {User} from "../../shared/models/User";
+import {UserStatistics} from "../../shared/models/UserStatistics";
+import {UserRanks} from "../../shared/models/UserRanks";
 
 @Injectable({
   providedIn: 'root'
@@ -18,12 +22,16 @@ export class MockDataProviderService {
   private static _gameState: Array<PlayerState>;
   private _playersList: Array<Player>;
   static idx = 0;
+  private static mapId = 1;
+
   private static getExampleMap(){
     const width = 13;
     const height = 9;
-    return new RaceMap(1, 'Map Name', 1, width, height, [new Vector(1, 1), new Vector(2, 2)],
-      [new Vector(3, 3), new Vector(4, 4)],
-      [new Vector(7, 5), new Vector(8, 6)]);
+    MockDataProviderService.mapId ++;
+    return new RaceMap(MockDataProviderService.mapId, 'Map Name', 1, width, height, [new Vector(1, 1), new Vector(2, 2)],
+      [new Vector(3 + MockDataProviderService.mapId, 3+ MockDataProviderService.mapId), new Vector(4+ MockDataProviderService.mapId, 4)],
+      [new Vector(7+ MockDataProviderService.mapId, 5+ MockDataProviderService.mapId), new Vector(8, 6)]);
+
   }
 
   private static getExamplePlayers(){
@@ -80,7 +88,17 @@ export class MockDataProviderService {
       .mapPlayersToPlayersStates(this._playersList);
   }
 
-
+  getExampleMapResponseList(size: number){
+    let mapList = new Array<MapResponse>();
+    for(let i = 0; i < size; i ++){
+      const map = new MapResponse(MockDataProviderService.getExampleMap(), MockDataProviderService.mapId);
+      mapList.push(map);
+    }
+    return mapList;
+  }
+  getExampleUser(){
+    return new User('User123', 'null', 'user123@abc.pl', 1, new UserStatistics(5, 10), new UserRanks(1, 123456));
+  }
   get game(): Game {
     return this._game;
   }
