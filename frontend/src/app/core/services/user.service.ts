@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { User } from 'src/app/shared/models/User';
 import {UserStatistics} from "../../shared/models/UserStatistics";
 import {UserRanks} from "../../shared/models/UserRanks";
@@ -7,14 +7,13 @@ import {RaceMap} from "../../shared/models/RaceMap";
 import {map, Observable} from "rxjs";
 import { Vector } from 'src/app/shared/models/Vector';
 import { JwtResponse } from 'src/app/shared/models/JwtResponse';
+import {MapResponse} from "../../shared/models/MapResponse";
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
   API_URL = 'http://localhost:8080'
-  private userUrl: string;
-  private user: User;
 
   constructor(private http: HttpClient) {
   }
@@ -63,32 +62,44 @@ export class UserService {
     return this.http.get<UserRanks>(this.API_URL + '/user/' + userId + '/ranks', this.getAuthorizationHeaders())
   }
 
-  //TODO
-  public getMapsWithMostWins() {
+  public getMapsWithMostWins(): Observable<Array<MapResponse>> {
     return this.http.get<any>(this.API_URL + '/map/user-wins', this.getAuthorizationHeaders())
+      .pipe(map(mapList => {
+        return this.convertMapListResponse(mapList)
+      }))
   }
-  //TODO
-  public getMapsWithMostGames() {
+
+  public getMapsWithMostGames(): Observable<Array<MapResponse>> {
     return this.http.get<any>(this.API_URL + '/map/user-games', this.getAuthorizationHeaders())
+      .pipe(map(mapList => {
+        return this.convertMapListResponse(mapList)
+      }))
 
   }
 
-  public getUserMaps(authorId: number): Observable<Array<RaceMap>> {
+  public getUserMaps(authorId: number): Observable<Array<MapResponse>> {
     return this.http.get<any>(this.API_URL + '/map?authorId=' + authorId, this.getAuthorizationHeaders())
       .pipe(map(mapsList => {
-        return mapsList.map((mapResponse: { mapId: number; name: string; userId: number; width: number; height: number; mapStructure: { finishLine: any[]; startLine: any[]; obstacles: any[]; }; }) =>
-          new RaceMap(
-            mapResponse.mapId,
-            mapResponse.name,
-            mapResponse.userId,
-            mapResponse.width,
-            mapResponse.height,
-            mapResponse.mapStructure.finishLine.map(v => new Vector(v.x, v.y)),
-            mapResponse.mapStructure.startLine.map(v => new Vector(v.x, v.y)),
-            mapResponse.mapStructure.obstacles.map(v => new Vector(v.x, v.y))
-          ))
+        return mapsList.map(((mapResponse: { mapId: number; name: string; userId: number; width: number; height: number; mapStructure: { finishLine: any[]; startLine: any[]; obstacles: any[]; }; }) =>
+          new MapResponse(this.convertMap(mapResponse))), 0);
         }
       ))
   }
 
+  private convertMap(mapJson: { mapId: number; name: string; userId: number; width: number; height: number; mapStructure: { finishLine: any[]; startLine: any[]; obstacles: any[]; }; }): RaceMap{
+    return  new RaceMap(
+      mapJson.mapId,
+      mapJson.name,
+      mapJson.userId,
+      mapJson.width,
+      mapJson.height,
+      mapJson.mapStructure.finishLine.map(v => new Vector(v.x, v.y)),
+      mapJson.mapStructure.startLine.map(v => new Vector(v.x, v.y)),
+      mapJson.mapStructure.obstacles.map(v => new Vector(v.x, v.y))
+    )
+  }
+  convertMapListResponse(mapList: { map: { mapId: number; name: string; userId: number; width: number; height: number; mapStructure: { finishLine: any[]; startLine: any[]; obstacles: any[]; }; }; games: number; }[]){
+    return mapList.map((mapResponse: { map: { mapId: number; name: string; userId: number; width: number; height: number; mapStructure: { finishLine: any[]; startLine: any[]; obstacles: any[]; }; }; games: number; }) =>
+      new MapResponse(this.convertMap(mapResponse.map), mapResponse.games))
+  }
 }

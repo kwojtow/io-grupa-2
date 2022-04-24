@@ -29,12 +29,19 @@
     </div>
     <div class="map-stats">
       <div>
-        <div class="fw-bold stat-info">Liczba rozegranych gier</div>
-        <div class="stat-info">12345</div>
+        <div class="fw-bold stat-info">
+          <label>Wszystkich rozegranych:</label>
+        </div>
+        <div class="stat-info">{{allGames}}</div>
+        <div *ngIf="selectRefCat.selectedIndex !== 0" class="fw-bold stat-info">
+          <label *ngIf="selectRefCat.selectedIndex === 1">Moich wygranych:</label>
+          <label *ngIf="selectRefCat.selectedIndex === 2">Moich rozegranych:</label>
+        </div>
+        <div class="stat-info">{{this.mapList[0]?.games}}</div>
       </div>
       <div>
         <div class="fw-bold stat-info">Ocena</div>
-        <div class="stat-info">9.5/10</div>
+        <div class="stat-info">{{mapRate}}</div>
       </div>
 
 
