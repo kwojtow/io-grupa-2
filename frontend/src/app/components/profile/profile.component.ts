@@ -1,14 +1,10 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
-import {RaceMap} from "../../shared/models/RaceMap";
-import {MapComponent} from "../../shared/components/map/map.component";
-import {BehaviorSubject, Observable, Subject} from "rxjs";
+import { Observable} from "rxjs";
 import {User} from "../../shared/models/User";
 import {MapService} from "../../core/services/map.service";
-import {Vector} from "../../shared/models/Vector";
-import {UserStatistics} from "../../shared/models/UserStatistics";
-import {UserRanks} from "../../shared/models/UserRanks";
 import {UserService} from "../../core/services/user.service";
+import {MapResponse} from "../../shared/models/MapResponse";
 
 @Component({
   selector: 'app-profile',
@@ -17,35 +13,30 @@ import {UserService} from "../../core/services/user.service";
 })
 export class ProfileComponent implements OnInit {
 
-  mapList = new Array<RaceMap>();
+  mapList = new Array<MapResponse>();
   user: User;
   mapListsCategories = new Array<string>( 'Moje mapy', 'Najlepsze mapy', 'Najczęstsze mapy');
-  chosenCategory = 'Moje mapy';
-  // private getExampleMap(i: number, j: number){
-  //   const width = 13;
-  //   const height = 10;
-  //   return new RaceMap(width, height, [new Vector(1, 1), new Vector(2, 2)],
-  //     [new Vector((3 + i)%width, (3+j)%height), new Vector(4, 4)],
-  //     [new Vector((7 + j)%width, 5), new Vector(8, 6)]);
-  // }
+  chosenCategory = this.mapListsCategories[0];
+
+  allGames = 12345;// TODO: map stats
+  mapRate = '9.5/10';
+
   constructor(private router: Router,
               private _mapService: MapService,
               private _userService: UserService) {
-    // for(let i = 0; i < 4; i ++){
-    //   this.mapList[i] = this.getExampleMap(i, i+3);
-    // }
+
     this._userService.getUser().subscribe(user => {
       this.user = user
       this._userService.getUserStats(user.userId).subscribe(stats => this.user.statistics = stats);
       this._userService.getUserRanksInfo(user.userId).subscribe(ranks => this.user.ranks = ranks);
       this._userService.getUserMaps(user.userId).subscribe(mapList => {
         this.mapList = mapList
-        if(this.mapList.length > 0) this._mapService.map.next(this.mapList[0]);
+        if(this.mapList.length > 0) this._mapService.map.next(this.mapList[0].raceMap);
       });
     },
     error => {
       if(error.status === 401){
-        this.router.navigate(['/']);
+        this.router.navigate(['/']).then();
       }
     }
     );
@@ -55,7 +46,7 @@ export class ProfileComponent implements OnInit {
   }
 
   switchToStartView() {
-    this.router.navigate(['start']);
+    this.router.navigate(['start']).then();
   }
 
   logout() {
@@ -63,16 +54,16 @@ export class ProfileComponent implements OnInit {
   }
 
   switchToNewMapView() {
-    this.router.navigate(['create'])
+    this.router.navigate(['create']).then()
   }
 
   changeMap(selectRef: HTMLSelectElement) {
-    this._mapService.map.next(this.mapList[selectRef.selectedIndex]);
+    this._mapService.map.next(this.mapList[selectRef.selectedIndex].raceMap);
   }
 
   changeMapCategory(selectRef: HTMLSelectElement) {
     this.chosenCategory = this.mapListsCategories[selectRef.selectedIndex];
-    let mapListObs: Observable<Array<RaceMap>>;
+    let mapListObs: Observable<Array<MapResponse>>;
     if(selectRef.selectedIndex === 0){
       mapListObs = this._userService.getUserMaps(this.user.userId);
     }else if(selectRef.selectedIndex === 1){
@@ -82,7 +73,7 @@ export class ProfileComponent implements OnInit {
     }
     mapListObs.subscribe(mapList => {
       this.mapList = mapList
-      if(this.mapList.length > 0) this._mapService.map.next(this.mapList[0]);
+      if(this.mapList.length > 0) this._mapService.map.next(this.mapList[0].raceMap);
     });
   }
 
