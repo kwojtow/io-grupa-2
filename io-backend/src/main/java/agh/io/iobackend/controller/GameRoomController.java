@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/game-room")
+@CrossOrigin
 @Transactional // for tests, because of "org.hibernate.LazyInitializationException"
 public class GameRoomController {
 
