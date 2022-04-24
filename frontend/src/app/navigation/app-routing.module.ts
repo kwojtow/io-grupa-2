@@ -6,9 +6,9 @@ import { RegisterSuccessComponent } from '../components/register/register-succes
 import { RegisterComponent } from '../components/register/register.component';
 import { StartPageComponent } from '../components/start-page/start-page.component';
 import {GameComponent} from "../components/game/game.component";
-import { CreateGameRoomComponent } from '../shared/components/create-game-room/create-game-room.component';
-import { GameRoomComponent } from '../shared/components/game-room/game-room.component';
-import { JoinGameRoomComponent } from '../shared/components/join-game-room/join-game-room.component';
+import { CreateGameRoomComponent } from '../components/create-game-room/create-game-room.component';
+import { GameRoomComponent } from '../components/game-room/game-room.component';
+import { JoinGameRoomComponent } from '../components/join-game-room/join-game-room.component';
 
 const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -16,9 +16,7 @@ const routes: Routes = [
   { path: 'signup', component: RegisterComponent },
   { path: 'success', component: RegisterSuccessComponent },
   { path: 'start', component: StartPageComponent },
-  { path: 'game', component: GameComponent}
-];
-const routes: Routes = [
+  { path: 'game/:id', component: GameComponent},
   { path: 'create-game-room', component: CreateGameRoomComponent},
   { path: 'join-game-room', component: JoinGameRoomComponent},
   { path: 'game-room/:id', component: GameRoomComponent },

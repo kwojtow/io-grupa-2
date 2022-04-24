@@ -35,6 +35,7 @@ public class MapController {
         return ResponseEntity.ok(mapService.getMapsCreatedByUser(authorId));
     }
 
+    @CrossOrigin
     @GetMapping("/{mapId}")
     public ResponseEntity<GameMap> getMapById(@PathVariable Long mapId) {
         Optional<GameMap> map = mapService.getMapById(mapId);
