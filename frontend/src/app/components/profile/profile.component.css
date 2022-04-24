@@ -185,7 +185,10 @@ div>button{
   }
   .stat-info{
     padding: 0;
+    padding-right: 10px;
     text-align: center;
+    display: inline-block;
+
   }
   .map-stats > div{
     display: inline-block;
@@ -218,6 +221,7 @@ div>button{
   }
   .stat-info{
     font-size: 13px;
+    display: inline-block;
   }
 }
 /* width */
