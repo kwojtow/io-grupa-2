@@ -7,10 +7,10 @@ import { UserService } from 'src/app/core/services/user.service';
 
 @Component({
   selector: 'app-join-game',
-  templateUrl: './join-game.component.html',
-  styleUrls: ['./join-game.component.css'],
+  templateUrl: './join-game-room.component.html',
+  styleUrls: ['./join-game-room.component.css'],
 })
-export class JoinGameComponent implements OnInit {
+export class JoinGameRoomComponent implements OnInit {
   joinForm: FormGroup;
   showErrorMessage: boolean;
   showNotGameFoundError: boolean;

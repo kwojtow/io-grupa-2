@@ -1,1 +1,74 @@
-<button (click)="create()">create game room</button>
+<div class="container-fluid m-0 p-0">
+  <div
+    id="top-bar"
+    class="container-fluid d-flex justify-content-between align-items-center"
+  >
+    <h1 id="header">Tworzenie pokoju</h1>
+    <div>
+      <button class="btn btn-primary px-5 mx-3" [routerLink]="'/start'">
+        Anuluj
+      </button>
+    </div>
+  </div>
+
+  <div id="content" class="container-fluid">
+    <form [formGroup]="mapOptionsForm">
+      <div id="settings">
+        <div class="row">
+          <div class="col-md-6">
+            <label for="max-gamers">Maksymalna ilość graczy</label>
+            <div>
+              <select
+                id="max-gamers"
+                class="form-select form-select-sm"
+                formControlName="maxGamersNumber"
+              >
+                <option *ngFor="let max of maxGamers">{{ max }}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <label for="round-time">Czas rundy</label>
+            <div>
+              <select
+                id="round-time"
+                class="form-select form-select-sm"
+                formControlName="roundTime"
+              >
+                <option *ngFor="let time of roundTimes">{{ time }}s</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-10 border d-flex flex-row align-items-center m-3">
+        <div class="ml-6 m-5" style="max-width: 50%">
+          <label for="map-select">Mapa</label>
+          <div class="mb-5">
+            <select id="map-select" class="form-select form-select-sm" formControlName="map">
+              <option *ngFor="let map of this.mapDatas">{{ map.name }}</option>
+            </select>
+          </div>
+          <app-map class="w-100"></app-map>
+        </div>
+        <div class="ml-6 d-flex flex-column justify-content-around m-5">
+          <h6 clas="h6">Liczba rozegranych gier:</h6>
+          <span class="mb-4">{{ this.mapDtoMap.get(selectedMapId)?.gamesPlayed}}</span>
+          <h6 clas="h6">Ocena:</h6>
+          <span class="mb-4">{{ this.mapDtoMap.get(selectedMapId)?.rate}}</span>
+          <h6 clas="h6">Autor:</h6>
+          <span class="mb-4">{{ this.mapDtoMap.get(selectedMapId)?.author?.login}}</span>
+        </div>
+      </div>
+      <div class="row">
+        <div id="button-box" class="col-md-4">
+          <button class="button to-login" (click)="createRoom()">
+            Utwórz pokój
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

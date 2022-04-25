@@ -1,16 +1,13 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AppComponent } from '../app.component';
-import { CreateRoomComponent } from '../components/create-room/create-room.component';
 import { LoginComponent } from '../components/login/login.component';
 import { RegisterSuccessComponent } from '../components/register/register-success/register-success.component';
 import { RegisterComponent } from '../components/register/register.component';
 import { StartPageComponent } from '../components/start-page/start-page.component';
 import {GameComponent} from "../components/game/game.component";
-import { JoinGameComponent } from '../components/start-page/join-game/join-game.component';
 import { CreateGameRoomComponent } from '../components/create-game-room/create-game-room.component';
 import { GameRoomComponent } from '../components/game-room/game-room.component';
-import { JoinGameRoomComponent } from '../components/join-game-room/join-game-room.component';
 
 const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -18,11 +15,9 @@ const routes: Routes = [
   { path: 'signup', component: RegisterComponent },
   { path: 'success', component: RegisterSuccessComponent },
   { path: 'start', component: StartPageComponent },
-  { path: 'create_room', component: CreateRoomComponent},
   { path: 'game', component: GameComponent},
   { path: 'game/:id', component: GameComponent},
   { path: 'create-game-room', component: CreateGameRoomComponent},
-  { path: 'join-game-room', component: JoinGameRoomComponent},
   { path: 'game-room/:id', component: GameRoomComponent },
 ];
 
