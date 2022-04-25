@@ -14,6 +14,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/map")
+@CrossOrigin
 public class MapController {
 
     @Autowired

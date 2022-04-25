@@ -9,7 +9,7 @@
           <div class="form-group">
             <label for="text"></label>
             <input
-              type="text"
+              type="number"
               id="code"
               class="form-control"
               placeholder="Kod gry"
@@ -22,6 +22,9 @@
       <div id="messageBox" class="row justify-content-center">
         <h3 class="errorMessage" *ngIf="showErrorMessage">
           Wprowadź kod gry
+        </h3>
+        <h3 class="errorMessage" *ngIf="showNotGameFoundError">
+          Nie znaleziono gry
         </h3>
       </div>
       <div id="button-box" class="row justify-content-center">

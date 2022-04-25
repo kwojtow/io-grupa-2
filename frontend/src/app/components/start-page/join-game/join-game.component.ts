@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { DataService } from 'src/app/core/services/data.service';
 import { GameRoomService } from 'src/app/core/services/game-room.service';
+import { UserService } from 'src/app/core/services/user.service';
 
 @Component({
   selector: 'app-join-game',
@@ -12,16 +13,19 @@ import { GameRoomService } from 'src/app/core/services/game-room.service';
 export class JoinGameComponent implements OnInit {
   joinForm: FormGroup;
   showErrorMessage: boolean;
+  showNotGameFoundError: boolean;
 
   constructor(
     private formBuilder: FormBuilder,
     private dataService: DataService,
     private gameRoomSerivce: GameRoomService,
+    private userService: UserService,
     private route: Router
   ) {}
 
   ngOnInit(): void {
     this.showErrorMessage = false;
+    this.showNotGameFoundError = false;
     this.joinForm = this.formBuilder.group({
       code: ['', [Validators.required]],
     });
@@ -34,12 +38,15 @@ export class JoinGameComponent implements OnInit {
 
   onSubmit() {
     if (this.joinForm.valid) {
-      this.gameRoomSerivce.joinGameRoom(
-        this.joinForm.value.code,
-        JSON.parse(localStorage.getItem('jwtResponse')).id
+      this.gameRoomSerivce.addUser(
+        parseInt(this.joinForm.value.code),
+        this.userService.getCurrentLoggedUserId()
       ).subscribe(
         () => {
-          // this.route.navigate(['/room']);
+          this.route.navigate(['/game-room', this.joinForm.value.code]);
+        },
+        () => {
+          this.showNotGameFoundError = true;
         }
       );
     }

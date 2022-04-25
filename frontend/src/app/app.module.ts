@@ -3,9 +3,9 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './navigation/app-routing.module';
 import { AppComponent } from './app.component';
 import { MapComponent } from './shared/components/map/map.component';
-// import { GameRoomComponent } from './components/game-room/game-room.component';
-// import { CreateGameRoomComponent } from './components/create-game-room/create-game-room.component';
-// import { JoinGameRoomComponent } from './components/join-game-room/join-game-room.component';
+import { GameRoomComponent } from './components/game-room/game-room.component';
+import { CreateGameRoomComponent } from './components/create-game-room/create-game-room.component';
+import { JoinGameRoomComponent } from './components/join-game-room/join-game-room.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { LoginComponent } from './components/login/login.component';
@@ -28,9 +28,9 @@ import { JoinGameComponent } from './components/start-page/join-game/join-game.c
     GameComponent,
     CreateRoomComponent,
     JoinGameComponent,
-    // GameRoomComponent,
-    // CreateGameRoomComponent,
-    // JoinGameRoomComponent,
+    GameRoomComponent,
+    CreateGameRoomComponent,
+    JoinGameRoomComponent,
     GameComponent
 
   ],

@@ -10,52 +10,65 @@
       </button>
     </div>
   </div>
+
   <div id="content" class="container-fluid">
-    <div id="settings">
-      <div class="row">
-        <div class="col-md-6">
-          <label for="max-gamers">Maksymalna ilość graczy</label>
-          <div>
-            <select id="max-gamers" class="form-select form-select-sm">
-              <option *ngFor="let max of maxGamers">{{ max }}</option>
-            </select>
+    <form [formGroup]="mapOptionsForm">
+      <div id="settings">
+        <div class="row">
+          <div class="col-md-6">
+            <label for="max-gamers">Maksymalna ilość graczy</label>
+            <div>
+              <select
+                id="max-gamers"
+                class="form-select form-select-sm"
+                formControlName="maxGamersNumber"
+              >
+                <option *ngFor="let max of maxGamers">{{ max }}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <label for="round-time">Czas rundy</label>
+            <div>
+              <select
+                id="round-time"
+                class="form-select form-select-sm"
+                formControlName="roundTime"
+              >
+                <option *ngFor="let time of roundTimes">{{ time }}s</option>
+              </select>
+            </div>
           </div>
         </div>
       </div>
-      <div class="row">
-        <div class="col-md-6">
-          <label for="round-time">Czas rundy</label>
-          <div>
-            <select id="round-time" class="form-select form-select-sm">
-              <option *ngFor="let time of roundTime">{{ time }}s</option>
+      <div class="col-lg-10 border d-flex flex-row align-items-center m-3">
+        <div class="ml-6 m-5" style="max-width: 50%">
+          <label for="max-gamers">Mapa</label>
+          <div class="mb-5">
+            <select id="max-gamers" class="form-select form-select-sm" formControlName="map">
+              <option *ngFor="let map of this.mapDatas">{{ map.name }}</option>
             </select>
           </div>
+          <app-map class="w-100"></app-map>
+        </div>
+        <div class="ml-6 d-flex flex-column justify-content-around m-5">
+          <h6 clas="h6">Liczba rozegranych gier:</h6>
+          <span class="mb-4">{{ this.mapDtoMap.get(selectedMapId)?.gamesPlayed}}</span>
+          <h6 clas="h6">Ocena:</h6>
+          <span class="mb-4">{{ this.mapDtoMap.get(selectedMapId)?.rate}}</span>
+          <h6 clas="h6">Autor:</h6>
+          <span class="mb-4">{{ this.mapDtoMap.get(selectedMapId)?.author?.login}}</span>
         </div>
       </div>
-    </div>
-    <div class="col-lg-10 border d-flex flex-row align-items-center m-3">
-      <div class="ml-6 m-5" style="max-width: 50%">
-        <label for="max-gamers">Mapa</label>
-        <div class="mb-5">
-          <select id="max-gamers" class="form-select form-select-sm">
-            <option *ngFor="let max of maxGamers">{{ max }}</option>
-          </select>
-        </div>
-        <app-map class="w-100"></app-map>
-      </div>
-      <div class="ml-6 d-flex flex-column justify-content-around m-5">
-        <h6 clas="h6">Liczba rozegranych gier:</h6>
-        <span class="mb-4"></span>
-        <h6 clas="h6">Ocena:</h6>
-        <span class="mb-4"></span>
-        <h6 clas="h6">Autor:</h6>
-        <span class="mb-4"></span>
-      </div>
-    </div>
-    <div class="row">
+      <div class="row">
         <div id="button-box" class="col-md-4">
-            <button class="button to-login">Utwórz pokój</button>
+          <button class="button to-login" (click)="createRoom()">
+            Utwórz pokój
+          </button>
         </div>
-    </div>
+      </div>
+    </form>
   </div>
 </div>
