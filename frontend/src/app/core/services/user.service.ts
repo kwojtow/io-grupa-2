@@ -7,7 +7,7 @@ import {RaceMap} from "../../shared/models/RaceMap";
 import {map, Observable} from "rxjs";
 import { Vector } from 'src/app/shared/models/Vector';
 import { JwtResponse } from 'src/app/shared/models/JwtResponse';
-import {MapResponse} from "../../shared/models/MapResponse";
+import {MapWithStats} from "../../shared/models/MapWithStats";
 
 @Injectable({
   providedIn: 'root',
@@ -78,14 +78,14 @@ export class UserService {
     return this.http.get<UserRanks>(this.API_URL + '/user/' + userId + '/ranks', this.getAuthorizationHeaders())
   }
 
-  public getMapsWithMostWins(): Observable<Array<MapResponse>> {
+  public getMapsWithMostWins(): Observable<Array<MapWithStats>> {
     return this.http.get<any>(this.API_URL + '/map/user-wins', this.getAuthorizationHeaders())
       .pipe(map(mapList => {
         return this.convertMapListResponse(mapList)
       }))
   }
 
-  public getMapsWithMostGames(): Observable<Array<MapResponse>> {
+  public getMapsWithMostGames(): Observable<Array<MapWithStats>> {
     return this.http.get<any>(this.API_URL + '/map/user-games', this.getAuthorizationHeaders())
       .pipe(map(mapList => {
         return this.convertMapListResponse(mapList)
@@ -93,11 +93,11 @@ export class UserService {
 
   }
 
-  public getUserMaps(authorId: number): Observable<Array<MapResponse>> {
+  public getUserMaps(authorId: number): Observable<Array<MapWithStats>> {
     return this.http.get<any>(this.API_URL + '/map?authorId=' + authorId, this.getAuthorizationHeaders())
       .pipe(map(mapsList => {
         return mapsList.map(((mapResponse: { mapId: number; name: string; userId: number; width: number; height: number; mapStructure: { finishLine: any[]; startLine: any[]; obstacles: any[]; }; }) =>
-          new MapResponse(this.convertMap(mapResponse))), 0);
+          new MapWithStats(this.convertMap(mapResponse))), 0);
         }
       ))
   }
@@ -116,6 +116,6 @@ export class UserService {
   }
   convertMapListResponse(mapList: { map: { mapId: number; name: string; userId: number; width: number; height: number; mapStructure: { finishLine: any[]; startLine: any[]; obstacles: any[]; }; }; games: number; }[]){
     return mapList.map((mapResponse: { map: { mapId: number; name: string; userId: number; width: number; height: number; mapStructure: { finishLine: any[]; startLine: any[]; obstacles: any[]; }; }; games: number; }) =>
-      new MapResponse(this.convertMap(mapResponse.map), mapResponse.games))
+      new MapWithStats(this.convertMap(mapResponse.map), mapResponse.games))
   }
 }

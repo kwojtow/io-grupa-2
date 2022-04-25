@@ -1,6 +1,6 @@
 import {RaceMap} from "./RaceMap";
 
-export class MapResponse{
+export class MapWithStats {
   private _raceMap: RaceMap;
   private _games: number;
 
