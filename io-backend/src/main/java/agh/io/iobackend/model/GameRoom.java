@@ -44,7 +44,7 @@ public class GameRoom {
     // Maximal number of players (apart from Game Master)
     private Boolean gameStarted;
 
-    @OneToMany
+    @ManyToMany
     private List<User> userList;
 
 //    @ElementCollection
@@ -68,7 +68,8 @@ public class GameRoom {
     }
 
     public void addPlayer(User user) {
-        userList.add(user);
+        if(!userList.contains(user))
+            userList.add(user);
     }
 
     public Long getGameRoomID() {

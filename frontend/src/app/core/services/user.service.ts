@@ -27,4 +27,19 @@ export class UserService {
   public logUser(user: User) {
     return this.http.post<JwtResponse>('http://localhost:8080/auth/signin', user);
   }
+
+  public getUserData(userId: number){
+
+  let httpOptions = {
+    headers: new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': "Bearer " + JSON.parse(localStorage.getItem("jwtResponse")).token,
+    })
+  };
+    return this.http.get<User>("http://localhost:8080/user/" + userId, httpOptions);
+  }
+
+  getCurrentLoggedUserId() : number{
+    return JSON.parse(localStorage.getItem("jwtResponse")).id;
+  }
 }

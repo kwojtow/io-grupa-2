@@ -15,9 +15,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/game-room")
 @CrossOrigin
@@ -40,6 +42,7 @@ public class GameRoomController {
     // TODO gameId generowane jako inne niz roomId
     // TODO obsługa błędów
 
+    @CrossOrigin
     @PostMapping("")
     public ResponseEntity<GameRoomResponse> createRoom(@RequestBody GameRoomRequest gameRoomRequest) {
         GameRoom gameRoom = new GameRoom(mapService.getMapById(gameRoomRequest.getMapId()).get(), gameRoomRequest.getPlayersLimit(),
@@ -56,6 +59,7 @@ public class GameRoomController {
         return ResponseEntity.ok(gameRoomResponse);
     }
 
+    @CrossOrigin
     @GetMapping("/{id}") // room id
     public ResponseEntity<GameRoomResponse> getRoomDetails(@PathVariable Long id) throws GameRoomNotFoundException {
         GameRoom gameRoom = gameRoomService.getGameRoom(id);
@@ -70,6 +74,7 @@ public class GameRoomController {
         return ResponseEntity.ok(gameRoomResponse);
     }
 
+    @CrossOrigin
     @GetMapping("/{id}/game") // zwraca id gry - aktualnie to jest nadal roomId
     public ResponseEntity<Long> createGame(@PathVariable Long id) throws GameRoomNotFoundException {
         GameRoom gameRoom = gameRoomService.getGameRoom(id);
@@ -85,6 +90,7 @@ public class GameRoomController {
 
     }
 
+    @CrossOrigin
     @DeleteMapping("/{id}") // room id
     public ResponseEntity<String> deleteRoom(@PathVariable Long id) throws GameRoomNotFoundException {
         gameRoomService.deleteGameRoom(id);
@@ -92,25 +98,30 @@ public class GameRoomController {
         return ResponseEntity.ok("Room deleted");
     }
 
+    @CrossOrigin
     @GetMapping("/{id}/users-list") // room id
-    public ResponseEntity<List<Long>> getUserListInRoom(@PathVariable Long id) throws GameRoomNotFoundException {
+    public ResponseEntity<List<User>> getUserListInRoom(@PathVariable Long id) throws GameRoomNotFoundException {
         GameRoom gameRoom = gameRoomService.getGameRoom(id);
-        return ResponseEntity.ok(gameRoom.getUserList().stream().map(User::getUserId).collect(Collectors.toList()));
+        return ResponseEntity.ok(new ArrayList<>(gameRoom.getUserList()));
     }
 
+    @CrossOrigin
     @DeleteMapping("/{id}/users-list/{user}") // room id
     public void leaveGameRoom(@PathVariable Long id, @PathVariable Long user) throws GameRoomNotFoundException {
         GameRoom gameRoom = gameRoomService.getGameRoom(id);
-        gameRoom.removePlayer(userService.getUserById(user));
+        gameRoom.removePlayer(userService.getUserById(user).get());
     }
 
+    @CrossOrigin
     @PostMapping("/{id}/users-list/{user}") // room id
-    public ResponseEntity<String> joinGameRoom(@PathVariable Long id, @PathVariable Long user) throws GameRoomNotFoundException {
+    public ResponseEntity<User> joinGameRoom(@PathVariable Long id, @PathVariable Long user) throws GameRoomNotFoundException {
         GameRoom gameRoom = gameRoomService.getGameRoom(id);
-        gameRoom.addPlayer(userService.getUserById(user));
-        return ResponseEntity.ok("User added");
+        User user1 = userService.getUserById(user).get();
+        gameRoom.addPlayer(user1);
+        return ResponseEntity.ok(user1);
     }
 
+    @CrossOrigin
     @GetMapping("/{id}/game-started") // room-id
     public ResponseEntity<Boolean> checkIfGameStarted(@PathVariable Long id) throws GameRoomNotFoundException {
         return ResponseEntity.ok(gameRoomService.getGameRoom(id).getGameStarted());

@@ -1,35 +1,114 @@
-import { HttpClient, HttpHandler, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { JwtResponse } from 'src/app/shared/models/JwtResponse';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { GameRoomDto } from '../../shared/models/GameRoomDto';
+import { MapDto } from '../../shared/models/MapDto';
+import { RaceMap } from '../../shared/models/RaceMap';
+import { User } from '../../shared/models/User';
+import { Vector } from '../../shared/models/Vector';
+import { MapService } from './map.service';
+import { UserService } from './user.service';
+import { catchError, retry, tap } from 'rxjs/operators';
+import { GameRoomResponse } from '../../payload/GameRoomResponse';
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: 'root'
 })
 export class GameRoomService {
-  readonly API_URL = 'http://localhost:8080';
+  httpOptions = {
+    headers: new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': "Bearer " + JSON.parse(localStorage.getItem("jwtResponse")).token,
+    })
+  };
 
-  constructor(private http: HttpClient) {}
+  idCounter = 0;
+  changes: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
-  public joinGameRoom(gameID: number, userID: number) {
-    const jwt = localStorage.getItem('jwtResponse');
+  gameRoomDto: GameRoomDto;
 
-    if (jwt != null) {
-      const jwtJson = JSON.parse(jwt);
-      const token = jwtJson.type + ' ' + jwtJson.token;
+  gameStarted : boolean = false;
 
-      const requestOptions: Object = {
-        headers: new HttpHeaders()
-          .set('Content-Type', 'application/json')
-          .set('Authorization', token),
-      };
-      console.log(token);
+  constructor(private mapService: MapService, private userServiece: UserService, private http: HttpClient) { }
 
-      return this.http.post<String>(
-        this.API_URL + '/game-room/' + gameID + '/users-list/' + userID,
-        userID, requestOptions
-      );
-    }
+  getGameRoom(id: number) : Observable<GameRoomResponse> {
+    return this.http.get<GameRoomResponse>("http://localhost:8080/game-room/" + id, this.httpOptions);
+  }
 
+  getPlayers(roomId: number) : Observable<User[]> {
+    return this.http.get<User[]>("http://localhost:8080/game-room/" + roomId + "/users-list", this.httpOptions);
+  }
+
+  getGameStarted(roomId: number) {
+    return this.http.get<boolean>("http://localhost:8080/game-room/" + roomId + "/game-started", this.httpOptions);
+  }
+
+  createGameRoom(mapId: number, playersLimit: number, roundTime: number, gameMasterId: number) : Observable<GameRoomResponse>{
     
+
+    console.log("Bearer " + JSON.parse(localStorage.getItem("jwtResponse")).token)
+    return this.http.post<GameRoomResponse>(
+      "http://localhost:8080/game-room/",
+      {
+        mapId: mapId,
+        playersLimit: playersLimit,
+        roundTime: roundTime,
+        gameMasterId: gameMasterId
+      },
+      this.httpOptions)
+      .pipe(
+        catchError(this.handleError)
+      );
+  }
+
+  // handleError<T>(arg0: string): (err: any, caught: Observable<any>) => import("rxjs").ObservableInput<any> {
+  //   console.log(arg0)
+  //   throw new Error('Method not implemented.');
+  // }
+
+
+  deleteUser(gameRoomId : number, userId: number): Observable<unknown> {
+    const url ='http://localhost:8080/game-room/' + gameRoomId + '/users-list/' + userId;
+    return this.http.delete(url, this.httpOptions)
+      .pipe(
+        catchError(this.handleError))
+  }
+
+  addUser(gameRoomId : number, userId : number) : Observable<User>{
+    return this.http.post<User>(
+      "http://localhost:8080/game-room/" + gameRoomId + "/users-list/" + userId,
+      {},
+      this.httpOptions)
+      .pipe(
+        catchError(this.handleError)
+      )
+  }
+
+  startGame(gameRoomId : number) : Observable<number>{
+    return this.http.get<number>(
+      "http://localhost:8080/game-room/" + gameRoomId + "/game",
+      this.httpOptions).pipe(
+        catchError(this.handleError)
+    )
+  }
+
+  deleteGameRoom(gameRoomId : number){
+    return this.http.delete("http://localhost:8080/game-room/" + gameRoomId, this.httpOptions).pipe(
+      catchError(this.handleError)
+    )
+  }
+
+  private handleError(error: HttpErrorResponse) {
+    if (error.status === 0) {
+      // A client-side or network error occurred. Handle it accordingly.
+      console.error('An error occurred:', error.error);
+    } else {
+      // The backend returned an unsuccessful response code.
+      // The response body may contain clues as to what went wrong.
+      console.error(
+        `Backend returned code ${error.status}, body was: `, error.error);
+    }
+    // Return an observable with a user-facing error message.
+    return throwError(() => new Error('Something bad happened; please try again later.'));
   }
 }
