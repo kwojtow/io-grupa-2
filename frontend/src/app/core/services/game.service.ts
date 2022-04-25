@@ -80,7 +80,15 @@ export class GameService {
   }
   updatePlayersStates(playersStates: Array<PlayerState>){
     playersStates.forEach(playerState => {
-      this._game.players.find(player => player.playerId === playerState.playerId)?.updateState(playerState);
+      let player = this._game.players.find(player => player.playerId === playerState.playerId);
+      if(player){
+        for(let finish of this._game.map.finishLine){
+          if(finish.equals(playerState.currentPosition) && !finish.equals(player.position) 
+           && player.playerId !== this.authorizedPlayer.playerId) 
+            setTimeout(function() { alert('Gracz ' + player.name + ' wygrał'); }, 1);
+        }
+        player.updateState(playerState);
+      }
     })
     return this._game.players;
   }
