@@ -84,7 +84,7 @@ export class GameService {
       if(player){
         for(let finish of this._game.map.finishLine){
           if(finish.equals(playerState.currentPosition) && !finish.equals(player.position) 
-           && player.playerId !== this.authorizedPlayer.playerId) 
+           ) 
             setTimeout(function() { alert('Gracz ' + player.name + ' wygrał'); }, 1);
         }
         player.updateState(playerState);
