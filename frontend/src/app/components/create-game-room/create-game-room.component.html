@@ -47,7 +47,11 @@
         <div class="ml-6 m-5" style="max-width: 50%">
           <label for="map-select">Mapa</label>
           <div class="mb-5">
-            <select id="map-select" class="form-select form-select-sm" formControlName="map">
+            <select
+              id="map-select"
+              class="form-select form-select-sm"
+              formControlName="map"
+            >
               <option *ngFor="let map of this.mapDatas">{{ map.name }}</option>
             </select>
           </div>
@@ -55,11 +59,17 @@
         </div>
         <div class="ml-6 d-flex flex-column justify-content-around m-5">
           <h6 clas="h6">Liczba rozegranych gier:</h6>
-          <span class="mb-4">{{ this.mapDtoMap.get(selectedMapId)?.gamesPlayed}}</span>
+          <span class="mb-4">{{
+            this.mapDtoMap.get(selectedMapId)?.gamesPlayed
+          }}</span>
           <h6 clas="h6">Ocena:</h6>
-          <span class="mb-4">{{ this.mapDtoMap.get(selectedMapId)?.rate}}</span>
+          <span class="mb-4">{{
+            this.mapDtoMap.get(selectedMapId)?.rate
+          }}</span>
           <h6 clas="h6">Autor:</h6>
-          <span class="mb-4">{{ this.mapDtoMap.get(selectedMapId)?.author?.login}}</span>
+          <span class="mb-4">{{
+            this.mapDtoMap.get(selectedMapId)?.author?.login
+          }}</span>
         </div>
       </div>
       <div class="row">
