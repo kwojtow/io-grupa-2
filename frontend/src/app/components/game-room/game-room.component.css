@@ -1,0 +1,65 @@
+#top-bar{
+    background-color: rgba(78, 42, 106, 100);;
+    height: 100px;
+}
+
+.btn{
+    height: 55px;
+    border-radius: 20px;
+    font-size: larger;
+}
+
+.h1{
+    color: white;
+}
+
+.avatar{
+    width: 100px;
+    height: 100px;
+}
+
+.kick{
+    position: absolute;
+    top: 20px;
+    left: 100px;
+    display: block;
+    width: 120px;
+    cursor: pointer;
+}
+
+.btn-success{
+    background-color: rgba(12, 151, 2, 100);
+}
+
+.btn-danger{
+    background-color: rgba(255, 0, 0, 100);
+}
+
+.bg-danger{
+    background-color: rgba(255, 0, 0, 100) !important; 
+}
+
+.modal-box{
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
+.modal-content{
+    width: 600px;
+    height: 400px;
+    margin: 200px auto 0;
+    background-color: rgba(78, 42, 106, 100);
+    color: white;
+    font-size: 64px;
+    text-align: center;
+    z-index: 100;
+}
+
+.modal-content span{
+    font-size: 100px;
+    font-weight: bold;
+}
