@@ -3,6 +3,9 @@ import {RaceMap} from "../../shared/models/RaceMap";
 import {Vector} from "../../shared/models/Vector";
 import {Player} from "../../shared/models/Player";
 import {Game} from "../../shared/models/Game";
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { MapResponse } from 'src/app/payload/MapResponse';
 
 @Injectable({
   providedIn: 'root'
@@ -19,8 +22,19 @@ export class MapService {
   private _canvas: HTMLCanvasElement;
   private _ctx: CanvasRenderingContext2D;
 
-  constructor() {
+  constructor(private http : HttpClient) {
   }
+
+  getMap(id: number) : Observable<MapResponse> {
+
+    let httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': "Bearer " + JSON.parse(localStorage.getItem("jwtResponse")).token,
+      })
+    };
+      return this.http.get<MapResponse>("http://localhost:8080/map/" + id, httpOptions);
+    }
 
   static getCursorPosition(canvas: HTMLCanvasElement, event: MouseEvent): Vector {
     const ctx = canvas.getContext('2d');

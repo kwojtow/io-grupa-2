@@ -30,15 +30,28 @@ public class GameRoomService {
         }
     }
 
-    public void deleteGameRoom(String roomCode) throws GameRoomNotFoundException {
-        Optional<GameRoom> gameRoom2Trash = gameRoomRepository.findByRoomCode(roomCode);
-        if (gameRoom2Trash.isPresent()) {
-            gameRoomRepository.delete(gameRoom2Trash.get());
+//    public void deleteGameRoom(String roomCode) throws GameRoomNotFoundException {
+//        Optional<GameRoom> gameRoom2Trash = gameRoomRepository.findByRoomCode(roomCode);
+//        if (gameRoom2Trash.isPresent()) {
+//            gameRoomRepository.delete(gameRoom2Trash.get());
+//        }
+//        else {
+//            throw new GameRoomNotFoundException(
+//                    "Can not delete game room with code " + roomCode + ", it does not exist!"
+//            );
+//        }
+//    }
+
+    public GameRoom getGameRoom(Long id) throws GameRoomNotFoundException {
+        Optional<GameRoom> gameRoom = gameRoomRepository.findByGameRoomID(id);
+        if (gameRoom.isPresent()) {
+            return gameRoom.get();
         }
         else {
             throw new GameRoomNotFoundException(
-                    "Can not delete game room with code " + roomCode + ", it does not exist!"
+                    "Cannot find the room"
             );
         }
+
     }
 }

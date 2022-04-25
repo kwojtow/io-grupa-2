@@ -1,5 +1,6 @@
 package agh.io.iobackend.controller;
 
+import agh.io.iobackend.controller.payload.PlayerInitialCoord;
 import agh.io.iobackend.controller.payload.PlayerMoveRequest;
 import agh.io.iobackend.controller.payload.PlayerStateResponse;
 import agh.io.iobackend.service.GameService;
@@ -11,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 
-
+@CrossOrigin
 @RestController
 @CrossOrigin
 @RequestMapping("/game/")
@@ -41,6 +42,12 @@ public class GameController {
     public ResponseEntity<ArrayList<PlayerStateResponse>> getGameState(@PathVariable Long id){
         ArrayList<PlayerStateResponse> playersList = gameService.getPlayerStatesList(id);
         return ResponseEntity.ok(playersList);
+    }
+
+    @PostMapping("/{id}") // game id - poczatkowe wspolrzedne
+    public ResponseEntity<String> startGame(@RequestBody ArrayList<PlayerInitialCoord> playerInitialCoordList, @PathVariable Long id) {
+        gameService.startGame(id, playerInitialCoordList);
+        return ResponseEntity.ok("Game created");
     }
 }
 
