@@ -57,6 +57,9 @@ export class MapService {
       this.drawObstaclesLines(this._canvas, this._ctx, map);
       if(players.length > 0){
         this.drawPlayers(this._canvas, this._ctx, map, players);
+        this.canvas.style.cursor = 'default';
+        this.canvas.removeAllListeners('mousemove');
+        this.canvas.removeAllListeners('click');
         let currentPlayer = players.find(p => p.playerId === player.playerId);
         if(isMyTurn && currentPlayer !== null)
           this.drawPlayerVectors(this._canvas, this._ctx, map, currentPlayer);
@@ -137,6 +140,12 @@ export class MapService {
 
   public drawPlayer(player: Player, ctx: CanvasRenderingContext2D, fieldWidth: number, lineWidth: number): void{
     const miniFieldWidth = (fieldWidth - lineWidth * 2)/5;
+    
+    if(player.playerStatus == "PLAYING") {
+      ctx.fillStyle = "#ffaa0088";
+      ctx.fillRect(fieldWidth*player.position.posX, fieldWidth*player.position.posY, fieldWidth, fieldWidth);
+    }
+
     let car = new Path2D();
     ctx.fillStyle = player.color;
     let leftUpperX: number =  fieldWidth * player.position.posX + lineWidth;
@@ -281,8 +290,64 @@ export class MapService {
             fieldWidth - 2 * lineWidth);
             ctx.fill(path);
           }
-          ctx.fillStyle = (isPointInPath && !isOnObstacle) ? "#cc8800" : "#454545";
-          ctx.strokeStyle = (isPointInPath && !isOnObstacle) ? "#cc8800" : "#454545";
+          if(isPointInPath && !isOnObstacle){
+            ctx.fillStyle = "#ff9900";
+            ctx.strokeStyle = "#ff9900";
+            canvas.style.cursor = 'pointer';
+          }
+          else{
+            ctx.fillStyle = "#454545";
+            ctx.strokeStyle = "#454545";
+          }
+
+          if((!isCurrentVector || isPointInPath) && !isOnObstacle) ctx.fill(arrows[i]);
+          ctx.stroke(arrows[i]);
+      }
+    }
+  }
+
+
+  private changePosition(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, map: RaceMap,
+                                    player: Player, availableVectorsPaths: Array<Path2D>,
+                                    arrows: Array<Path2D>): void {
+    const lineWidth = this.LINE_WIDTH;
+    const fieldWidth = MapService.getFieldWidth(canvas, map);
+    const availableVectors = player.getAvailableVectors();
+    let onObstacle = this.onObstacle;
+
+    canvas.onclick = function(event) {
+      let v = MapService.getCursorPosition(canvas, event);
+
+      for(let i = availableVectorsPaths.length-1; i >= 0; --i) {
+          
+          const path = availableVectorsPaths[i];
+          const vector = availableVectors[i];
+          const isCurrentVector = vector.equals(player.getCurrentVectorPosition());
+          const isPointInPath = ctx.isPointInPath(path, v.posX*fieldWidth + 2*lineWidth,
+                                                  v.posY*fieldWidth + 2*lineWidth);
+          const isOnObstacle = onObstacle(vector, map);
+
+          if(isPointInPath) ctx.fillStyle =  (isCurrentVector) ? "#001155ff" : "#005511ff";
+          else ctx.fillStyle =  (isCurrentVector) ? "#0066ff77" : "#00ff6677";
+
+          if(!isOnObstacle){
+            ctx.clearRect(fieldWidth * vector.posX + lineWidth,
+            fieldWidth * vector.posY + lineWidth,
+            fieldWidth - 2 * lineWidth,
+            fieldWidth - 2 * lineWidth);
+            ctx.fill(path);
+          }
+          if(isPointInPath && !isOnObstacle){
+            ctx.fillStyle = "#ff9900";
+            ctx.strokeStyle = "#ff9900";
+            canvas.style.cursor = 'grabbing';
+            player.setNewVector(new Vector(availableVectors[i].posX - player.position.posX,
+                                           availableVectors[i].posY - player.position.posY));
+          }
+          else{
+            ctx.fillStyle = "#454545";
+            ctx.strokeStyle = "#454545";
+          }
 
           if((!isCurrentVector || isPointInPath) && !isOnObstacle) ctx.fill(arrows[i]);
           ctx.stroke(arrows[i]);
@@ -329,7 +394,9 @@ export class MapService {
         }
 
       })
+      
       this.highlightAvaliableVectors(canvas, ctx, map, player, availableVectorsPaths, arrows);
+      this.changePosition(canvas, ctx, map, player, availableVectorsPaths, arrows);
   }
 
   get map(): RaceMap {
