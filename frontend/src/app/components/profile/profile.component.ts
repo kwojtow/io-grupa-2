@@ -4,7 +4,7 @@ import { Observable} from "rxjs";
 import {User} from "../../shared/models/User";
 import {MapService} from "../../core/services/map.service";
 import {UserService} from "../../core/services/user.service";
-import {MapResponse} from "../../shared/models/MapResponse";
+import {MapWithStats} from "../../shared/models/MapWithStats";
 import {MockDataProviderService} from "../../core/services/mock-data-provider.service";
 
 @Component({
@@ -14,7 +14,7 @@ import {MockDataProviderService} from "../../core/services/mock-data-provider.se
 })
 export class ProfileComponent implements OnInit {
 
-  mapList = new Array<MapResponse>();
+  mapList = new Array<MapWithStats>();
   user: User;
   mapListsCategories = new Array<string>( 'Moje mapy', 'Najlepsze mapy', 'Najczęstsze mapy');
   chosenCategory = this.mapListsCategories[0];
@@ -73,7 +73,7 @@ export class ProfileComponent implements OnInit {
 
   changeMapCategory(selectRef: HTMLSelectElement) {
     this.chosenCategory = this.mapListsCategories[selectRef.selectedIndex];
-    let mapListObs: Observable<Array<MapResponse>>;
+    let mapListObs: Observable<Array<MapWithStats>>;
     if(selectRef.selectedIndex === 0){
       mapListObs = this._userService.getUserMaps(this.user.userId);
     }else if(selectRef.selectedIndex === 1){

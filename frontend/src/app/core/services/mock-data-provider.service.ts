@@ -6,7 +6,7 @@ import {GameSettings} from "../../shared/models/GameSettings";
 import {Game} from "../../shared/models/Game";
 import {BehaviorSubject, Observable} from "rxjs";
 import {PlayerState} from "../../shared/models/PlayerState";
-import {MapResponse} from "../../shared/models/MapResponse";
+import {MapWithStats} from "../../shared/models/MapWithStats";
 import {User} from "../../shared/models/User";
 import {UserStatistics} from "../../shared/models/UserStatistics";
 import {UserRanks} from "../../shared/models/UserRanks";
@@ -89,9 +89,9 @@ export class MockDataProviderService {
   }
 
   getExampleMapResponseList(size: number){
-    let mapList = new Array<MapResponse>();
+    let mapList = new Array<MapWithStats>();
     for(let i = 0; i < size; i ++){
-      const map = new MapResponse(MockDataProviderService.getExampleMap(), MockDataProviderService.mapId);
+      const map = new MapWithStats(MockDataProviderService.getExampleMap(), MockDataProviderService.mapId);
       mapList.push(map);
     }
     return mapList;
