@@ -15,9 +15,6 @@ import { StartPageComponent } from './components/start-page/start-page.component
 import { GameComponent } from './components/game/game.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import {CreateMapComponent} from "./components/create-map/create-map.component";
-import {GameRoomComponent} from "./components/game-room/game-room.component";
-import {CreateGameRoomComponent} from "./components/create-game-room/create-game-room.component";
-import {JoinGameRoomComponent} from "./components/join-game-room/join-game-room.component";
 import { JoinGameRoomComponent } from './components/start-page/join-game-room/join-game-room.component';
 
 @NgModule({
