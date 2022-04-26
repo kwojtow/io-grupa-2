@@ -22,6 +22,7 @@ export class Player{
     console.log('ID: ' + newState.playerId + ';' + this._playerId)
     if(newState.playerId === this._playerId){
       this._playerStatus = newState.playerStatus;
+      this.position = newState.currentPosition;
       }
     }
 

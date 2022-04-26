@@ -43,7 +43,8 @@ export class GameComponent implements OnInit {
   //   })
   // }
   updateGameState(){
-    this._gameService.postPlayerNewPosition(this._gameService.game.players[0]);
+    if(this.authorizedPlayer != null)
+      this._gameService.postPlayerNewPosition(this.authorizedPlayer);
     timer(0, this._gameService.REFRESH_TIME) // GET game state in every 0.5s
       .pipe(mergeMap(() => this._gameService.getGameState())) // to test: getMockGameState()
       .subscribe(playersStates => {
