@@ -12,6 +12,11 @@ import { User } from '../../shared/models/User';
 import { GameRoomResponse } from 'src/app/payload/GameRoomResponse';
 import { MapResponse } from 'src/app/payload/MapResponse';
 import { UserService as UserService2} from 'src/app/core/services/user.service';
+import {GameService} from "../../core/services/game.service";
+import {Player} from "../../shared/models/Player";
+import {Game} from "../../shared/models/Game";
+import {MockDataProviderService} from "../../core/services/mock-data-provider.service";
+import {GameSettings} from "../../shared/models/GameSettings";
 
 @Component({
   selector: 'app-game-room',
@@ -29,14 +34,16 @@ export class GameRoomComponent implements OnInit {
   timer: number = 3;
 
   constructor(
-    private mapService : MapService, 
-    private gameRoomService: GameRoomService, 
-    private userService : UserService, 
-    private router : Router, 
+    private mapService : MapService,
+    private gameRoomService: GameRoomService,
+    private userService : UserService,
+    private router : Router,
     private route : ActivatedRoute,
     private userService2 : UserService2,
-    
-    ) { 
+    private gameService: GameService,
+    private mockData: MockDataProviderService
+
+    ) {
 
   }
 
@@ -44,7 +51,7 @@ export class GameRoomComponent implements OnInit {
     this.gameRoomId = +this.route.snapshot.params['id'];
 
     this.getGameRoomData();
-    
+
     this.refresh();
 
   }
@@ -117,11 +124,14 @@ export class GameRoomComponent implements OnInit {
           let mapAuthor : User;
           this.userService2.getUserData(data2.userId).subscribe(data3 => mapDto.author = data3)
           mapDto = {
-            raceMap : new RaceMap(
+            raceMap : new RaceMap(// TODO: !!!!!!!!!!!!!!
+              1,
+              'map',
+              1,
               data2.width,
               data2.height,
               data2.mapStructure.finishLine,
-              data2.mapStructure.startLine, 
+              data2.mapStructure.startLine,
               data2.mapStructure.obstacles
             ),
             name: data2.name,
@@ -153,7 +163,7 @@ export class GameRoomComponent implements OnInit {
       this.gameRoomData.usersList = data;
       for(let user of this.gameRoomData.usersList){
         if(this.usersExtensions.map(userExtension => userExtension.user.userId).includes(user.userId)){
-          
+
         }
         else{
           this.usersExtensions.push({user: user, extended: false} as UserExtension)
@@ -182,16 +192,35 @@ export class GameRoomComponent implements OnInit {
       }
     });
   }
+
   showModal() {
     setTimeout(() => {
       this.timer -= 1;
       setTimeout(() => {
         this.timer -= 1;
         setTimeout(() => {
-          this.router.navigate(["/game/" + this.gameRoomId])
+
+          this.userService.getUser().subscribe(user => {
+            let player;
+            let players = new Array<Player>()
+            this.usersExtensions.map(userExtension => userExtension.user)
+              .forEach(user => {
+                players.push(new Player(user.userId, user.login, new Vector(user.userId,0), 'green'))
+              })
+            player = players.find(player => player.playerId === user.userId)
+            this.gameService.setGameInfo(player, new Game(this.gameRoomId, MockDataProviderService.getExampleMap(), players, new GameSettings(this.timer)))
+            this.gameRoomService.startGame1(players, this.gameRoomId).subscribe(response =>{
+              this.router.navigate(["/game/" + this.gameRoomId]).then(() =>{
+
+              })
+            })
+          })
+
         }, 1000)
       }, 1000)
     }, 1000)
+
   }
+
 }
 
