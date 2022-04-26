@@ -3,7 +3,7 @@ import {GameService} from "../../core/services/game.service";
 import {Player} from "../../shared/models/Player";
 import {interval, mergeMap, Observable, timer} from "rxjs";
 import {PlayerState} from "../../shared/models/PlayerState";
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
   selector: 'app-game',
@@ -19,16 +19,29 @@ export class GameComponent implements OnInit {
   gameId: number;
 
   constructor(private _gameService: GameService,
-              private router: Router) {
-
-    this.gameId = _gameService.game.gameId;
+              private router: Router,
+              private _route: ActivatedRoute) {
+    //TODO: get game from backend
+    this.gameId = +this._route.snapshot.params['id'];
     this.playersList = _gameService.game.players;
     this.authorizedPlayer = _gameService.player;
 
     this.timer = this._gameService.game.settings.roundTime;   // TODO: timer animation
-
+    // this.getPlayer();
+    // this.getInitialGameState();
     this.updateGameState();
   }
+
+  // getInitialGameState(){
+  //   this._gameService.getGame(this.gameId).subscribe(game =>{
+  //     this._gameService.game = game;
+  //   })
+  // }
+  // getPlayer(){
+  //   this._gameService.getPlayer().subscribe(player => {
+  //     this._gameService.player = player;
+  //   })
+  // }
   updateGameState(){
     this._gameService.postPlayerNewPosition(this._gameService.game.players[0]);
     timer(0, this._gameService.REFRESH_TIME) // GET game state in every 0.5s

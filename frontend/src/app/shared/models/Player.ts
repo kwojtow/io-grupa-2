@@ -1,5 +1,3 @@
-import { MapService } from "src/app/core/services/map.service";
-import { RaceMap } from "./RaceMap";
 import { Vector } from "./Vector";
 import {PlayerState} from "./PlayerState";
 import { Observable, Subject } from "rxjs";
