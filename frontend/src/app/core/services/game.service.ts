@@ -66,7 +66,7 @@ export class GameService {
       );
   }
   postPlayerNewPosition(player: Player) {
-
+    console.log("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO")
     player.getChangedPosition().subscribe(() => {
       const playerPositionInfo = {
         playerId: player.playerId,
