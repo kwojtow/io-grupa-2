@@ -38,6 +38,16 @@ export class MapService {
       return this.http.get<MapResponse>("http://localhost:8080/map/" + id, httpOptions);
     }
 
+    getMaps()  {
+      let httpOptions = {
+        headers: new HttpHeaders({
+          'Content-Type': 'application/json',
+          'Authorization': "Bearer " + JSON.parse(localStorage.getItem("jwtResponse")).token,
+        })
+      };
+        return this.http.get<any>("http://localhost:8080/map/list", httpOptions);
+    }
+
   static getCursorPosition(canvas: HTMLCanvasElement, event: MouseEvent): Vector {
     const ctx = canvas.getContext('2d');
     const rect = canvas.getBoundingClientRect()

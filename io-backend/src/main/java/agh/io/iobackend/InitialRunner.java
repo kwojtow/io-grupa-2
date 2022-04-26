@@ -1,9 +1,13 @@
 package agh.io.iobackend;
 
+import agh.io.iobackend.model.Game;
+import agh.io.iobackend.model.GameRoom;
 import agh.io.iobackend.model.User;
 import agh.io.iobackend.model.Vector;
 import agh.io.iobackend.model.map.GameMap;
 import agh.io.iobackend.model.map.MapStructure;
+import agh.io.iobackend.service.GameRoomService;
+import agh.io.iobackend.service.GameService;
 import agh.io.iobackend.service.MapService;
 import agh.io.iobackend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +28,12 @@ public class InitialRunner implements CommandLineRunner {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    GameRoomService gameRoomService;
+
+    @Autowired
+    GameService gameService;
 
 
     @Override
@@ -70,10 +80,20 @@ public class InitialRunner implements CommandLineRunner {
 
         mapService.saveMap(gameMap);
 
+        GameRoom gameRoom = new GameRoom(gameMap, 5, 5, user2.getUserId());
+
+        gameRoomService.createGameRoom(gameRoom);
+
+        Game game = new Game(gameRoom.getGameRoomID(), gameMap.getMapId(), user2.getUserId());
+
+        gameService.createGame(gameRoom);
+
         System.out.println("User id: " + user.getUserId());
         System.out.println(user);
         System.out.println("User id: " + user2.getUserId());
         System.out.println(user2);
         System.out.println("Map id: " + gameMap.getMapId());
+        System.out.println("Game room id: " + gameRoom.getGameRoomID());
+        
     }
 }

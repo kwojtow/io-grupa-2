@@ -7,6 +7,8 @@ import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { RegisterSuccessComponent } from './components/register/register-success/register-success.component';
 import { MapComponent } from './shared/components/map/map.component';
+import { GameRoomComponent } from './components/game-room/game-room.component';
+import { CreateGameRoomComponent } from './components/create-game-room/create-game-room.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { StartPageComponent } from './components/start-page/start-page.component';
@@ -16,6 +18,7 @@ import {CreateMapComponent} from "./components/create-map/create-map.component";
 import {GameRoomComponent} from "./components/game-room/game-room.component";
 import {CreateGameRoomComponent} from "./components/create-game-room/create-game-room.component";
 import {JoinGameRoomComponent} from "./components/join-game-room/join-game-room.component";
+import { JoinGameRoomComponent } from './components/start-page/join-game-room/join-game-room.component';
 
 @NgModule({
   declarations: [
@@ -25,25 +28,25 @@ import {JoinGameRoomComponent} from "./components/join-game-room/join-game-room.
     RegisterSuccessComponent,
     MapComponent,
     StartPageComponent,
-    MapComponent,
-    GameComponent,
     ProfileComponent,
     CreateMapComponent,
+    GameComponent,
     GameRoomComponent,
     CreateGameRoomComponent,
-    JoinGameRoomComponent
+    JoinGameRoomComponent,
+    GameComponent
+
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
-    AppRoutingModule,
+    FormsModule,
+    HttpClientModule,
     ReactiveFormsModule,
     FormsModule,
     HttpClientModule
   ],
-  providers: [
-
-  ],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
