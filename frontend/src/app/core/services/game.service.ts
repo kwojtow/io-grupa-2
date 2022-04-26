@@ -9,6 +9,7 @@ import {UserService} from "./user.service";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import { Vector } from 'src/app/shared/models/Vector';
 import { JwtResponse } from 'src/app/shared/models/JwtResponse';
+import {ActivatedRoute} from "@angular/router";
 
 @Injectable({
   providedIn: 'root'
@@ -24,7 +25,8 @@ export class GameService {
   constructor(private mockDataProvider: MockDataProviderService,
               private _mapService: MapService,
               private _httpClient: HttpClient,
-              private _userService: UserService) {
+              private _userService: UserService,
+              private _route: ActivatedRoute) {
     // Mock data to test game view (to delete)
     // this.setGameInfo(mockDataProvider.getPlayer(),
     //   mockDataProvider.getGame());
@@ -40,6 +42,17 @@ export class GameService {
   getMockGameState(): Observable<Array<PlayerState>>{
     return this.mockDataProvider.getGameState();
   }
+  //TODO
+  getGame(gameId: number): Observable<Game>{
+    return this._httpClient.get<any>(this.API_URL + '/game/' + gameId,
+      this._userService.getAuthorizationHeaders())
+  }
+  //TODO
+  getPlayer(userId: number): Observable<Player>{
+    return this._httpClient.get<any>(this.API_URL + '/player/' + userId,
+      this._userService.getAuthorizationHeaders())
+  }
+
   getGameState(): Observable<Array<PlayerState>>{
     return this._httpClient.get<Array<any>>(this.API_URL + '/game/' + this._game.gameId + '/state',
       this._userService.getAuthorizationHeaders())
@@ -97,6 +110,10 @@ export class GameService {
   }
   get game(): Game {
     return this._game;
+  }
+
+  set game(value: Game) {
+    this._game = value;
   }
 
   get player(): Player {
