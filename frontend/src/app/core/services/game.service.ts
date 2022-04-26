@@ -97,7 +97,6 @@ export class GameService {
   }
   updatePlayersStates(playersStates: Array<PlayerState>){
     playersStates.forEach(playerState => {
-<<<<<<< HEAD
       let player = this._game.players.find(player => player.playerId === playerState.playerId);
       if(player){
         for(let finish of this._game.map.finishLine){
@@ -107,10 +106,6 @@ export class GameService {
         }
         player.updateState(playerState);
       }
-=======
-      this._game.players.find(player => player.playerId === playerState.playerId)?.updateState(playerState);
-      console.log(playerState)
->>>>>>> development
     })
     return this._game.players;
   }
