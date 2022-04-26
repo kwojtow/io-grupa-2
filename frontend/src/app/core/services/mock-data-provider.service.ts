@@ -28,7 +28,7 @@ export class MockDataProviderService {
     const width = 13;
     const height = 9;
     MockDataProviderService.mapId ++;
-    return new RaceMap(MockDataProviderService.mapId, 'Map Name', 1, width, height, [new Vector(1, 1), new Vector(2, 2)],
+    return new RaceMap(MockDataProviderService.mapId, 'Map Name', 1, width, height, [new Vector(4, 6), new Vector(3, 7)],
       [new Vector(3 + MockDataProviderService.mapId, 3+ MockDataProviderService.mapId), new Vector(4+ MockDataProviderService.mapId, 4)],
       [new Vector(7+ MockDataProviderService.mapId, 5+ MockDataProviderService.mapId), new Vector(8, 6)]);
 
