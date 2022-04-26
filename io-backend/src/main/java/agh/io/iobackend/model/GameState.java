@@ -1,6 +1,8 @@
 package agh.io.iobackend.model;
+import agh.io.iobackend.controller.payload.PlayerInitialCoord;
 import agh.io.iobackend.controller.payload.PlayerMoveRequest;
 import agh.io.iobackend.controller.payload.PlayerStateResponse;
+import agh.io.iobackend.model.map.GameMap;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,23 +10,40 @@ import java.util.HashMap;
 public class GameState {
 
     private Long gameId;
+    private Long gameRoomId;
+    private GameMap gameMap;
+    private Long gameMasterId;
     private HashMap<Long, Player> players = new HashMap<>();
     private int currentPlayerIndex;
-    private ArrayList<Player> playersQueue;
+    private final ArrayList<Long> playersQueue;
+    private Boolean gameStarted;
 
-
-    public GameState(ArrayList<Player> playersQueue) {
-        this.playersQueue = playersQueue;
-        this.currentPlayerIndex = 0;
-        this.playersQueue.get(currentPlayerIndex).setPlayerStatus(PlayerStatus.PLAYING);
-        for (Player player : playersQueue) {
-            players.put(player.getPlayerId(), player);
-        }
-    }
-
-    public GameState() {
+    public GameState(Long gameId, Long gameRoomId, GameMap gameMap, Long gameMasterId) {
+        this.gameId = gameId;
+        this.gameRoomId = gameRoomId;
+        this.gameMap = gameMap;
+        this.gameMasterId = gameMasterId;
+        this.gameStarted = false;
         this.players = new HashMap<>();
         this.playersQueue = new ArrayList<>();
+    }
+
+    public GameState(){
+        this.gameStarted = false;
+        this.players = new HashMap<>();
+        this.playersQueue = new ArrayList<>();
+    }
+
+    public void startGame(ArrayList<PlayerInitialCoord> playerInitialCoordsList){
+        for (PlayerInitialCoord playerInitialCoord : playerInitialCoordsList){
+            this.playersQueue.add(playerInitialCoord.getUserId());
+            this.players.put(playerInitialCoord.getUserId(),
+                    new Player(playerInitialCoord.getXCoord(),
+                            playerInitialCoord.getYCoord(), playerInitialCoord.getUserId()));
+        }
+        this.gameStarted = true;
+        Long currentPlayerId= this.playersQueue.get(currentPlayerIndex);
+        this.players.get(currentPlayerId).setPlayerStatus(PlayerStatus.PLAYING);
     }
 
     public void changeGameState(PlayerMoveRequest playerMove) {
@@ -50,9 +69,9 @@ public class GameState {
         return playerStatesList;
     }
 
-    public void addPlayerToGame(Long PlayerId, Player player) {
-        this.players.put(PlayerId, player);
-        this.playersQueue.add(player);
+    public void addPlayerToGame(Long playerId, Player player) {
+        this.players.put(playerId, player);
+        this.playersQueue.add(playerId);
     }
 
     public Player getPlayer(Long playerId) {
@@ -60,16 +79,27 @@ public class GameState {
     }
 
     public Long getCurrentPlayerId(){
-        return this.playersQueue.get(currentPlayerIndex).getPlayerId();
+        return this.playersQueue.get(currentPlayerIndex);
+    }
+
+    public Boolean getGameStarted(){
+        return gameStarted;
+    }
+
+    public void setGameStarted(Boolean gameStarted){
+        this.gameStarted = gameStarted;
     }
 
     private void nextPlayerTurn() {
         currentPlayerIndex = (currentPlayerIndex + 1) % playersQueue.size();
 
-        while (playersQueue.get(currentPlayerIndex).getPlayerStatus() != PlayerStatus.WAITING) {
+        while (players.get(getCurrentPlayerId()).getPlayerStatus() != PlayerStatus.WAITING) {
             currentPlayerIndex = (currentPlayerIndex + 1) % playersQueue.size();
         }
-        playersQueue.get(currentPlayerIndex).setPlayerStatus(PlayerStatus.PLAYING);
+        players.entrySet().stream().forEach(e -> e.getValue().setPlayerStatus(PlayerStatus.WAITING));
+        System.out.println("on turn: "+ getCurrentPlayerId());
+        players.get(getCurrentPlayerId()).setPlayerStatus(PlayerStatus.PLAYING);
     }
+
 
 }

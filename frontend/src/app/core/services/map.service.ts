@@ -3,6 +3,10 @@ import {RaceMap} from "../../shared/models/RaceMap";
 import {Vector} from "../../shared/models/Vector";
 import {Player} from "../../shared/models/Player";
 import {Game} from "../../shared/models/Game";
+import {BehaviorSubject} from "rxjs";
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { MapResponse } from 'src/app/payload/MapResponse';
 
 @Injectable({
   providedIn: 'root'
@@ -15,12 +19,34 @@ export class MapService {
   OBSTACLE_COLOR = 'black';
 
   static game: Game;
-  private _map: RaceMap;
+  private _map: BehaviorSubject<RaceMap>;
   private _canvas: HTMLCanvasElement;
   private _ctx: CanvasRenderingContext2D;
 
-  constructor() {
+  constructor(private http : HttpClient) {
+    this._map = new BehaviorSubject<RaceMap>(undefined);
   }
+
+  getMap(id: number) : Observable<MapResponse> {
+
+    let httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': "Bearer " + JSON.parse(localStorage.getItem("jwtResponse")).token,
+      })
+    };
+      return this.http.get<MapResponse>("http://localhost:8080/map/" + id, httpOptions);
+    }
+
+    getMaps()  {
+      let httpOptions = {
+        headers: new HttpHeaders({
+          'Content-Type': 'application/json',
+          'Authorization': "Bearer " + JSON.parse(localStorage.getItem("jwtResponse")).token,
+        })
+      };
+        return this.http.get<any>("http://localhost:8080/map/list", httpOptions);
+    }
 
   static getCursorPosition(canvas: HTMLCanvasElement, event: MouseEvent): Vector {
     const ctx = canvas.getContext('2d');
@@ -61,6 +87,8 @@ export class MapService {
         this.canvas.removeAllListeners('mousemove');
         this.canvas.removeAllListeners('click');
         let currentPlayer = players.find(p => p.playerId === player.playerId);
+        console.log(players)
+        console.log(currentPlayer)
         if(isMyTurn && currentPlayer !== null)
           this.drawPlayerVectors(this._canvas, this._ctx, map, currentPlayer);
       }
@@ -140,7 +168,7 @@ export class MapService {
 
   public drawPlayer(player: Player, ctx: CanvasRenderingContext2D, fieldWidth: number, lineWidth: number): void{
     const miniFieldWidth = (fieldWidth - lineWidth * 2)/5;
-    
+
     if(player.playerStatus == "PLAYING") {
       ctx.fillStyle = "#ffaa0088";
       ctx.fillRect(fieldWidth*player.position.posX, fieldWidth*player.position.posY, fieldWidth, fieldWidth);
@@ -319,7 +347,7 @@ export class MapService {
       let v = MapService.getCursorPosition(canvas, event);
 
       for(let i = availableVectorsPaths.length-1; i >= 0; --i) {
-          
+
           const path = availableVectorsPaths[i];
           const vector = availableVectors[i];
           const isCurrentVector = vector.equals(player.getCurrentVectorPosition());
@@ -404,16 +432,12 @@ export class MapService {
         }
 
       })
-      
       this.highlightAvaliableVectors(canvas, ctx, map, player, availableVectorsPaths, arrows);
       this.changePosition(canvas, ctx, map, player, availableVectorsPaths, arrows);
   }
 
-  get map(): RaceMap {
+  get map(): BehaviorSubject<RaceMap> {
     return this._map;
-  }
-  set map(value: RaceMap) {
-    this._map = value;
   }
 
   get canvas(): HTMLCanvasElement {

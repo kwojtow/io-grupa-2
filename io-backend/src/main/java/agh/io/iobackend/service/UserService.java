@@ -60,5 +60,4 @@ public class UserService implements UserDetailsService {
         }
         return userId; // TODO check this implementation
     }
-
 }

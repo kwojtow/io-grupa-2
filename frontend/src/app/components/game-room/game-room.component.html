@@ -1,0 +1,56 @@
+<div class="container-fluid m-0 p-0"*ngIf="ready(); else loading">
+    <div id="top-bar" class="container-fluid d-flex justify-content-between align-items-center">
+        <h1 class="h1 mx-4" id="header">Pokój #{{ gameRoomData.id }}</h1>
+        <div>
+            <button class="btn btn-danger px-5 mx-3" *ngIf="isOwner()" (click)="close()">Zamknij</button>
+            <button class="btn btn-success px-5 mx-3" *ngIf="isOwner()" (click)="startGame()">Rozpocznij rozgrywkę</button>
+            <button class="btn btn-danger px-5 mx-3" *ngIf="!isOwner()" (click)="leave()">Opuść</button>
+        </div>
+    </div>
+    <div class="d-flex flex-column mx-5 justify-content-center align-items-center row">
+        <h2 class="h2 d-block mt-5">Liczba graczy (maksymalna liczba: {{ gameRoomData.playersLimit }})</h2>
+        <div class="col-lg-12 d-flex border justify-content-left">
+            <div class="border d-flex flex-column align-items-center m-3 p-3" *ngFor="let userExtension of usersExtensions">
+                <div class="w-100 d-flex flex-row justify-content-end" style="position: relative;" *ngIf="isOwner() && userExtension.user.userId != gameRoomData.owner.userId">
+                    <img src="../../../../assets/resources/images/ze-ellipsis.svg" (click)="makeExpand(userExtension)" />
+                    <span (click)="kick(userExtension.user)" class="kick badge rounded-pill bg-danger" *ngIf="userExtension.extended">Wyrzuć
+                        gracza</span>
+                </div>
+                <img class="avatar my-2" src="{{ userExtension.user.avatar ? 'userExtension.user.avatar' : '../../../../assets/resources/images/riFill-taxi-fill.svg'}}" alt="avatar" />
+                <span>{{ userExtension.user.login }}</span>
+            </div>
+        </div>
+        <h2 class="h2 d-block my-5">Czas rundy: {{ gameRoomData.roundTime }}s</h2>
+        <hr />
+        <h2 class="h2 d-block mt-5">Mapa: {{ gameRoomData.mapDto.name }}</h2>
+        <div class="col-lg-12 border d-flex flex-row align-items-center justify-content-center m-3">
+            <div class="ml-6 m-5" style="max-width: 50%;">
+                <app-map class="w-100"></app-map>
+            </div>
+            <div class="ml-6 d-flex flex-column justify-content-around m-5">
+                <h6 clas="h6">Liczba rozegranych gier:</h6>
+                <span class="mb-4">{{ gameRoomData.mapDto.gamesPlayed }}</span>
+                <h6 clas="h6">Ocena:</h6>
+                <span class="mb-4">{{ gameRoomData.mapDto.rate }}</span>
+                <h6 clas="h6">Autor:</h6>
+                <span class="mb-4">{{ gameRoomData.mapDto.author.login }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #loading>
+    <div class="spinner-border" role="status">
+        <span class="sr-only">Loading...</span>
+      </div>
+</ng-template>
+
+<div *ngIf="gameStarted" class="modal-box">
+    <div class="modal-content">
+        Gra rozpocznie się za: 
+        <br>
+        <span>
+            {{ timer }}
+        </span>
+    </div>
+</div>

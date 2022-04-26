@@ -1,5 +1,3 @@
-import { MapService } from "src/app/core/services/map.service";
-import { RaceMap } from "./RaceMap";
 import { Vector } from "./Vector";
 import {PlayerState} from "./PlayerState";
 import { Observable, Subject } from "rxjs";
@@ -8,7 +6,7 @@ export class Player{
   private _currentVector: Vector;
   private _playerStatus: string;
   private newVector = new Subject<Vector>();
-  
+
   constructor(private _playerId: number,
               private _name: string,
               private _position: Vector,
@@ -21,9 +19,10 @@ export class Player{
       this._playerStatus = 'WAITING';
     }
   updateState(newState: PlayerState){
+    console.log('ID: ' + newState.playerId + ';' + this._playerId)
     if(newState.playerId === this._playerId){
       this._playerStatus = newState.playerStatus;
-      this._position = newState.currentPosition;
+      this.position = newState.currentPosition;
       }
     }
 
@@ -88,7 +87,7 @@ export class Player{
   public setNewVector(vector: Vector) {
     this.currentVector = vector;
     this.position = new Vector(this.position.posX + vector.posX, this.position.posY + vector.posY);
-    
+
     this.newVector.next(this.currentVector);
   }
 

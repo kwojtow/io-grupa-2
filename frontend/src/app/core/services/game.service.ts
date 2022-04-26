@@ -5,9 +5,11 @@ import { map, Observable} from "rxjs";
 import {MockDataProviderService} from "./mock-data-provider.service";
 import {MapService} from "./map.service";
 import {PlayerState} from "../../shared/models/PlayerState";
+import {UserService} from "./user.service";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import { Vector } from 'src/app/shared/models/Vector';
 import { JwtResponse } from 'src/app/shared/models/JwtResponse';
+import {ActivatedRoute} from "@angular/router";
 
 @Injectable({
   providedIn: 'root'
@@ -22,22 +24,37 @@ export class GameService {
 
   constructor(private mockDataProvider: MockDataProviderService,
               private _mapService: MapService,
-              private _httpClient: HttpClient) {
-    this.setGameInfo(mockDataProvider.getPlayer(), //TODO: set authorized user
-      mockDataProvider.getGame()); // TODO: set game when game starting
+              private _httpClient: HttpClient,
+              private _userService: UserService,
+              private _route: ActivatedRoute) {
+    // Mock data to test game view (to delete)
+
   }
-  setGameInfo(authorizedPlayer: Player, game: Game){
-    this._player = authorizedPlayer;
+    // TODO: set game when game starting
+    setGameInfo(authorizedPlayer: Player, game: Game){
+    this._player = authorizedPlayer;  //TODO: set authorized user
     this._game =   game;
     MapService.game = game;
-    this._mapService.map = game.map;
+    this._mapService.map.next(game.map);
   }
 
   getMockGameState(): Observable<Array<PlayerState>>{
     return this.mockDataProvider.getGameState();
   }
+  //TODO
+  getGame(gameId: number): Observable<Game>{
+    return this._httpClient.get<any>(this.API_URL + '/game/' + gameId,
+      this._userService.getAuthorizationHeaders())
+  }
+  //TODO
+  getPlayer(userId: number): Observable<Player>{
+    return this._httpClient.get<any>(this.API_URL + '/player/' + userId,
+      this._userService.getAuthorizationHeaders())
+  }
+
   getGameState(): Observable<Array<PlayerState>>{
-    return this._httpClient.get<Array<any>>(this.API_URL + '/game/' + this._game.gameId + '/state')
+    return this._httpClient.get<Array<any>>(this.API_URL + '/game/' + this._game.gameId + '/state',
+      this._userService.getAuthorizationHeaders())
       .pipe(
         map(playersList => {
           return playersList.map(playerState =>
@@ -49,7 +66,7 @@ export class GameService {
       );
   }
   postPlayerNewPosition(player: Player) {
-    
+    console.log("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO")
     player.getChangedPosition().subscribe(() => {
       const playerPositionInfo = {
         playerId: player.playerId,
@@ -67,8 +84,8 @@ export class GameService {
           headers: new HttpHeaders().set('Content-Type', 'application/json')
                                     .set('Authorization', token)
         };
-        return this._httpClient.post<any>(this.API_URL + '/game/' + this._game.gameId + '/state', 
-                                          playerPositionInfo, 
+        return this._httpClient.post<any>(this.API_URL + '/game/' + this._game.gameId + '/state',
+                                          playerPositionInfo,
                                           requestOptions
                                           ).subscribe(res => console.log(res));
       }
@@ -80,6 +97,7 @@ export class GameService {
   }
   updatePlayersStates(playersStates: Array<PlayerState>){
     playersStates.forEach(playerState => {
+<<<<<<< HEAD
       let player = this._game.players.find(player => player.playerId === playerState.playerId);
       if(player){
         for(let finish of this._game.map.finishLine){
@@ -89,6 +107,10 @@ export class GameService {
         }
         player.updateState(playerState);
       }
+=======
+      this._game.players.find(player => player.playerId === playerState.playerId)?.updateState(playerState);
+      console.log(playerState)
+>>>>>>> development
     })
     return this._game.players;
   }
@@ -100,6 +122,10 @@ export class GameService {
   }
   get game(): Game {
     return this._game;
+  }
+
+  set game(value: Game) {
+    this._game = value;
   }
 
   get player(): Player {

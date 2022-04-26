@@ -1,0 +1,63 @@
+.container-fluid {
+    background-color: rgba(78, 42, 106, 100);
+    width: 85vh;
+    height: 70vh;
+    z-index: 2;
+}
+
+#header {
+    padding-top: 10%;
+    text-align: center;
+    color: rgba(255, 255, 255, 100);
+    font-size: 72px;
+}
+
+
+.button-join {
+    text-align: center;
+    color: rgba(255, 255, 255, 100);
+    background-color: rgba(14, 136, 6, 100);
+    border-radius: 20px;
+    padding-left: 25%;
+    padding-right: 25%;
+    padding-bottom: 1%;
+    border: none;
+    font-size: 2vw;
+
+}
+
+.button-cancel {
+    text-align: center;
+    color: rgba(255, 255, 255, 100);
+    background-color: rgba(255, 1, 1, 100);
+    border-radius: 20px;
+    padding-left: 25%;
+    padding-right: 25%;
+    padding-bottom: 1%;
+    border: none;
+    font-size: 2vw;
+
+}
+
+h1 {
+    font-size: 4vw;
+}
+
+#code {
+    font-size: 3vw;
+    color:rgba(136, 136, 136, 100)
+}
+
+.form-group {
+    margin-top: 5%;
+}
+
+.errorMessage {
+    color: red;
+    text-align: center;
+}
+
+#messageBox {
+    margin-top: 1vw;
+    height: 5vw;
+}
