@@ -5,6 +5,7 @@
 
 #header{
     color: white;
+    padding: 1%;
 }
 
 .btn {
@@ -80,7 +81,7 @@
 
 
 span{
-    font-size: 128px;
+    font-size: 118px;
 }
 
 #randomGame{

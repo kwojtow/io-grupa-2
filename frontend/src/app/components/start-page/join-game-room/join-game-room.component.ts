@@ -38,6 +38,7 @@ export class JoinGameRoomComponent implements OnInit {
 
   onSubmit() {
     if (this.joinForm.valid) {
+      this.showErrorMessage = false;
       this.gameRoomSerivce.addUser(
         parseInt(this.joinForm.value.code),
         this.userService.getCurrentLoggedUserId()
