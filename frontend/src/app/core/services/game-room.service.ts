@@ -10,6 +10,8 @@ import { MapService } from './map.service';
 import { UserService } from './user.service';
 import { catchError, retry, tap } from 'rxjs/operators';
 import { GameRoomResponse } from '../../payload/GameRoomResponse';
+import {Player} from "../../shared/models/Player";
+import {PlayerInitialCoord} from "../../shared/models/PlayerInitialCoord";
 
 @Injectable({
   providedIn: 'root'
@@ -44,7 +46,7 @@ export class GameRoomService {
   }
 
   createGameRoom(mapId: number, playersLimit: number, roundTime: number, gameMasterId: number) : Observable<GameRoomResponse>{
-    
+
 
     console.log("Bearer " + JSON.parse(localStorage.getItem("jwtResponse")).token)
     return this.http.post<GameRoomResponse>(
@@ -91,7 +93,13 @@ export class GameRoomService {
         catchError(this.handleError)
     )
   }
-
+  startGame1(playersList: Array<Player>, gameRoomId: number){
+    return this.http.post<number>(
+      "http://localhost:8080/game/" + gameRoomId, playersList.map(player => new PlayerInitialCoord(player.playerId, player.position.posX, player.position.posY)),
+      this.httpOptions).pipe(
+      catchError(this.handleError)
+    )
+  }
   deleteGameRoom(gameRoomId : number){
     return this.http.delete("http://localhost:8080/game-room/" + gameRoomId, this.httpOptions).pipe(
       catchError(this.handleError)

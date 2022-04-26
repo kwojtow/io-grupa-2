@@ -77,6 +77,8 @@ export class MapService {
         this.canvas.removeAllListeners('mousemove');
         this.canvas.removeAllListeners('click');
         let currentPlayer = players.find(p => p.playerId === player.playerId);
+        console.log(players)
+        console.log(currentPlayer)
         if(isMyTurn && currentPlayer !== null)
           this.drawPlayerVectors(this._canvas, this._ctx, map, currentPlayer);
       }

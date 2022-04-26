@@ -24,7 +24,7 @@ export class MockDataProviderService {
   static idx = 0;
   private static mapId = 1;
 
-  private static getExampleMap(){
+  static getExampleMap(){
     const width = 13;
     const height = 9;
     MockDataProviderService.mapId ++;

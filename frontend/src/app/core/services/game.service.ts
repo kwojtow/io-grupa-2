@@ -28,8 +28,7 @@ export class GameService {
               private _userService: UserService,
               private _route: ActivatedRoute) {
     // Mock data to test game view (to delete)
-    // this.setGameInfo(mockDataProvider.getPlayer(),
-    //   mockDataProvider.getGame());
+
   }
     // TODO: set game when game starting
     setGameInfo(authorizedPlayer: Player, game: Game){
@@ -99,6 +98,7 @@ export class GameService {
   updatePlayersStates(playersStates: Array<PlayerState>){
     playersStates.forEach(playerState => {
       this._game.players.find(player => player.playerId === playerState.playerId)?.updateState(playerState);
+      console.log(playerState)
     })
     return this._game.players;
   }
