@@ -1,11 +1,12 @@
 package agh.io.iobackend.controller;
 
 
-import agh.io.iobackend.controller.payload.GameRoomRequest;
-import agh.io.iobackend.controller.payload.GameRoomResponse;
+import agh.io.iobackend.controller.payload.room.GameRoomRequest;
+import agh.io.iobackend.controller.payload.room.GameRoomResponse;
 import agh.io.iobackend.exceptions.GameRoomNotFoundException;
-import agh.io.iobackend.model.GameRoom;
-import agh.io.iobackend.model.User;
+import agh.io.iobackend.model.game.Game;
+import agh.io.iobackend.model.game.GameRoom;
+import agh.io.iobackend.model.user.User;
 import agh.io.iobackend.service.GameRoomService;
 import agh.io.iobackend.service.GameService;
 import agh.io.iobackend.service.MapService;
@@ -15,11 +16,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@CrossOrigin
 @RestController
 @RequestMapping("/game-room")
 @Transactional // for tests, because of "org.hibernate.LazyInitializationException"
@@ -37,17 +36,16 @@ public class GameRoomController {
     @Autowired
     private MapService mapService;
 
-    // TODO sprawdz czy gra istnieje, czy uzytkownik istnieje
-    // TODO gameId generowane jako inne niz roomId
-    // TODO obsługa błędów
-
-    @CrossOrigin
     @PostMapping("")
     public ResponseEntity<GameRoomResponse> createRoom(@RequestBody GameRoomRequest gameRoomRequest) {
-        GameRoom gameRoom = new GameRoom(mapService.getMapById(gameRoomRequest.getMapId()).get(), gameRoomRequest.getPlayersLimit(),
-                gameRoomRequest.getRoundTime(), gameRoomRequest.getGameMasterId());
-        // czy potrzebna jest ta nowa zmienna?
+        GameRoom gameRoom = new GameRoom(
+                mapService.getMapById(gameRoomRequest.getMapId()).get(),
+                gameRoomRequest.getPlayersLimit(),
+                gameRoomRequest.getRoundTime(),
+                gameRoomRequest.getGameMasterId()
+        );
         GameRoom savedGameRoom = gameRoomService.createGameRoom(gameRoom);
+        savedGameRoom.addPlayer(userService.getUserById(gameRoomRequest.getGameMasterId()).get());
         GameRoomResponse gameRoomResponse = new GameRoomResponse();
         gameRoomResponse.setRoomId(savedGameRoom.getGameRoomID());
         gameRoomResponse.setGameMasterId(gameRoomRequest.getGameMasterId());
@@ -58,10 +56,14 @@ public class GameRoomController {
         return ResponseEntity.ok(gameRoomResponse);
     }
 
-    @CrossOrigin
     @GetMapping("/{id}") // room id
-    public ResponseEntity<GameRoomResponse> getRoomDetails(@PathVariable Long id) throws GameRoomNotFoundException {
-        GameRoom gameRoom = gameRoomService.getGameRoom(id);
+    public ResponseEntity<GameRoomResponse> getRoomDetails(@PathVariable Long id) {
+        GameRoom gameRoom;
+        try {
+            gameRoom = gameRoomService.getGameRoom(id);
+        } catch (GameRoomNotFoundException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
 
         GameRoomResponse gameRoomResponse = new GameRoomResponse();
         gameRoomResponse.setRoomId(id);
@@ -73,57 +75,81 @@ public class GameRoomController {
         return ResponseEntity.ok(gameRoomResponse);
     }
 
-    @CrossOrigin
-    @GetMapping("/{id}/game") // zwraca id gry - aktualnie to jest nadal roomId
-    public ResponseEntity<Long> createGame(@PathVariable Long id) throws GameRoomNotFoundException {
-        GameRoom gameRoom = gameRoomService.getGameRoom(id);
-        gameService.createGame(gameRoom);
+    @GetMapping("/{id}/game") // zaczecie gry przez Game Mastera - zwraca id gry
+    public ResponseEntity<Long> createGame(@PathVariable Long id) {
+        GameRoom gameRoom;
+        try {
+            gameRoom = gameRoomService.getGameRoom(id);
+        } catch (GameRoomNotFoundException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
         gameRoom.setGameStarted(true);
+        Game game = new Game(id, gameRoom.getGameMap());
+        Game savedGame = gameService.createGame(game);
 
-        // szkic pozniejszych zmian z nowa klasa Game podobna do GameRoom
-//        Game game = new Game(id, gameRoom.getMapID(), gameRoom.getGameMasterID());
-//        Game savedGame = gameService.createGame(game);
-//        return ResponseEntity.ok(savedGame.getGameId());
-
-        return ResponseEntity.ok(id);
-
+        return ResponseEntity.ok(savedGame.getGameId());
     }
 
-    @CrossOrigin
     @DeleteMapping("/{id}") // room id
-    public ResponseEntity<String> deleteRoom(@PathVariable Long id) throws GameRoomNotFoundException {
-        gameRoomService.deleteGameRoom(id);
-        gameService.deleteGame(id);
+    public ResponseEntity<String> deleteRoom(@PathVariable Long id) {
+        try {
+            gameRoomService.deleteGameRoom(id);
+        } catch (GameRoomNotFoundException e) {
+            return ResponseEntity.badRequest().body("Game room not found");
+        }
+        // cos jeszcze?
         return ResponseEntity.ok("Room deleted");
     }
 
-    @CrossOrigin
     @GetMapping("/{id}/users-list") // room id
-    public ResponseEntity<List<User>> getUserListInRoom(@PathVariable Long id) throws GameRoomNotFoundException {
-        GameRoom gameRoom = gameRoomService.getGameRoom(id);
-        return ResponseEntity.ok(new ArrayList<>(gameRoom.getUserList()));
+    public ResponseEntity<List<Long>> getUserListInRoom(@PathVariable Long id) {
+        GameRoom gameRoom = null;
+        try {
+            gameRoom = gameRoomService.getGameRoom(id);
+        } catch (GameRoomNotFoundException e) {
+            return ResponseEntity.badRequest().body(null);
+        }
+        return ResponseEntity.ok(gameRoom.getUserList().stream().map(User::getUserId).collect(Collectors.toList()));
     }
 
-    @CrossOrigin
     @DeleteMapping("/{id}/users-list/{user}") // room id
     public void leaveGameRoom(@PathVariable Long id, @PathVariable Long user) throws GameRoomNotFoundException {
         GameRoom gameRoom = gameRoomService.getGameRoom(id);
         gameRoom.removePlayer(userService.getUserById(user).get());
+        if (gameRoom.getUserList().size() == 0) {
+            gameRoomService.deleteGameRoom(id);
+        }
     }
 
-    @CrossOrigin
     @PostMapping("/{id}/users-list/{user}") // room id
-    public ResponseEntity<User> joinGameRoom(@PathVariable Long id, @PathVariable Long user) throws GameRoomNotFoundException {
-        GameRoom gameRoom = gameRoomService.getGameRoom(id);
-        User user1 = userService.getUserById(user).get();
-        gameRoom.addPlayer(user1);
-        return ResponseEntity.ok(user1);
+    public ResponseEntity<String> joinGameRoom(@PathVariable Long id, @PathVariable Long user) {
+        try {
+            GameRoom gameRoom = gameRoomService.getGameRoom(id);
+            if (gameRoom.getLimitOfPlayers() < gameRoom.getUserList().size()) {
+                gameRoom.addPlayer(userService.getUserById(user).get()); // TODO what if user does not exist
+                return ResponseEntity.ok("User added");
+            }
+        } catch (GameRoomNotFoundException e) {
+            return ResponseEntity.badRequest().body("No room");
+        }
+        return ResponseEntity.badRequest().body("Cannot add user - too many players");
     }
 
-    @CrossOrigin
     @GetMapping("/{id}/game-started") // room-id
-    public ResponseEntity<Boolean> checkIfGameStarted(@PathVariable Long id) throws GameRoomNotFoundException {
-        return ResponseEntity.ok(gameRoomService.getGameRoom(id).getGameStarted());
+    public ResponseEntity<Long> checkIfGameStarted(@PathVariable Long id) {
+        Long gameId = -1L;
+        try {
+            if (gameRoomService.getGameRoom(id).getGameStarted()) {
+                gameId = gameRoomService.getGameIdByRoomId(id);
+            }
+        } catch (GameRoomNotFoundException e) {
+            return ResponseEntity.badRequest().body(-1L);
+        }
+        // zwraca gameId - jak gameStarted to false to zwraca -1 moze tak byc??
+        // w przeciwnym przypadku zwraca gameId już wygenerowane poprzez rozpoczecie
+        // gry przez GameMastera (prez klikniecie start-game)
+        // i teraz zarowno gracze jak i gameMaster zwracaja się do GameController - startGame
+        // po wspolrzedne poczatkowe graczy
+        return ResponseEntity.ok(gameId);
     }
-
 }
