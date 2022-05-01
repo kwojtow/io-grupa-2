@@ -1,7 +1,7 @@
 package agh.io.iobackend.service;
 
 import agh.io.iobackend.exceptions.GameRoomNotFoundException;
-import agh.io.iobackend.model.GameRoom;
+import agh.io.iobackend.model.game.GameRoom;
 import agh.io.iobackend.repository.GameRoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

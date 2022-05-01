@@ -1,8 +1,11 @@
 package agh.io.iobackend.controller;
 
-import agh.io.iobackend.controller.payload.*;
+import agh.io.iobackend.controller.payload.auth.JwtResponse;
+import agh.io.iobackend.controller.payload.auth.SigninRequest;
+import agh.io.iobackend.controller.payload.auth.SignupRequest;
+import agh.io.iobackend.controller.payload.room.GameRoomRequest;
+import agh.io.iobackend.controller.payload.room.GameRoomResponse;
 import agh.io.iobackend.exceptions.GameRoomNotFoundException;
-import agh.io.iobackend.model.User;
 import agh.io.iobackend.model.Vector;
 import agh.io.iobackend.model.map.GameMap;
 import agh.io.iobackend.model.map.MapStructure;
@@ -139,8 +142,8 @@ public class GameRoomControllerTest {
     }
 
     @Test
-    void usersListTests() throws GameRoomNotFoundException {
-        ResponseEntity<List<User>> usersListInRoom = gameRoomController.getUserListInRoom(roomId);
+    void usersListTests() throws GameRoomNotFoundException { // TODO fixme
+        ResponseEntity<List<Long>> usersListInRoom = gameRoomController.getUserListInRoom(roomId);
         assertEquals(0, usersListInRoom.getBody().size());
 
         gameRoomController.joinGameRoom(roomId, gameMasterId);

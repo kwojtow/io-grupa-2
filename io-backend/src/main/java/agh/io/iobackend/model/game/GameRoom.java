@@ -1,11 +1,16 @@
-package agh.io.iobackend.model;
+package agh.io.iobackend.model.game;
 
 import agh.io.iobackend.model.map.GameMap;
+import agh.io.iobackend.model.user.User;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Data
+@NoArgsConstructor
 @Entity(name = "GameRoom")
 public class GameRoom {
 
@@ -41,15 +46,13 @@ public class GameRoom {
     private Integer limitOfPlayers;
 
     @Column(name = "gameStarted")
-    // Maximal number of players (apart from Game Master)
     private Boolean gameStarted;
 
-    @ManyToMany
+    @OneToMany
     private List<User> userList;
 
-//    @ElementCollection
-//    @Column(name = "gamesList")
-//    private List<Long> gamesList; // kiedy bedzie wiecej gier w 1 pokoju
+    @OneToOne
+    private Game game;
 
     public GameRoom(GameMap map, int playersLimit, int roundTime, Long gameMasterId) {
         this.gameMap = map;
@@ -59,48 +62,12 @@ public class GameRoom {
         this.userList = new ArrayList<>();
     }
 
-    public GameRoom() {
-
-    }
-
     public void removePlayer(User user) {
         userList.remove(user);
     }
 
     public void addPlayer(User user) {
-        if(!userList.contains(user))
-            userList.add(user);
+        userList.add(user);
     }
 
-    public Long getGameRoomID() {
-        return gameRoomID;
-    }
-
-    public Long getGameMasterID() {
-        return gameMasterID;
-    }
-
-    public Integer getLimitOfPlayers() {
-        return limitOfPlayers;
-    }
-
-    public Integer getRoundTime() {
-        return roundTime;
-    }
-
-    public Boolean getGameStarted() {
-        return this.gameStarted;
-    }
-
-    public void setGameStarted(Boolean gameStarted) {
-        this.gameStarted = gameStarted;
-    }
-
-    public GameMap getGameMap() {
-        return gameMap;
-    }
-
-    public List<User> getUserList() {
-        return userList;
-    }
 }

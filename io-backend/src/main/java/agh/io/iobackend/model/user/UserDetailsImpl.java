@@ -1,5 +1,6 @@
-package agh.io.iobackend.model;
+package agh.io.iobackend.model.user;
 
+import agh.io.iobackend.model.user.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

@@ -1,7 +1,7 @@
 package agh.io.iobackend.repository;
 
 
-import agh.io.iobackend.model.User;
+import agh.io.iobackend.model.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

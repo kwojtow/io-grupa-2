@@ -1,6 +1,6 @@
 package agh.io.iobackend.model.map;
 
-import agh.io.iobackend.model.User;
+import agh.io.iobackend.model.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

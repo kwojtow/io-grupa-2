@@ -1,6 +1,6 @@
 package agh.io.iobackend.controller;
 
-import agh.io.iobackend.controller.payload.UserStatsResponse;
+import agh.io.iobackend.controller.payload.stats.UserStatsResponse;
 import agh.io.iobackend.service.StatisticsService;
 import agh.io.iobackend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

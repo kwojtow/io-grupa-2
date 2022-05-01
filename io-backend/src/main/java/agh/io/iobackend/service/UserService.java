@@ -1,7 +1,7 @@
 package agh.io.iobackend.service;
 
-import agh.io.iobackend.model.User;
-import agh.io.iobackend.model.UserDetailsImpl;
+import agh.io.iobackend.model.user.User;
+import agh.io.iobackend.model.user.UserDetailsImpl;
 import agh.io.iobackend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
