@@ -192,6 +192,17 @@ export class GameRoomComponent implements OnInit {
       }
     });
   }
+  initGame(){
+    let players = new Array<Player>()
+    this.usersExtensions.map(userExtension => userExtension.user)
+      .forEach(user => {
+        players.push(new Player(user.userId, user.login, new Vector(0,0), 'green'))
+      })
+    this.gameRoomService.initGame(players, this.gameRoomId).subscribe(response => {// TODO: only one ?
+      this.router.navigate(["/game/" + this.gameRoomId]).then(() =>{
+      })
+    })
+  }
 
   showModal() {
     setTimeout(() => {
@@ -199,23 +210,7 @@ export class GameRoomComponent implements OnInit {
       setTimeout(() => {
         this.timer -= 1;
         setTimeout(() => {
-
-          this.userService.getUser().subscribe(user => {
-            let player;
-            let players = new Array<Player>()
-            this.usersExtensions.map(userExtension => userExtension.user)
-              .forEach(user => {
-                players.push(new Player(user.userId, user.login, new Vector(user.userId,0), 'green'))
-              })
-            player = players.find(player => player.playerId === user.userId)
-            this.gameService.setGameInfo(player, new Game(this.gameRoomId, MockDataProviderService.getExampleMap(), players, new GameSettings(this.timer)))
-            this.gameRoomService.startGame1(players, this.gameRoomId).subscribe(response =>{
-              this.router.navigate(["/game/" + this.gameRoomId]).then(() =>{
-
-              })
-            })
-          })
-
+          this.initGame();// TODO; loading ?
         }, 1000)
       }, 1000)
     }, 1000)
@@ -223,4 +218,5 @@ export class GameRoomComponent implements OnInit {
   }
 
 }
+
 

@@ -1,15 +1,16 @@
 import { Injectable } from '@angular/core';
 import {Game} from "../../shared/models/Game";
 import {Player} from "../../shared/models/Player";
-import { map, Observable} from "rxjs";
+import {BehaviorSubject, map, Observable, Subject} from "rxjs";
 import {MockDataProviderService} from "./mock-data-provider.service";
 import {MapService} from "./map.service";
 import {PlayerState} from "../../shared/models/PlayerState";
 import {UserService} from "./user.service";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import { Vector } from 'src/app/shared/models/Vector';
-import { JwtResponse } from 'src/app/shared/models/JwtResponse';
 import {ActivatedRoute} from "@angular/router";
+import {GameSettings} from "../../shared/models/GameSettings";
+import {GameRoomService} from "./game-room.service";
 
 @Injectable({
   providedIn: 'root'
@@ -22,38 +23,45 @@ export class GameService {
   authorizedPlayer: Player;                          // currently playing user
   private _game: Game;
 
+  gameLoaded = new BehaviorSubject<boolean>(false);
+
   constructor(private mockDataProvider: MockDataProviderService,
               private _mapService: MapService,
               private _httpClient: HttpClient,
               private _userService: UserService,
-              private _route: ActivatedRoute) {
-    // Mock data to test game view (to delete)
+              private _route: ActivatedRoute,
+              private _gameRoomService: GameRoomService) {
 
   }
-    // TODO: set game when game starting
-    setGameInfo(authorizedPlayer: Player, game: Game){
-    this._player = authorizedPlayer;  //TODO: set authorized user
+  setGameInfo(authorizedPlayer: Player, game: Game){
+    this._player = authorizedPlayer;
     this._game =   game;
     MapService.game = game;
     this._mapService.map.next(game.map);
+    this.gameLoaded.next(true);
   }
 
+  initGame(gameId: number){
+    this._userService.getUser().subscribe(user => {
+      this._gameRoomService.getPlayers(gameId).subscribe(users => {
+        let players = new Array<Player>();
+        let player;
+        users
+          .forEach(user => {
+            players.push(new Player(user.userId, user.login, new Vector(0,0), 'green'))
+          })
+        player = players.find(player => player.playerId === user.userId)
+        this.setGameInfo(player, new Game(gameId, MockDataProviderService.getExampleMap(),// TODO: get map
+          players, new GameSettings(5)))// TODO: game settings downolad
+      })
+
+    })
+  }
   getMockGameState(): Observable<Array<PlayerState>>{
     return this.mockDataProvider.getGameState();
   }
-  //TODO
-  getGame(gameId: number): Observable<Game>{
-    return this._httpClient.get<any>(this.API_URL + '/game/' + gameId,
-      this._userService.getAuthorizationHeaders())
-  }
-  //TODO
-  getPlayer(userId: number): Observable<Player>{
-    return this._httpClient.get<any>(this.API_URL + '/player/' + userId,
-      this._userService.getAuthorizationHeaders())
-  }
-
-  getGameState(): Observable<Array<PlayerState>>{
-    return this._httpClient.get<Array<any>>(this.API_URL + '/game/' + this._game.gameId + '/state',
+  getGameState(gameId: number): Observable<Array<PlayerState>>{
+    return this._httpClient.get<Array<any>>(this.API_URL + '/game/' + gameId + '/state',
       this._userService.getAuthorizationHeaders())
       .pipe(
         map(playersList => {
@@ -66,7 +74,6 @@ export class GameService {
       );
   }
   postPlayerNewPosition(player: Player) {
-    console.log("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO")
     player.getChangedPosition().subscribe(() => {
       const playerPositionInfo = {
         playerId: player.playerId,
@@ -98,7 +105,6 @@ export class GameService {
   updatePlayersStates(playersStates: Array<PlayerState>){
     playersStates.forEach(playerState => {
       this._game.players.find(player => player.playerId === playerState.playerId)?.updateState(playerState);
-      console.log(playerState)
     })
     return this._game.players;
   }
