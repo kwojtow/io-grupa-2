@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 
-
+@CrossOrigin
 @RestController
 @RequestMapping("/game/")
 public class GameController {
@@ -42,6 +42,7 @@ public class GameController {
         ArrayList<PlayerStateResponse> playersList = null;
         try {
             playersList = gameService.getPlayerStatesList(id);
+            System.out.println(playersList);
         } catch (NoGameFoundException e) {
             return ResponseEntity.badRequest().body(null);
         }
@@ -61,10 +62,12 @@ public class GameController {
     @DeleteMapping("/{id}/state")
     public ResponseEntity<String> endGame(@PathVariable Long id) {
         try {
-            gameService.endGame(id);
+            gameService.endGame(id); // changes also gameStarted in GameRoom
         } catch (NoGameFoundException e) {
             return ResponseEntity.badRequest().body("Game not found");
         }
         return ResponseEntity.ok("Game ended");
     }
+
+    //TODO leaving game ?
 }

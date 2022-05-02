@@ -48,7 +48,7 @@ public class GameRoom {
     @Column(name = "gameStarted")
     private Boolean gameStarted;
 
-    @OneToMany
+    @ManyToMany
     private List<User> userList;
 
     @OneToOne
@@ -67,7 +67,7 @@ public class GameRoom {
     }
 
     public void addPlayer(User user) {
-        userList.add(user);
+        if (!userList.contains(user))
+            userList.add(user);
     }
-
 }

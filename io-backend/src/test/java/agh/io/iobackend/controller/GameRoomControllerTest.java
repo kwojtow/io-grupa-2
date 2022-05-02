@@ -9,6 +9,7 @@ import agh.io.iobackend.exceptions.GameRoomNotFoundException;
 import agh.io.iobackend.model.Vector;
 import agh.io.iobackend.model.map.GameMap;
 import agh.io.iobackend.model.map.MapStructure;
+import agh.io.iobackend.model.user.User;
 import agh.io.iobackend.repository.GameRoomRepository;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -18,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -142,17 +144,25 @@ public class GameRoomControllerTest {
     }
 
     @Test
-    void usersListTests() throws GameRoomNotFoundException { // TODO fixme
-        ResponseEntity<List<Long>> usersListInRoom = gameRoomController.getUserListInRoom(roomId);
-        assertEquals(0, usersListInRoom.getBody().size());
+    void usersListTests() throws GameRoomNotFoundException {
+        ResponseEntity<List<User>> usersListInRoom = gameRoomController.getUserListInRoom(roomId);
+        assertEquals(0, Objects.requireNonNull(usersListInRoom.getBody()).size());
 
         gameRoomController.joinGameRoom(roomId, gameMasterId);
         usersListInRoom = gameRoomController.getUserListInRoom(roomId);
         assertEquals(1, usersListInRoom.getBody().size());
 
+        gameRoomController.joinGameRoom(roomId, 6000L);
+        usersListInRoom = gameRoomController.getUserListInRoom(roomId);
+        assertEquals(1, Objects.requireNonNull(usersListInRoom.getBody()).size());
+
         gameRoomController.joinGameRoom(roomId, user1Id);
         usersListInRoom = gameRoomController.getUserListInRoom(roomId);
-        assertEquals(2, usersListInRoom.getBody().size());
+        assertEquals(2, Objects.requireNonNull(usersListInRoom.getBody()).size());
+
+        gameRoomController.joinGameRoom(roomId, user1Id);
+        usersListInRoom = gameRoomController.getUserListInRoom(roomId);
+        assertEquals(2, Objects.requireNonNull(usersListInRoom.getBody()).size());
 
         gameRoomController.leaveGameRoom(roomId, user1Id);
         usersListInRoom = gameRoomController.getUserListInRoom(roomId);

@@ -41,7 +41,8 @@ public class Game {
     private GameMap gameMap;
 
     @ElementCollection
-    private final List<Long> playersQueue = new ArrayList<>();
+    @Transient
+    private final List<Long> playersQueue  = new ArrayList<>();
 
     @Transient
     private final Map<Long, Player> players = new HashMap<>();
@@ -67,7 +68,6 @@ public class Game {
 
     public ArrayList<PlayerStateResponse> getPlayerStatesList() {
         ArrayList<PlayerStateResponse> playerStatesList = new ArrayList<>();
-
         for (HashMap.Entry<Long, Player> entry : players.entrySet()) {
             PlayerStateResponse playerStateResponse = new PlayerStateResponse();
             playerStateResponse.setPlayerId(entry.getKey());
@@ -114,6 +114,10 @@ public class Game {
 
     public Long getGameRoomId() {
         return gameRoomId;
+    }
+
+    public List<Long> getPlayersQueue(){
+        return this.playersQueue;
     }
 
 }

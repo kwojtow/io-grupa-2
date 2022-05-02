@@ -2,7 +2,7 @@ package agh.io.iobackend;
 
 import agh.io.iobackend.controller.AuthController;
 import agh.io.iobackend.controller.MapController;
-import agh.io.iobackend.controller.payload.SignupRequest;
+import agh.io.iobackend.controller.payload.auth.SignupRequest;
 import agh.io.iobackend.model.Vector;
 import agh.io.iobackend.model.map.GameMap;
 import agh.io.iobackend.model.map.MapStructure;
