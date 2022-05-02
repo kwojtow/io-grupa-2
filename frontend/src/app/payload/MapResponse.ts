@@ -1,4 +1,5 @@
 import { Vector } from "../shared/models/Vector";
+import {RaceMap} from "../shared/models/RaceMap";
 
 export interface MapResponse {
 
@@ -13,5 +14,4 @@ export interface MapResponse {
         startLine : Vector[];
         obstacles : Vector[];
     }
-
 }

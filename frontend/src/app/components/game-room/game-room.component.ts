@@ -124,10 +124,10 @@ export class GameRoomComponent implements OnInit {
           let mapAuthor : User;
           this.userService2.getUserData(data2.userId).subscribe(data3 => mapDto.author = data3)
           mapDto = {
-            raceMap : new RaceMap(// TODO: !!!!!!!!!!!!!!
-              1,
-              'map',
-              1,
+            raceMap : new RaceMap(
+              data2.mapId,
+              data2.name,
+              data2.userId,
               data2.width,
               data2.height,
               data2.mapStructure.finishLine,
@@ -198,7 +198,7 @@ export class GameRoomComponent implements OnInit {
       .forEach(user => {
         players.push(new Player(user.userId, user.login, new Vector(0,0), 'green'))
       })
-    this.gameRoomService.initGame(players, this.gameRoomId).subscribe(response => {// TODO: only one ?
+    this.gameRoomService.initGame(players, this.gameRoomId).subscribe(response => {
       this.router.navigate(["/game/" + this.gameRoomId]).then(() =>{
       })
     })
@@ -210,7 +210,7 @@ export class GameRoomComponent implements OnInit {
       setTimeout(() => {
         this.timer -= 1;
         setTimeout(() => {
-          this.initGame();// TODO; loading ?
+          this.initGame();
         }, 1000)
       }, 1000)
     }, 1000)

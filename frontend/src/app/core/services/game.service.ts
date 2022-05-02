@@ -11,6 +11,7 @@ import { Vector } from 'src/app/shared/models/Vector';
 import {ActivatedRoute} from "@angular/router";
 import {GameSettings} from "../../shared/models/GameSettings";
 import {GameRoomService} from "./game-room.service";
+import {RaceMap} from "../../shared/models/RaceMap";
 
 @Injectable({
   providedIn: 'root'
@@ -50,9 +51,24 @@ export class GameService {
           .forEach(user => {
             players.push(new Player(user.userId, user.login, new Vector(0,0), 'green'))
           })
-        player = players.find(player => player.playerId === user.userId)
-        this.setGameInfo(player, new Game(gameId, MockDataProviderService.getExampleMap(),// TODO: get map
-          players, new GameSettings(5)))// TODO: game settings downolad
+        this._gameRoomService.getGameRoom(gameId).subscribe(gameResponse => {
+          this._mapService.getMap(gameResponse.mapId).subscribe(mapResponse => {
+            player = players.find(player => player.playerId === user.userId)
+            this.setGameInfo(player, new Game(gameId,
+              new RaceMap(
+              mapResponse.mapId,
+              mapResponse.name,
+              mapResponse.userId,
+              mapResponse.width,
+              mapResponse.height,
+              mapResponse.mapStructure.finishLine,
+              mapResponse.mapStructure.startLine,
+              mapResponse.mapStructure.obstacles
+              ),
+              // MockDataProviderService.getExampleMap(),
+              players, new GameSettings(gameResponse.roundTime)))
+          })
+        })
       })
 
     })
