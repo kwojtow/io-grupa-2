@@ -59,4 +59,8 @@ public class Player {
     public int getyCoordinate(){
         return yCoordinate;
     }
+
+    public Vector getVector() {
+        return vector;
+    }
 }
