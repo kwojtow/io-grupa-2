@@ -1,9 +1,11 @@
 package agh.io.iobackend;
 
+import agh.io.iobackend.model.GameRoom;
 import agh.io.iobackend.model.User;
 import agh.io.iobackend.model.Vector;
 import agh.io.iobackend.model.map.GameMap;
 import agh.io.iobackend.model.map.MapStructure;
+import agh.io.iobackend.service.GameRoomService;
 import agh.io.iobackend.service.MapService;
 import agh.io.iobackend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +14,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.List;
 
 @Component
 public class InitialRunner implements CommandLineRunner {
@@ -21,6 +22,9 @@ public class InitialRunner implements CommandLineRunner {
 
     @Autowired
     private MapService mapService;
+
+    @Autowired
+    private GameRoomService gameRoomService;
 
     @Autowired
     UserService userService;
@@ -70,10 +74,15 @@ public class InitialRunner implements CommandLineRunner {
 
         mapService.saveMap(gameMap);
 
+        // Test random GameRoom ID
+        GameRoom gameRoom = new GameRoom(gameMap, 4, 5, user.getUserId());
+        gameRoomService.createGameRoom(gameRoom);
+
         System.out.println("User id: " + user.getUserId());
         System.out.println(user);
         System.out.println("User id: " + user2.getUserId());
         System.out.println(user2);
         System.out.println("Map id: " + gameMap.getMapId());
+        System.out.println("Game Room id: " + gameRoom.getGameRoomID());
     }
 }

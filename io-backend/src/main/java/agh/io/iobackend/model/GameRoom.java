@@ -1,6 +1,7 @@
 package agh.io.iobackend.model;
 
 import agh.io.iobackend.model.map.GameMap;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -18,6 +19,10 @@ public class GameRoom {
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
             generator = "gameRoom_sequence"
+    )
+    @GenericGenerator(
+            name = "gameRoom_sequence",
+            strategy = "agh.io.iobackend.model.GameRoomSequenceIdGenerator"
     )
     @Column(
             name = "gameRoomID",

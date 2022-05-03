@@ -14,7 +14,6 @@ import java.util.ArrayList;
 
 @CrossOrigin
 @RestController
-@CrossOrigin
 @RequestMapping("/game/")
 public class GameController {
     private static final Logger logger = LoggerFactory.getLogger(GameController.class);
