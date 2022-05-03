@@ -12,7 +12,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.List;
 
 @Component
 public class InitialRunner implements CommandLineRunner {
@@ -23,7 +22,7 @@ public class InitialRunner implements CommandLineRunner {
     private MapService mapService;
 
     @Autowired
-    UserService userService;
+    private UserService userService;
 
 
     @Override

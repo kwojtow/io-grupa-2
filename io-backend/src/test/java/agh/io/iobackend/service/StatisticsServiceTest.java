@@ -27,6 +27,7 @@ class StatisticsServiceTest {
 
     @BeforeAll
     public static void prepareData(@Autowired UserService userService, @Autowired MapService mapService, @Autowired StatisticsService statisticsService) {
+        statisticsService.clearMapHistory();
         System.out.println("prepring data");
         user1 = User
                 .builder()

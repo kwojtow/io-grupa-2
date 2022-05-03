@@ -6,6 +6,9 @@ import agh.io.iobackend.controller.payload.SignupRequest;
 import agh.io.iobackend.model.Vector;
 import agh.io.iobackend.model.map.GameMap;
 import agh.io.iobackend.model.map.MapStructure;
+import agh.io.iobackend.service.MapService;
+import agh.io.iobackend.service.StatisticsService;
+import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +34,14 @@ class MapControllerTest {
     private static Long userId;
 
     @BeforeAll
-    static void registerAndLogin(@Autowired AuthController authController) {
+    static void registerAndLogin(@Autowired AuthController authController,
+                                 @Autowired MapService mapService,
+                                 @Autowired StatisticsService statisticsService) {
+
+        statisticsService.clearMapHistory();
+        mapService.clearMapRatings();
+        mapService.clearMaps();
+
         SignupRequest signupRequest = new SignupRequest();
         signupRequest.setUsername(username);
         signupRequest.setEmail(email);
