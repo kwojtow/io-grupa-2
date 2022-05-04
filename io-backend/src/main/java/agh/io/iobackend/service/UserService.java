@@ -25,6 +25,10 @@ public class UserService implements UserDetailsService {
         return userRepository.save(user);
     }
 
+    public void clearUsers() { // for tests
+        userRepository.deleteAll();
+    }
+
     public boolean existsByLogin(String login) {
         return userRepository.existsByLogin(login);
     }
@@ -33,7 +37,7 @@ public class UserService implements UserDetailsService {
         return userRepository.existsByEmail(email);
     }
 
-    public List<User> getAllUsers(){
+    public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
