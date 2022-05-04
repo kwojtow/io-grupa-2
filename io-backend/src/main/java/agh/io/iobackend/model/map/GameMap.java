@@ -40,4 +40,7 @@ public class GameMap {
     @Convert(converter = MapStructureConverter.class)
     private MapStructure mapStructure;
 
+    @Transient
+    private Double rating;
+
 }

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,6 +52,18 @@ public class MapController {
         return ResponseEntity.ok(map.getMapId());
     }
 
+    @PostMapping("/{mapId}")
+    public ResponseEntity<GameMap> updateMap(@PathVariable Long mapId, @RequestBody GameMap gameMap) {
+        return ResponseEntity.ok().body(mapService.updateMap(mapId, gameMap));
+    }
+
+    @CrossOrigin
+    @DeleteMapping("/{mapId}")
+    public ResponseEntity<String> removeMapById(@PathVariable Long mapId) {
+        mapService.removeMapById(mapId);
+        return ResponseEntity.ok().body("Map deleted");
+    }
+
     @GetMapping("/user-wins")
     public void getMapsWithTheMostWinsForUser() {
         statisticsService.getMapsWithTheMostWinsForUser(userService.getCurrentUserId());
@@ -61,5 +74,14 @@ public class MapController {
         statisticsService.getMapsWithTheMostGamesForUser(userService.getCurrentUserId());
     }
 
-    // TODO getMapRanking
+    @PostMapping("/rating/{mapId}")
+    public ResponseEntity<String> saveMapRating(@PathVariable Long mapId, @RequestParam Integer rating) {
+        mapService.saveRating(mapService.getMapById(mapId).get(), userService.getCurrentUser(), rating);
+        return ResponseEntity.ok().body("Rating added successfully");
+    }
+
+    @GetMapping("/ranking")
+    public ResponseEntity<LinkedHashMap<GameMap, Double>> getMapRanking() {
+        return ResponseEntity.ok().body(mapService.getMapsRanking());
+    }
 }
