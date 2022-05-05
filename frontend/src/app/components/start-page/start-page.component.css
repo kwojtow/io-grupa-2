@@ -1,0 +1,88 @@
+#top-bar{
+    background-color: rgba(78, 42, 106, 100);
+    height: 100px;
+}
+
+#header{
+    color: white;
+}
+
+.btn {
+    border-radius: 20px;
+    font-size: larger;
+    height: 55px;
+    
+    
+}
+
+#buttons{
+    justify-content: right;
+}
+
+.btn-outline-primary{
+    background-color: rgba(78, 42, 106, 100);
+    color: rgba(255, 255, 255, 100);
+    border: 1px solid rgba(255, 255, 255, 100);
+}
+
+.btn-primary{
+    background-color: rgba(255, 255, 255, 100);
+    color: rgba(78, 42, 106, 100);
+    border: 1px solid rgba(255, 255, 255, 100);
+}
+
+.col-md-3{
+    border: 1px solid rgba(187,187,187,100);
+    text-align: center;
+    margin: 2%;
+    box-shadow: 7px 7px 6px 0px rgba(0,0,0,0.4);
+    padding: 1%;
+}
+
+.col-md-3:hover{
+    background-color:rgba(78, 42, 106, 100);
+    cursor: pointer;
+    color: white;
+}
+
+.col-md-3:hover .description {
+    color: white;
+}
+
+#min{
+    margin-left: -80px;
+}
+
+
+#content{
+    height: 80vh;
+    padding: 5%;
+}
+
+.dialog{
+    z-index: 2;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    width: 90%;
+}
+
+.description{
+    color: rgba(16,16,16,100);
+    font-size:30px;
+    margin-top: 20%;
+}
+
+.cardView{
+    margin-top: 20%;
+    margin-bottom: 15%;
+}
+
+
+span{
+    font-size: 128px;
+}
+
+#randomGame{
+    transform: rotate(45deg);
+}

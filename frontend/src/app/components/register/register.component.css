@@ -40,6 +40,7 @@
   background-color: rgba(78, 42, 106, 100);
   color: rgba(255, 255, 255, 100);
   font-size: 17px;
+  border: none;
 }
 
 .button-login {
