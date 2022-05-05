@@ -21,7 +21,7 @@ export class CreateMapComponent implements OnInit {
 
   constructor(private _mapService: MapService,
               private _http: HttpClient) {
-    // TODO: size, validation, mapService.game.map???, full size, responsiveness
+    // TODO: size, validation, full size
     this.resetMap();
   }
 
