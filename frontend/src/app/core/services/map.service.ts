@@ -26,6 +26,9 @@ export class MapService {
 
   constructor(private http : HttpClient) {
     this._map = new BehaviorSubject<RaceMap>(undefined);
+    this._map.subscribe(newMap => {
+      MapService.game = new Game(-1, newMap, [], null);
+    }) // TODO : !!!!!!!!!!!!!!!!!!!!!
   }
 
   getMap(id: number) : Observable<MapResponse> {
