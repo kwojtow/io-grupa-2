@@ -51,7 +51,7 @@ export class CreateMapComponent implements OnInit {
         break;
       }
     }
-    this._mapService.map.next(this.map);
+    MapService.map.next(this.map);
   }
 
   clearField(v: Vector){
@@ -90,6 +90,6 @@ export class CreateMapComponent implements OnInit {
   resetMap(){
     const userId: number = JSON.parse(localStorage.getItem('jwtResponse')).id;
     this.map = new RaceMap('', userId, 13, 7, [], [], []);
-    this._mapService.map.next(this.map);
+    MapService.map.next(this.map);
   }
 }

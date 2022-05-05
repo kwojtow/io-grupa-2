@@ -20,15 +20,13 @@ export class MapService {
   OBSTACLE_COLOR = 'black';
 
   static game: Game;
-  private _map: BehaviorSubject<RaceMap>;
+  static map: BehaviorSubject<RaceMap>;
   private _canvas: HTMLCanvasElement;
   private _ctx: CanvasRenderingContext2D;
 
   constructor(private http : HttpClient) {
-    this._map = new BehaviorSubject<RaceMap>(undefined);
-    this._map.subscribe(newMap => {
-      MapService.game = new Game(-1, newMap, [], null);
-    }) // TODO : !!!!!!!!!!!!!!!!!!!!!
+    MapService.map = new BehaviorSubject<RaceMap>(undefined);
+
   }
 
   getMap(id: number) : Observable<MapResponse> {
@@ -80,7 +78,7 @@ export class MapService {
     const x = event.offsetX;
     const y = event.offsetY;
     // @ts-ignore
-    const raceMap = MapService.game.map;
+    const raceMap = MapService.map.getValue();
     if (ctx !== null) {
       const v = MapService.getIdxPosition(ctx,
         canvas,
@@ -461,10 +459,6 @@ export class MapService {
       })
       this.highlightAvaliableVectors(canvas, ctx, map, player, availableVectorsPaths, arrows);
       this.changePosition(canvas, ctx, map, player, availableVectorsPaths, arrows);
-  }
-
-  get map(): BehaviorSubject<RaceMap> {
-    return this._map;
   }
 
   get canvas(): HTMLCanvasElement {

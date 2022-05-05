@@ -38,7 +38,7 @@ export class GameService {
     this._player = authorizedPlayer;
     this._game =   game;
     MapService.game = game;
-    this._mapService.map.next(game.map);
+    MapService.map.next(game.map);
     this.gameLoaded.next(true);
   }
 

@@ -18,7 +18,7 @@
     </div>
     <div class="choose-map">
       <select #selectRefMap (change)="changeMap(selectRefMap)" class="map-select">
-        <option *ngFor="let map of mapList; let i = index" value="Mapa 1">Mapa {{i}}</option>
+        <option *ngFor="let map of mapList; let i = index" value="Mapa 1">{{map.raceMap.name}}</option>
       </select>
     </div>
     <div class="new-map-btn">
