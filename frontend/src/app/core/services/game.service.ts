@@ -55,17 +55,17 @@ export class GameService {
           this._mapService.getMap(gameResponse.mapId).subscribe(mapResponse => {
             player = players.find(player => player.playerId === user.userId)
             this.setGameInfo(player, new Game(gameId,
-              new RaceMap(
-              mapResponse.mapId,
-              mapResponse.name,
-              mapResponse.userId,
-              mapResponse.width,
-              mapResponse.height,
-              mapResponse.mapStructure.finishLine,
-              mapResponse.mapStructure.startLine,
-              mapResponse.mapStructure.obstacles
-              ),
-              // MockDataProviderService.getExampleMap(),
+              // new RaceMap(
+              // mapResponse.mapId,
+              // mapResponse.name,
+              // mapResponse.userId,
+              // mapResponse.width,
+              // mapResponse.height,
+              // mapResponse.mapStructure.finishLine,
+              // mapResponse.mapStructure.startLine,
+              // mapResponse.mapStructure.obstacles
+              // ),
+              MockDataProviderService.getExampleMap(),
               players, new GameSettings(gameResponse.roundTime)))
           })
         })

@@ -13,6 +13,7 @@ import { RegisterSuccessComponent } from './components/register/register-success
 import { StartPageComponent } from './components/start-page/start-page.component';
 import { GameComponent } from './components/game/game.component';
 import { JoinGameRoomComponent } from './components/start-page/join-game-room/join-game-room.component';
+import {ProfileComponent} from "./components/profile/profile.component";
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { JoinGameRoomComponent } from './components/start-page/join-game-room/jo
     JoinGameRoomComponent,
     GameRoomComponent,
     CreateGameRoomComponent,
-    GameComponent
+    GameComponent,
+    ProfileComponent
 
   ],
   imports: [

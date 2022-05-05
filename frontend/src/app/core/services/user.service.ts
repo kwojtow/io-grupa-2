@@ -48,7 +48,7 @@ export class UserService {
   getCurrentLoggedUserId() : number{
     return JSON.parse(localStorage.getItem("jwtResponse")).id;
   }
-  public getUser() { // TODO: ??
+  public getUser() {
     return this.http.get<User>('http://localhost:8080/user', this.getAuthorizationHeaders());
   }
   getAuthorizationHeaders() {
@@ -65,10 +65,6 @@ export class UserService {
       return requestOptions;
     }
   }
-
-  // public getUser() { // TODO: ??
-  //   return this.http.get<User>(this.API_URL + '/user', this.getAuthorizationHeaders());
-  // }
 
   public getUserStats(userId: number) {
     return this.http.get<UserStatistics>(this.API_URL + '/statistics/user/' + userId, this.getAuthorizationHeaders())
