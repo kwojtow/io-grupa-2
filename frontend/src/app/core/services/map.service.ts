@@ -393,16 +393,16 @@ export class MapService {
             ctx.strokeStyle = "#ff9900";
             canvas.style.cursor = 'grabbing';
 
-            player.setNewVector(new Vector(availableVectors[i].posX - player.position.posX,
-                                           availableVectors[i].posY - player.position.posY));
+            player.setNewVector(new Vector(availableVectors[i].x - player.position.x,
+                                           availableVectors[i].y - player.position.y));
             for(let finish of map.finishLine){
               if(finish.equals(player.position)) setTimeout(function() { alert('Wygrałeś'); }, 1);
             }
-            
+
             let isAvailableVector = false;
             for(let vector of player.getAvailableVectors()) {
-              if(!onObstacle(vector, map) && vector.posX >= 0 && vector.posX < map.mapWidth &&
-                vector.posY >= 0 && vector.posY < map.mapHeight ) isAvailableVector = true;
+              if(!onObstacle(vector, map) && vector.x >= 0 && vector.x < map.mapWidth &&
+                vector.y >= 0 && vector.y < map.mapHeight ) isAvailableVector = true;
             }
             if(!isAvailableVector) setTimeout(function() { alert('Przegrałeś'); }, 1);
           }
