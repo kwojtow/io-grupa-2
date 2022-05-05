@@ -68,7 +68,7 @@ export class MockDataProviderService {
 
   startIntervalChanges(): void{
     setInterval(function (playersList: Array<Player>){
-      playersList[MockDataProviderService.idx%3].position.posX = (playersList[MockDataProviderService.idx%3].position.posX + 1) % MockDataProviderService.getExampleMap().mapWidth;
+      playersList[MockDataProviderService.idx%3].position.x = (playersList[MockDataProviderService.idx%3].position.x + 1) % MockDataProviderService.getExampleMap().mapWidth;
       playersList[(MockDataProviderService.idx)%3].playerStatus = 'WAITING';
       playersList[(MockDataProviderService.idx + 1)%3].playerStatus = 'PLAYING';
       MockDataProviderService.idx += 1;
@@ -78,7 +78,7 @@ export class MockDataProviderService {
   }
   static mapPlayersToPlayersStates(players: Array<Player>): Array<PlayerState>{
     return players.map(player => {
-      return new PlayerState(player.playerId, player.playerStatus, player.position.posX, player.position.posY);
+      return new PlayerState(player.playerId, player.playerStatus, player.position.x, player.position.y);
     });
   }
   constructor() {

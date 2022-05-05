@@ -55,18 +55,18 @@ export class Player{
     }
 
   public getCurrentVectorPosition(): Vector{
-      return new Vector(this.position.posX + this.currentVector.posX,
-                        this.position.posY + this.currentVector.posY);
+      return new Vector(this.position.x + this.currentVector.x,
+                        this.position.y + this.currentVector.y);
     }
 
 
   public getCurrentVectorPositionPx(fieldWidth: number): Vector{
-    return new Vector(this.getCurrentVectorPosition().posX * fieldWidth,
-                        this.getCurrentVectorPosition().posY * fieldWidth);
+    return new Vector(this.getCurrentVectorPosition().x * fieldWidth,
+                        this.getCurrentVectorPosition().y * fieldWidth);
     }
   public getAvailableVectors(): Array<Vector> {
-    let xpos = this.currentVector.posX + this.position.posX;
-    let ypos = this.currentVector.posY + this.position.posY;
+    let xpos = this.currentVector.x + this.position.x;
+    let ypos = this.currentVector.y + this.position.y;
     return [new Vector(xpos + 1, ypos), new Vector(xpos + 1, ypos + 1),
       new Vector(xpos, ypos + 1), new Vector(xpos - 1, ypos + 1),
       new Vector(xpos - 1, ypos), new Vector(xpos - 1, ypos - 1),
@@ -86,7 +86,7 @@ export class Player{
 
   public setNewVector(vector: Vector) {
     this.currentVector = vector;
-    this.position = new Vector(this.position.posX + vector.posX, this.position.posY + vector.posY);
+    this.position = new Vector(this.position.x + vector.x, this.position.y + vector.y);
 
     this.newVector.next(this.currentVector);
   }

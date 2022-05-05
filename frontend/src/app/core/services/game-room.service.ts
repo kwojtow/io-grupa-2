@@ -95,7 +95,7 @@ export class GameRoomService {
   }
   initGame(playersList: Array<Player>, gameRoomId: number){
     return this.http.post<number>(
-      "http://localhost:8080/game/" + gameRoomId, playersList.map(player => new PlayerInitialCoord(player.playerId, player.position.posX, player.position.posY)),
+      "http://localhost:8080/game/" + gameRoomId, playersList.map(player => new PlayerInitialCoord(player.playerId, player.position.x, player.position.y)),
       this.httpOptions).pipe(
       catchError(this.handleError)
     )

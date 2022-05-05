@@ -1,26 +1,26 @@
 export class Vector{
-  constructor( private _posX: number,
-               private _posY: number){
-    this._posX = _posX;
-    this._posY = _posY;
+  constructor( private _x: number,
+               private _y: number){
+    this._x = _x;
+    this._y = _y;
   }
 
-  get posX(): number {
-    return this._posX;
+  get x(): number {
+    return this._x;
   }
 
-  get posY(): number {
-    return this._posY;
+  get y(): number {
+    return this._y;
   }
   equals(v: Vector): boolean{
-    return v.posX == this.posX && v.posY == this.posY;
+    return v.x == this.x && v.y == this.y;
   }
 
-  set posX(value: number) {
-    this._posX = value;
+  set x(value: number) {
+    this._x = value;
   }
 
-  set posY(value: number) {
-    this._posY = value;
+  set y(value: number) {
+    this._y = value;
   }
 }
