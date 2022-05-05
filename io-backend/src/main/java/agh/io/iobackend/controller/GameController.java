@@ -14,6 +14,7 @@ import java.util.ArrayList;
 
 
 @RestController
+@CrossOrigin
 @RequestMapping("/game/")
 public class GameController {
     private static final Logger logger = LoggerFactory.getLogger(GameController.class);
@@ -44,9 +45,9 @@ public class GameController {
     }
 
     @PostMapping("/{id}") // game id - poczatkowe wspolrzedne
-    public ResponseEntity<String> startGame(@RequestBody ArrayList<PlayerInitialCoord> playerInitialCoordList, @PathVariable Long id) {
+    public ResponseEntity startGame(@RequestBody ArrayList<PlayerInitialCoord> playerInitialCoordList, @PathVariable Long id) {
         gameService.startGame(id, playerInitialCoordList);
-        return ResponseEntity.ok("Game created");
+        return ResponseEntity.ok().build();
     }
 }
 

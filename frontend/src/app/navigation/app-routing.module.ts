@@ -8,6 +8,7 @@ import { StartPageComponent } from '../components/start-page/start-page.componen
 import {GameComponent} from "../components/game/game.component";
 import { CreateGameRoomComponent } from '../components/create-game-room/create-game-room.component';
 import { GameRoomComponent } from '../components/game-room/game-room.component';
+import {ProfileComponent} from "../components/profile/profile.component";
 
 const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -19,6 +20,7 @@ const routes: Routes = [
   { path: 'game/:id', component: GameComponent},
   { path: 'create-game-room', component: CreateGameRoomComponent},
   { path: 'game-room/:id', component: GameRoomComponent },
+  { path: 'profile', component: ProfileComponent}
 ];
 
 @NgModule({

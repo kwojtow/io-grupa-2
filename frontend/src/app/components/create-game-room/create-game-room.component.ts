@@ -74,6 +74,9 @@ export class CreateGameRoomComponent implements OnInit, OnDestroy {
         .subscribe((data2) => (mapDto.author = data2));
       mapDto = {
         raceMap: new RaceMap(
+          data.mapId,
+          data.name,
+          data.userId,
           data.width,
           data.height,
           data.mapStructure.finishLine,

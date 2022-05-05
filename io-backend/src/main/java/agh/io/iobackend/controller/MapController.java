@@ -1,5 +1,6 @@
 package agh.io.iobackend.controller;
 
+import agh.io.iobackend.controller.payload.MapResponse;
 import agh.io.iobackend.model.map.GameMap;
 import agh.io.iobackend.service.MapService;
 import agh.io.iobackend.service.StatisticsService;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -66,13 +68,27 @@ public class MapController {
     }
 
     @GetMapping("/user-wins")
-    public void getMapsWithTheMostWinsForUser() {
-        statisticsService.getMapsWithTheMostWinsForUser(userService.getCurrentUserId());
+    public ResponseEntity<List<MapResponse>> getMapsWithTheMostWinsForUser() {
+        List<MapResponse> result = statisticsService.getMapsWithTheMostWinsForUser(userService.getCurrentUserId())
+                .entrySet().stream()
+                .map(e -> MapResponse.builder()
+                        .map(e.getKey())
+                        .games(e.getValue())
+                        .build())
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/user-games")
-    public void getMapsWithTheMostGamesForUser() {
-        statisticsService.getMapsWithTheMostGamesForUser(userService.getCurrentUserId());
+    public ResponseEntity<List<MapResponse>> getMapsWithTheMostGamesForUser() {
+        List<MapResponse> result = statisticsService.getMapsWithTheMostGamesForUser(userService.getCurrentUserId())
+                .entrySet().stream()
+                .map(e -> MapResponse.builder()
+                        .map(e.getKey())
+                        .games(e.getValue())
+                        .build())
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(result);
     }
 
     @PostMapping("/rating/{mapId}")

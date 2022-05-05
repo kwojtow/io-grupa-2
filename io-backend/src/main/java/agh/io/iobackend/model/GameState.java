@@ -96,6 +96,8 @@ public class GameState {
         while (players.get(getCurrentPlayerId()).getPlayerStatus() != PlayerStatus.WAITING) {
             currentPlayerIndex = (currentPlayerIndex + 1) % playersQueue.size();
         }
+        players.entrySet().stream().forEach(e -> e.getValue().setPlayerStatus(PlayerStatus.WAITING));
+        System.out.println("on turn: "+ getCurrentPlayerId());
         players.get(getCurrentPlayerId()).setPlayerStatus(PlayerStatus.PLAYING);
     }
 
