@@ -18,8 +18,9 @@ export class CreateMapComponent implements OnInit {
   chosenObject = ObjectType.NONE;
 
   constructor(private _mapService: MapService) {
-    // TODO: size, mapId?, userId, name, sending, mapService.game.map???, full size, responsiveness save, cancel
-    this.map = new RaceMap(-1, '', -1, 13, 7, [], [], []);
+    const userId: number = +localStorage.getItem('id');
+    // TODO: size, name, sending, mapService.game.map???, full size, responsiveness save, cancel
+    this.map = new RaceMap('', userId, 13, 7, [], [], []);
     _mapService.map.next(this.map);
   }
 

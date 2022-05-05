@@ -3,14 +3,15 @@ import {Vector} from "./Vector";
 
 
 export class RaceMap{
-  constructor(private _mapId: number,
+  constructor(
               private _name: string,
               private _userId: number,
               private readonly _mapWidth: number,
                private readonly _mapHeight: number,
                private _finishLine: Array<Vector>,
                private _startLine: Array<Vector>,
-               private _obstacles: Array<Vector> ){
+               private _obstacles: Array<Vector>,
+              private _mapId?: number){
     this._mapId = _mapId;
     this._name = _name;
     this._userId = _userId;
