@@ -87,14 +87,16 @@
 span{
   font-size: 118px;
 }
-
+#test{background-color: #630c78;
+width: 3000px;
+  height: 100px;}
 #randomGame{
   transform: rotate(45deg);
 }
 #map-name-input{
   font-size: 23px;
 }
-.container {  display: grid;
+.container1 {  display: grid;
   grid-template-columns: 1fr 1.6fr 0.4fr;
   grid-template-rows: 0.7fr 0.7fr 0.7fr 0.7fr 2.2fr;
   gap: 0px 40px;
@@ -121,7 +123,7 @@ span{
 /*div{border: 1px solid black}*/
 
 @media(max-width: 1200px) {
-  .container {  display: grid;
+  .container1 {  display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
     grid-template-rows: 5fr 1fr 1fr;
     gap: 0px 10px;
@@ -140,3 +142,4 @@ span{
     width: 90%;
   }
 }
+
