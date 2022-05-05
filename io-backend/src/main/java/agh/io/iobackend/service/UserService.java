@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -24,12 +25,20 @@ public class UserService implements UserDetailsService {
         return userRepository.save(user);
     }
 
+    public void clearUsers() { // for tests
+        userRepository.deleteAll();
+    }
+
     public boolean existsByLogin(String login) {
         return userRepository.existsByLogin(login);
     }
 
     public boolean existsByEmail(String email) {
         return userRepository.existsByEmail(email);
+    }
+
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
 
     @Override
@@ -58,6 +67,6 @@ public class UserService implements UserDetailsService {
             UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
             userId = userDetails.getUserId();
         }
-        return userId; // TODO check this implementation
+        return userId;
     }
 }

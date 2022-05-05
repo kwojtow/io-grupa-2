@@ -18,7 +18,7 @@ import { User } from 'src/app/shared/models/User';
 export class CreateGameRoomComponent implements OnInit, OnDestroy {
   mapOptionsForm: FormGroup;
   mapList: MapResponse[];
-  mapDatas: MapDto[] =[];
+  mapDatas: MapDto[] = [];
   maxGamers: number[];
   roundTimes: number[];
   mapDtoMap = new Map<String, MapDto>();
@@ -44,35 +44,36 @@ export class CreateGameRoomComponent implements OnInit, OnDestroy {
     this.roundTimes = [3, 4, 5, 6, 7, 8, 9, 10, 15];
     this.mapService.getMaps().subscribe((result) => {
       this.mapList = result;
-      for(let i=0; i<this.mapList.length; i++){
-       this.getMapData(this.mapList[i].mapId, i)
+
+      for (let i = 0; i < this.mapList.length; i++) {
+        this.getMapData(this.mapList[i].mapId, i);
       }
     });
     this.subscribeToMap();
-
   }
-
-
 
   ngOnDestroy(): void {
     this.selectedMapSubscription?.unsubscribe();
   }
 
-  private subscribeToMap(){
-    this.selectedMapSubscription =
-    this.mapOptionsForm.controls['map'].valueChanges.subscribe((value) =>{
+  private subscribeToMap() {
+    this.selectedMapSubscription = this.mapOptionsForm.controls[
+      'map'
+    ].valueChanges.subscribe((value) => {
       this.selectedMapId = value;
       console.log(value);
-    })
+    });
   }
 
-  getMapData(mapId: number, i: number){
+  getMapData(mapId: number, i: number) {
     let mapDto: MapDto;
     this.mapService.getMap(mapId).subscribe((data: MapResponse) => {
-      let mapAuthor : User;
-      this.userService.getUserData(data.userId).subscribe(data2 => mapDto.author = data2)
+      let mapAuthor: User;
+      this.userService
+        .getUserData(data.userId)
+        .subscribe((data2) => (mapDto.author = data2));
       mapDto = {
-        raceMap : new RaceMap(
+        raceMap: new RaceMap(
           data.width,
           data.height,
           data.mapStructure.finishLine,
@@ -83,33 +84,39 @@ export class CreateGameRoomComponent implements OnInit, OnDestroy {
         name: mapId.toString(),
         gamesPlayed: 0,
         rate: 0,
-        author: mapAuthor
-      }
+        author: mapAuthor,
+      };
       this.mapDatas.push(mapDto);
       this.mapDtoMap.set(mapId.toString(), mapDto);
       this.selectedMapId = this.mapDatas[0].name;
-
-    }
-    )
-
+    });
   }
 
   createRoom() {
     if (this.mapOptionsForm.valid) {
-      let id : number;
+      let id: number;
       let mapId: number = parseInt(this.mapOptionsForm.value.map);
-      let playersLimit: number = parseInt(this.mapOptionsForm.value.maxGamersNumber);
-      let time: number = parseInt(this.mapOptionsForm.value.roundTime.slice(0,-1));
-      this.gameRoomService.createGameRoom(mapId, playersLimit, time, this.userService.getCurrentLoggedUserId()).subscribe(data =>{
-        id = data.roomId;
-        this.gameRoomService.addUser(id, this.userService.getCurrentLoggedUserId()).subscribe(
-          () => {
-            this.router.navigate(["game-room", id]);
-          }
-        );
-      });
+      let playersLimit: number = parseInt(
+        this.mapOptionsForm.value.maxGamersNumber
+      );
+      let time: number = parseInt(
+        this.mapOptionsForm.value.roundTime.slice(0, -1)
+      );
+      this.gameRoomService
+        .createGameRoom(
+          mapId,
+          playersLimit,
+          time,
+          this.userService.getCurrentLoggedUserId()
+        )
+        .subscribe((data) => {
+          id = data.roomId;
+          this.gameRoomService
+            .addUser(id, this.userService.getCurrentLoggedUserId())
+            .subscribe(() => {
+              this.router.navigate(['game-room', id]);
+            });
+        });
     }
   }
-
-
 }
