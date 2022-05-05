@@ -107,6 +107,7 @@ width: 3000px;
     "map map row3"
     "map map row4"
     "map map row5";
+  padding-right: 20px;
 }
 
 .row1 { grid-area: row1; }

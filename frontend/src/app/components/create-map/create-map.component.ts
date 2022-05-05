@@ -21,7 +21,7 @@ export class CreateMapComponent implements OnInit {
 
   constructor(private _mapService: MapService,
               private _http: HttpClient) {
-    // TODO: size, validation
+    // TODO: size
     this.resetMap();
   }
 
@@ -65,27 +65,35 @@ export class CreateMapComponent implements OnInit {
   }
 
   saveMap(name: string) {
-    let httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        'Authorization': "Bearer " + JSON.parse(localStorage.getItem("jwtResponse")).token,
-      })
-    };
-    const finishLine = this.map.finishLine;
-    const startLine = this.map.startLine;
-    const obstacles = this.map.obstacles;
-    const mapResponse = new MapResponse(-1,
-      name,
-      this.map.mapWidth,
-      this.map.mapHeight,
-      this.map.userId,
-      {finishLine, startLine, obstacles})
-    this.resetMap();
-    return this._http.post<any>("http://localhost:8080/map", mapResponse, httpOptions)
-      .subscribe(id => {
-        this.map.mapId = id;
-        console.log(id);
-      });
+    let alertString = '';
+    let valid = true;
+    if(name === undefined || name === '' || name === null){alertString += 'Podaj nazwę mapy! \n'; valid = false;}
+    if(this.map.startLine.length < 2 || this.map.finishLine.length < 1){alertString += 'Narysuj conajmniej 2 pola startu i conajmniej jedno pole mety!'; valid = false}
+
+    if(!valid){
+      alert(alertString);
+    }else{
+      let httpOptions = {
+        headers: new HttpHeaders({
+          'Content-Type': 'application/json',
+          'Authorization': "Bearer " + JSON.parse(localStorage.getItem("jwtResponse")).token,
+        })
+      };
+      const finishLine = this.map.finishLine;
+      const startLine = this.map.startLine;
+      const obstacles = this.map.obstacles;
+      const mapResponse = new MapResponse(-1,
+        name,
+        this.map.mapWidth,
+        this.map.mapHeight,
+        this.map.userId,
+        {finishLine, startLine, obstacles})
+      this.resetMap();
+      return this._http.post<any>("http://localhost:8080/map", mapResponse, httpOptions)
+        .subscribe(id => {
+          this.map.mapId = id;
+        });
+    }
   }
   resetMap(){
     const userId: number = JSON.parse(localStorage.getItem('jwtResponse')).id;
