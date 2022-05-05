@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import {MapService} from "../../core/services/map.service";
 import {RaceMap} from "../../shared/models/RaceMap";
 import {Vector} from "../../shared/models/Vector";
+import {HttpClient, HttpHeaders} from "@angular/common/http";
+import {MapResponse} from "../../payload/MapResponse";
 
 enum ObjectType{
   NONE, START, FINISH, OBSTACLE
@@ -17,11 +19,10 @@ export class CreateMapComponent implements OnInit {
   map: RaceMap;
   chosenObject = ObjectType.NONE;
 
-  constructor(private _mapService: MapService) {
-    const userId: number = +localStorage.getItem('id');
-    // TODO: size, name, sending, mapService.game.map???, full size, responsiveness save, cancel
-    this.map = new RaceMap('', userId, 13, 7, [], [], []);
-    _mapService.map.next(this.map);
+  constructor(private _mapService: MapService,
+              private _http: HttpClient) {
+    // TODO: size, validation, mapService.game.map???, full size, responsiveness
+    this.resetMap();
   }
 
   ngOnInit(): void {
@@ -61,5 +62,34 @@ export class CreateMapComponent implements OnInit {
 
   changeObjectType(type: ObjectType) {
     this.chosenObject = type;
+  }
+
+  saveMap(name: string) {
+    let httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': "Bearer " + JSON.parse(localStorage.getItem("jwtResponse")).token,
+      })
+    };
+    const finishLine = this.map.finishLine;
+    const startLine = this.map.startLine;
+    const obstacles = this.map.obstacles;
+    const mapResponse = new MapResponse(-1,
+      name,
+      this.map.mapWidth,
+      this.map.mapHeight,
+      this.map.userId,
+      {finishLine, startLine, obstacles})
+    this.resetMap();
+    return this._http.post<any>("http://localhost:8080/map", mapResponse, httpOptions)
+      .subscribe(id => {
+        this.map.mapId = id;
+        console.log(id);
+      });
+  }
+  resetMap(){
+    const userId: number = JSON.parse(localStorage.getItem('jwtResponse')).id;
+    this.map = new RaceMap('', userId, 13, 7, [], [], []);
+    this._mapService.map.next(this.map);
   }
 }

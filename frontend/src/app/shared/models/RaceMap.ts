@@ -3,8 +3,7 @@ import {Vector} from "./Vector";
 
 
 export class RaceMap{
-  constructor(
-              private _name: string,
+  constructor(private _name: string,
               private _userId: number,
               private readonly _mapWidth: number,
                private readonly _mapHeight: number,
