@@ -5,6 +5,7 @@ import agh.io.iobackend.controller.payload.auth.JwtResponse;
 import agh.io.iobackend.controller.payload.auth.SigninRequest;
 import agh.io.iobackend.controller.payload.auth.SignupRequest;
 import agh.io.iobackend.controller.payload.game.PlayerInitialCoord;
+import agh.io.iobackend.controller.payload.game.PlayerMoveRequest;
 import agh.io.iobackend.controller.payload.game.PlayerStateResponse;
 import agh.io.iobackend.controller.payload.room.GameRoomRequest;
 import agh.io.iobackend.controller.payload.room.GameRoomResponse;
@@ -59,6 +60,11 @@ public class GameControllerTest {
     private static Long user1Id;
 
     private static Long gameId;
+
+    int x1 = 1, y1 = 1;
+    int x2 = 4; int y2 = 4;
+
+
 
     private static void createUsers(AuthController authController) {
 
@@ -157,25 +163,29 @@ public class GameControllerTest {
         assertEquals(roomId, gameIdResponse.getBody().longValue());
     }
 
-    @Test
-    public void setInitialCoordinatesWithStartGame(){
-        //given
+    @BeforeEach
+    public void setInitialCoord(){
         ArrayList<PlayerInitialCoord> playerInitialCoordArrayList = new ArrayList<>();
 
         PlayerInitialCoord playerInitialCoord1 = new PlayerInitialCoord();
-        int x1 = 1, y1 = 1;
         playerInitialCoord1.setUserId(user1Id);
         playerInitialCoord1.setXCoord(x1);
         playerInitialCoord1.setYCoord(y1);
         playerInitialCoordArrayList.add(playerInitialCoord1);
 
         PlayerInitialCoord playerInitialCoord2 = new PlayerInitialCoord();
-        int x2 = 4; int y2 = 4;
         playerInitialCoord2.setUserId(gameMasterId);
         playerInitialCoord2.setXCoord(x2);
         playerInitialCoord2.setYCoord(y2);
         playerInitialCoordArrayList.add(playerInitialCoord2);
 
+        gameController.startGame(playerInitialCoordArrayList, gameId);
+
+    }
+
+    @Test
+    public void setInitialCoordinatesWithStartGame(){
+        //given
         PlayerStateResponse expectedPlayerStateResponse1 = new PlayerStateResponse();
         expectedPlayerStateResponse1.setPlayerId(user1Id);
         expectedPlayerStateResponse1.setXCoordinate(x1);
@@ -191,7 +201,6 @@ public class GameControllerTest {
         expectedPlayerStateResponse2.setPlayerStatus(PlayerStatus.WAITING);
 
         //when
-        gameController.startGame(playerInitialCoordArrayList, gameId);
         ResponseEntity<ArrayList<PlayerStateResponse>> playerStates = gameController.getGameState(gameId);
 
         //then
@@ -204,8 +213,34 @@ public class GameControllerTest {
 
     @Test
     public void makeMoveAndGetGameState(){
+        PlayerMoveRequest playerMoveRequest= new PlayerMoveRequest();
+        playerMoveRequest.setPlayerId(user1Id);
+        playerMoveRequest.setPlayerStatus(PlayerStatus.WAITING);
+        playerMoveRequest.setVector(new Vector(1,1));
+        playerMoveRequest.setXCoordinate(x1);
+        playerMoveRequest.setYCoordinate(y1);
+
+        PlayerStateResponse expectedPlayerStateResponse1 = new PlayerStateResponse();
+        expectedPlayerStateResponse1.setPlayerId(user1Id);
+        expectedPlayerStateResponse1.setXCoordinate(x1);
+        expectedPlayerStateResponse1.setYCoordinate(y1);
+        expectedPlayerStateResponse1.setVector(new Vector(1,1));
+        expectedPlayerStateResponse1.setPlayerStatus(PlayerStatus.WAITING);
+
+        //when
+        ResponseEntity<String> responseEntity = gameController.changePosition(playerMoveRequest, gameId);
+        ResponseEntity<ArrayList<PlayerStateResponse>> playerStates = gameController.getGameState(gameId);
+
+        //then
+        assertEquals(playerStates.getBody().get(0), expectedPlayerStateResponse1);
+    }
+
+    //TODO
+    @Test
+    public void playersQueueWorksFine(){
 
     }
+
 
     @Test
     public void endGame(){
