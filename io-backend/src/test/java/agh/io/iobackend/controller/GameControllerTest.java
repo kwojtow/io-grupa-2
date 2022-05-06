@@ -145,6 +145,9 @@ public class GameControllerTest {
         assertEquals(200, gameRoomResponse.getStatusCodeValue());
         assertNotNull(gameRoomRepository.findByGameRoomID(roomId));
 
+        // add users
+        gameRoomController.joinGameRoom(roomId, user1Id);
+        gameRoomController.joinGameRoom(roomId,  gameMasterId);
 
         // create game
 
@@ -192,8 +195,8 @@ public class GameControllerTest {
         //then
         ResponseEntity<Long> gameIdResponse = gameRoomController.checkIfGameStarted(roomId);
         assertEquals(gameIdResponse.getBody(), gameId);
-//        assertEquals(playerStates.getBody().get(0), expectedPlayerStateResponse1);
-//        assertEquals(playerStates.getBody().get(1), expectedPlayerStateResponse2);
+        assertEquals(playerStates.getBody().get(0), expectedPlayerStateResponse1); // ta lista jest pusta
+        assertEquals(playerStates.getBody().get(1), expectedPlayerStateResponse2);
 
     }
 

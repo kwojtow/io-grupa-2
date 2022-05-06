@@ -7,6 +7,7 @@ import agh.io.iobackend.model.map.GameMap;
 import agh.io.iobackend.model.player.Player;
 import agh.io.iobackend.model.player.PlayerStatus;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Proxy;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import java.util.Map;
 
 @NoArgsConstructor
 @Entity(name = "Game")
+
 public class Game {
 
     @Id
@@ -35,7 +37,7 @@ public class Game {
     private Long gameId;
 
     @Column(name = "gameRoomId")
-    private Long gameRoomId;
+    private Long gameRoomId; // czy GameRoom
 
     @OneToOne
     private GameMap gameMap;
@@ -62,12 +64,14 @@ public class Game {
                     new Player(playerInitialCoord.getXCoord(),
                             playerInitialCoord.getYCoord(), playerInitialCoord.getUserId()));
         }
+        System.out.println("in createGame " + players);
         Long currentPlayerId = playersQueue.get(currentPlayerIndex);
         players.get(currentPlayerId).setPlayerStatus(PlayerStatus.PLAYING);
     }
 
     public ArrayList<PlayerStateResponse> getPlayerStatesList() {
         ArrayList<PlayerStateResponse> playerStatesList = new ArrayList<>();
+        System.out.println("in getPlayers State" +  players);
         for (HashMap.Entry<Long, Player> entry : players.entrySet()) {
             PlayerStateResponse playerStateResponse = new PlayerStateResponse();
             playerStateResponse.setPlayerId(entry.getKey());

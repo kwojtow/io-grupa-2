@@ -1,6 +1,7 @@
 package agh.io.iobackend.model.player;
 
 import agh.io.iobackend.model.Vector;
+import lombok.Data;
 import org.springframework.data.util.Pair;
 
 public class Player {
