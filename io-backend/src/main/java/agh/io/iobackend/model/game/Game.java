@@ -64,21 +64,23 @@ public class Game {
         this.currentPlayerIndex = 0;
     }
 
+// startGame nie uzywam bo tworze to wszystko wyzej, zapisujac playera do bazy :/
 
-    public void startGame(ArrayList<PlayerInitialCoord> playerInitialCoordsList) {
-        for (PlayerInitialCoord playerInitialCoord : playerInitialCoordsList) {
-            playersQueue.add(playerInitialCoord.getUserId());
-            players.put(playerInitialCoord.getUserId(),
-                    new Player(playerInitialCoord.getXCoord(),
-                            playerInitialCoord.getYCoord(), playerInitialCoord.getUserId()));
-        }
-        System.out.println("in createGame " + players);
-        Long currentPlayerId = playersQueue.get(currentPlayerIndex);
-//        Long currentPlayerId = getListOfUserIds().get(currentPlayerIndex);
-        players.get(currentPlayerId).setPlayerStatus(PlayerStatus.PLAYING);
-    }
+//    public void startGame(ArrayList<PlayerInitialCoord> playerInitialCoordsList) {
+//        for (PlayerInitialCoord playerInitialCoord : playerInitialCoordsList) {
+//            playersQueue.add(playerInitialCoord.getUserId());
+//            players.put(playerInitialCoord.getUserId(),
+//                    new Player(playerInitialCoord.getXCoord(),
+//                            playerInitialCoord.getYCoord(), playerInitialCoord.getUserId()));
+//        }
+//        System.out.println("in createGame " + players);
+//        Long currentPlayerId = playersQueue.get(currentPlayerIndex);
+////        Long currentPlayerId = getListOfUserIds().get(currentPlayerIndex);
+//        players.get(currentPlayerId).setPlayerStatus(PlayerStatus.PLAYING);
+//    }
 
     public void startGameForPlayer(Player player) {
+        System.out.println("Game started for + " + player);
         playersQueue.add(player.getPlayerId());
         players.put(player.getPlayerId(), player);
     }
@@ -86,18 +88,20 @@ public class Game {
     public void setPlayerThatStarts(){
         Long currentPlayerId = playersQueue.get(currentPlayerIndex);
         players.get(currentPlayerId).setPlayerStatus(PlayerStatus.PLAYING);
+        System.out.println("curr" + currentPlayerIndex + currentPlayerId);
     }
 
     public ArrayList<PlayerStateResponse> getPlayerStatesList() {
         ArrayList<PlayerStateResponse> playerStatesList = new ArrayList<>();
         System.out.println("in getPlayers State" +  players);
-        for (HashMap.Entry<Long, Player> entry : players.entrySet()) {
+        for (Long playerId : playersQueue) {
             PlayerStateResponse playerStateResponse = new PlayerStateResponse();
-            playerStateResponse.setPlayerId(entry.getKey());
-            playerStateResponse.setPlayerStatus(entry.getValue().getPlayerStatus());
-            playerStateResponse.setXCoordinate(entry.getValue().getXCoordinate());
-            playerStateResponse.setYCoordinate(entry.getValue().getYCoordinate());
-            playerStateResponse.setVector(new Vector(entry.getValue().getXVector(), entry.getValue().getYVector()));
+            Player playerDetails = players.get(playerId);
+            playerStateResponse.setPlayerId(playerId);
+            playerStateResponse.setPlayerStatus(playerDetails.getPlayerStatus());
+            playerStateResponse.setXCoordinate(playerDetails.getXCoordinate());
+            playerStateResponse.setYCoordinate(playerDetails.getYCoordinate());
+            playerStateResponse.setVector(new Vector(playerDetails.getXVector(), playerDetails.getYVector()));
             playerStatesList.add(playerStateResponse);
         }
         return playerStatesList;

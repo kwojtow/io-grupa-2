@@ -146,8 +146,8 @@ public class GameControllerTest {
         assertNotNull(gameRoomRepository.findByGameRoomID(roomId));
 
         // add users
-        gameRoomController.joinGameRoom(roomId, user1Id);
         gameRoomController.joinGameRoom(roomId,  gameMasterId);
+        gameRoomController.joinGameRoom(roomId, user1Id);
 
         // create game
 
@@ -180,12 +180,14 @@ public class GameControllerTest {
         expectedPlayerStateResponse1.setPlayerId(user1Id);
         expectedPlayerStateResponse1.setXCoordinate(x1);
         expectedPlayerStateResponse1.setYCoordinate(y1);
+        expectedPlayerStateResponse1.setVector(new Vector(0,0));
         expectedPlayerStateResponse1.setPlayerStatus(PlayerStatus.PLAYING);
 
         PlayerStateResponse expectedPlayerStateResponse2 = new PlayerStateResponse();
         expectedPlayerStateResponse2.setPlayerId(gameMasterId);
         expectedPlayerStateResponse2.setXCoordinate(x2);
         expectedPlayerStateResponse2.setYCoordinate(y2);
+        expectedPlayerStateResponse2.setVector(new Vector(0,0));
         expectedPlayerStateResponse2.setPlayerStatus(PlayerStatus.WAITING);
 
         //when
@@ -204,8 +206,6 @@ public class GameControllerTest {
     public void makeMoveAndGetGameState(){
 
     }
-
-
 
     @Test
     public void endGame(){
