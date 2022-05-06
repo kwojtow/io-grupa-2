@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
 @CrossOrigin
 @RestController
 @RequestMapping("/game-room")
@@ -39,6 +38,10 @@ public class GameRoomController {
 
     @Autowired
     private MapService mapService;
+
+    // TODO sprawdz czy gra istnieje, czy uzytkownik istnieje
+    // TODO gameId generowane jako inne niz roomId
+    // TODO obsługa błędów
 
     @CrossOrigin
     @PostMapping("")
@@ -152,6 +155,7 @@ public class GameRoomController {
         return ResponseEntity.badRequest().body("Cannot add user - too many players");
     }
 
+    @CrossOrigin
     @GetMapping("/{id}/game-started") // room-id
     public ResponseEntity<Long> checkIfGameStarted(@PathVariable Long id) {
         Long gameId = -1L;
@@ -169,4 +173,5 @@ public class GameRoomController {
         // po wspolrzedne poczatkowe graczy
         return ResponseEntity.ok(gameId);
     }
+
 }

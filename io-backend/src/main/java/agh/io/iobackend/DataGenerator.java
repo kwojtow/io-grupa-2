@@ -6,6 +6,7 @@ import agh.io.iobackend.controller.payload.auth.SignupRequest;
 import agh.io.iobackend.model.Vector;
 import agh.io.iobackend.model.map.GameMap;
 import agh.io.iobackend.model.map.MapStructure;
+import agh.io.iobackend.service.MapService;
 import agh.io.iobackend.service.StatisticsService;
 import agh.io.iobackend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +18,14 @@ import java.util.ArrayList;
 /*
 This class is responsible for generating example data.
  */
-//@Component // <- comment out if you want to generate some data during application startup
+@Component
 public class DataGenerator {
 
     @Autowired
     private MapController mapController;
+
+    @Autowired
+    private MapService mapService;
 
     @Autowired
     private AuthController authController;
@@ -47,6 +51,7 @@ public class DataGenerator {
         addUsers();
         addMaps(user1Id);
         addGameMapHistory();
+        addGameMapRatings();
     }
 
     private void addUsers() {
@@ -114,5 +119,12 @@ public class DataGenerator {
         statisticsService.saveHistoryEntry(mapController.getMapById(map1Id).getBody(), userService.getUserById(user2Id).get(), false, 0);
         statisticsService.saveHistoryEntry(mapController.getMapById(map2Id).getBody(), userService.getUserById(user1Id).get(), false, 5);
         statisticsService.saveHistoryEntry(mapController.getMapById(map2Id).getBody(), userService.getUserById(user2Id).get(), true, 20);
+    }
+
+    private void addGameMapRatings(){
+        mapService.saveRating(mapService.getMapById(map1Id).get(), userService.getUserById(user1Id).get(), 8);
+        mapService.saveRating(mapService.getMapById(map2Id).get(), userService.getUserById(user1Id).get(), 6);
+        mapService.saveRating(mapService.getMapById(map1Id).get(), userService.getUserById(user2Id).get(), 9);
+        mapService.saveRating(mapService.getMapById(map2Id).get(), userService.getUserById(user2Id).get(), 2);
     }
 }

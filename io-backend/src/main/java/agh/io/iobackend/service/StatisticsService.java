@@ -21,7 +21,9 @@ public class StatisticsService {
     @Autowired
     private GameMapHistoryRepository gameMapHistoryRepository;
 
-    // TODO poprosić Asię żeby zapisywała to do historii jak gra się zakończy (trzeba to będzie zrobić dla każdego gracza oddzielnie)
+    @Autowired
+    private UserService userService;
+
     public void saveHistoryEntry(GameMap map, User user, boolean win, int points) {
         GameMapHistory gameMapHistory = GameMapHistory
                 .builder()
@@ -31,6 +33,10 @@ public class StatisticsService {
                 .points(points)
                 .build();
         gameMapHistoryRepository.save(gameMapHistory);
+    }
+
+    public void clearMapHistory() { // for tests
+        gameMapHistoryRepository.deleteAll();
     }
 
     public long getUserWinsNumber(Long userId) {
@@ -53,6 +59,13 @@ public class StatisticsService {
                 points.put(user, gameMapHistory.getPoints());
             }
         }
+        List<User> usersList = userService.getAllUsers();
+        for (User user : usersList) {
+            if (!points.containsKey(user)) {
+                points.put(user, 0);
+            }
+        }
+
         return points.entrySet()
                 .stream()
                 .sorted((c1, c2) -> -1 * c1.getValue().compareTo(c2.getValue()))

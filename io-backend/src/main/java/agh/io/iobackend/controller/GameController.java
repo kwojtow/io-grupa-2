@@ -49,7 +49,6 @@ public class GameController {
         return ResponseEntity.ok(playersList);
     }
 
-    @PostMapping("/{id}") // game id - poczatkowe wspolrzedne
     public ResponseEntity<String> startGame(@RequestBody ArrayList<PlayerInitialCoord> playerInitialCoordList, @PathVariable Long id) {
         try {
             gameService.startGame(id, playerInitialCoordList);
@@ -69,5 +68,3 @@ public class GameController {
         return ResponseEntity.ok("Game ended");
     }
 
-    //TODO leaving game ?
-}
