@@ -67,4 +67,5 @@ public class GameController {
         }
         return ResponseEntity.ok("Game ended");
     }
+}
 

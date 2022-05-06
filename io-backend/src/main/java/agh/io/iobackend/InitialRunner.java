@@ -1,9 +1,9 @@
 package agh.io.iobackend;
 
-import agh.io.iobackend.model.Game;
-import agh.io.iobackend.model.GameRoom;
-import agh.io.iobackend.model.User;
+
 import agh.io.iobackend.model.Vector;
+import agh.io.iobackend.model.game.Game;
+import agh.io.iobackend.model.game.GameRoom;
 import agh.io.iobackend.model.map.GameMap;
 import agh.io.iobackend.model.map.MapStructure;
 import agh.io.iobackend.model.user.User;
@@ -85,9 +85,9 @@ public class InitialRunner implements CommandLineRunner {
 
         gameRoomService.createGameRoom(gameRoom);
 
-        Game game = new Game(gameRoom.getGameRoomID(), gameMap.getMapId(), user2.getUserId());
+        Game game = new Game(gameRoom, gameMap);
 
-        gameService.createGame(gameRoom);
+        gameService.createGame(game);
 
         System.out.println("User id: " + user.getUserId());
         System.out.println(user);

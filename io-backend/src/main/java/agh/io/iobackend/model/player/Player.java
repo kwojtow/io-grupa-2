@@ -1,33 +1,40 @@
 package agh.io.iobackend.model.player;
 
-import agh.io.iobackend.model.Vector;
 import lombok.Data;
-import org.springframework.data.util.Pair;
+import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+@Entity
+@NoArgsConstructor
+@Data
 public class Player {
 
+    @Column
     private Long playerId;
 
     private PlayerStatus playerStatus;
     private int xCoordinate;
     private int yCoordinate;
+    private int xVector;
+    private int yVector;
 
-    private Vector vector;
+
+    private Long id;
 
     public Player(int xCoordinate, int yCoordinate, Long userId) {
         this.playerId = userId;
         this.playerStatus = PlayerStatus.WAITING;
         this.xCoordinate = xCoordinate;
         this.yCoordinate = yCoordinate;
-        this.vector = new Vector(0,0);
+        this.xVector = 0;
+        this.yVector = 0;
     }
 
-    public Long getPlayerId() {
-        return playerId;
-    }
-
-    public void updatePlayerAfterMove(int xCoordinate, int yCoordinate, Vector vector, PlayerStatus playerStatus) {
-        updateVectorAndCoordinates(xCoordinate, yCoordinate, vector);
+    public void updatePlayerAfterMove(int xCoordinate, int yCoordinate, int xVector, int yVector, PlayerStatus playerStatus) {
+        updateVectorAndCoordinates(xCoordinate, yCoordinate, xVector, yVector);
         this.playerStatus = playerStatus;
     }
 
@@ -43,14 +50,11 @@ public class Player {
         this.playerStatus = playerStatus;
     }
 
-    private void updateVectorAndCoordinates(int xCoordinate, int yCoordinate, Vector vector){
-        this.vector = vector;
+    private void updateVectorAndCoordinates(int xCoordinate, int yCoordinate, int xVector, int yVector){
+        this.xVector = xVector;
+        this.yVector = yVector;
         this.xCoordinate = xCoordinate;
         this.yCoordinate = yCoordinate;
-    }
-
-    public Pair<Integer, Integer> getPlayerPosition(){
-        return Pair.of(xCoordinate, yCoordinate);
     }
 
     public int getxCoordinate(){
@@ -61,7 +65,19 @@ public class Player {
         return yCoordinate;
     }
 
-    public Vector getVector() {
-        return vector;
+    public int getxVector() {
+        return this.xVector;
+    }
+    public int getyVector(){
+        return yVector;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    @Id
+    public Long getId() {
+        return id;
     }
 }

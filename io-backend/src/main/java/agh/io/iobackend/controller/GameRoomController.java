@@ -5,6 +5,7 @@ import agh.io.iobackend.controller.payload.room.GameRoomRequest;
 import agh.io.iobackend.controller.payload.room.GameRoomResponse;
 import agh.io.iobackend.exceptions.GameRoomNotFoundException;
 
+import agh.io.iobackend.exceptions.NoGameFoundException;
 import agh.io.iobackend.model.game.Game;
 import agh.io.iobackend.model.game.GameRoom;
 import agh.io.iobackend.model.user.User;
@@ -86,7 +87,7 @@ public class GameRoomController {
 
     @CrossOrigin
     @GetMapping("/{id}/game") // zaczecie gry przez Game Mastera - zwraca id gry
-    public ResponseEntity<Long> createGame(@PathVariable Long id) {
+    public ResponseEntity<Long> createGame(@PathVariable Long id) throws GameRoomNotFoundException {
         GameRoom gameRoom;
         try {
             gameRoom = gameRoomService.getGameRoom(id);
@@ -94,7 +95,7 @@ public class GameRoomController {
             return ResponseEntity.badRequest().body(null);
         }
         gameRoom.setGameStarted(true);
-        Game game = new Game(id, gameRoom.getGameMap());
+        Game game = new Game(gameRoomService.getGameRoom(id), gameRoom.getGameMap());
         Game savedGame = gameService.createGame(game);
         gameRoom.setGame(savedGame);
 
@@ -145,8 +146,7 @@ public class GameRoomController {
                     gameRoom.addPlayer(userService.getUserById(user).get());
                     return ResponseEntity.ok("User added");
                 }
-            }
-            else {
+            } else {
                 return ResponseEntity.badRequest().body("No user");
             }
         } catch (GameRoomNotFoundException e) {

@@ -3,9 +3,11 @@ package agh.io.iobackend.model.game;
 import agh.io.iobackend.controller.payload.game.PlayerInitialCoord;
 import agh.io.iobackend.controller.payload.game.PlayerMoveRequest;
 import agh.io.iobackend.controller.payload.game.PlayerStateResponse;
+import agh.io.iobackend.model.Vector;
 import agh.io.iobackend.model.map.GameMap;
 import agh.io.iobackend.model.player.Player;
 import agh.io.iobackend.model.player.PlayerStatus;
+import agh.io.iobackend.model.user.User;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Proxy;
 
@@ -14,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @Entity(name = "Game")
@@ -40,32 +43,31 @@ public class Game {
     private Long gameRoomId; // czy GameRoom
 
     @OneToOne
+    private GameRoom gameRoom;
+
+    @OneToOne
     private GameMap gameMap;
 
-    @ElementCollection
-    @Transient
-    private final List<Long> playersQueue  = new ArrayList<>();
-
-    @Transient
+    @OneToMany
     private final Map<Long, Player> players = new HashMap<>();
 
     private int currentPlayerIndex;
 
-    public Game(Long roomId, GameMap map) {
-        this.gameRoomId = roomId;
+    public Game(GameRoom gameRoom, GameMap map) {
+        this.gameRoom = gameRoom;
         this.gameMap = map;
         this.currentPlayerIndex = 0;
     }
 
+
     public void startGame(ArrayList<PlayerInitialCoord> playerInitialCoordsList) {
         for (PlayerInitialCoord playerInitialCoord : playerInitialCoordsList) {
-            playersQueue.add(playerInitialCoord.getUserId());
             players.put(playerInitialCoord.getUserId(),
                     new Player(playerInitialCoord.getXCoord(),
                             playerInitialCoord.getYCoord(), playerInitialCoord.getUserId()));
         }
         System.out.println("in createGame " + players);
-        Long currentPlayerId = playersQueue.get(currentPlayerIndex);
+        Long currentPlayerId = getListOfUserIds().get(currentPlayerIndex);
         players.get(currentPlayerId).setPlayerStatus(PlayerStatus.PLAYING);
     }
 
@@ -78,24 +80,28 @@ public class Game {
             playerStateResponse.setPlayerStatus(entry.getValue().getPlayerStatus());
             playerStateResponse.setXCoordinate(entry.getValue().getxCoordinate());
             playerStateResponse.setYCoordinate(entry.getValue().getyCoordinate());
-            playerStateResponse.setVector(entry.getValue().getVector());
+            playerStateResponse.setVector(new Vector(entry.getValue().getxVector(), entry.getValue().getyVector()));
             playerStatesList.add(playerStateResponse);
         }
         return playerStatesList;
     }
 
     private void nextPlayerTurn() {
-        currentPlayerIndex = (currentPlayerIndex + 1) % playersQueue.size();
+        currentPlayerIndex = (currentPlayerIndex + 1) % getListOfUserIds().size();
 
         while (players.get(getCurrentPlayerId()).getPlayerStatus() != PlayerStatus.WAITING) { // TODO why != WAITING ?
-            currentPlayerIndex = (currentPlayerIndex + 1) % playersQueue.size();
+            currentPlayerIndex = (currentPlayerIndex + 1) % getListOfUserIds().size();
         }
         players.get(getCurrentPlayerId()).setPlayerStatus(PlayerStatus.PLAYING);
     }
 
+    private List<Long> getListOfUserIds(){
+        return gameRoom.getUserList().stream().map(User::getUserId).collect(Collectors.toList());
+    }
+
     public void changeGameState(PlayerMoveRequest playerMove) {
         players.get(playerMove.getPlayerId())
-                .updatePlayerAfterMove(playerMove.getXCoordinate(), playerMove.getYCoordinate(), playerMove.getVector(),
+                .updatePlayerAfterMove(playerMove.getXCoordinate(), playerMove.getYCoordinate(), playerMove.getVector().getX(), playerMove.getVector().getY(),
                         playerMove.getPlayerStatus());
 
         nextPlayerTurn();
@@ -106,7 +112,7 @@ public class Game {
     }
 
     public Long getCurrentPlayerId() {
-        return playersQueue.get(currentPlayerIndex);
+        return getListOfUserIds().get(currentPlayerIndex);
     }
 
     public Long getGameId() {
@@ -121,8 +127,5 @@ public class Game {
         return gameRoomId;
     }
 
-    public List<Long> getPlayersQueue(){
-        return this.playersQueue;
-    }
 
 }
