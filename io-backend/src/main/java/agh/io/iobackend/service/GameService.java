@@ -6,9 +6,11 @@ import agh.io.iobackend.controller.payload.game.PlayerStateResponse;
 import agh.io.iobackend.exceptions.NoGameFoundException;
 import agh.io.iobackend.model.game.Game;
 import agh.io.iobackend.model.game.GameRoom;
+import agh.io.iobackend.model.player.Player;
 import agh.io.iobackend.model.user.User;
 import agh.io.iobackend.repository.GameRepository;
 import agh.io.iobackend.repository.GameRoomRepository;
+import agh.io.iobackend.repository.PlayerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +30,9 @@ public class GameService {
     @Autowired
     private GameRoomRepository gameRoomRepository;
 
+    @Autowired
+    private PlayerRepository playerRepository;
+
 
     public Game createGame(Game game) {
         return gameRepository.save(game);
@@ -44,9 +49,14 @@ public class GameService {
     }
 
     public void startGame(Long gameId, ArrayList<PlayerInitialCoord> playerInitialCoordsList) throws NoGameFoundException {
-       getGameFromRepo(gameId).startGame(playerInitialCoordsList);
+        Game game = getGameFromRepo(gameId);
+        for (PlayerInitialCoord playerInitialCoord : playerInitialCoordsList){
+            Player player = new Player(playerInitialCoord.getXCoord(), playerInitialCoord.getYCoord(), playerInitialCoord.getUserId());
+            playerRepository.save(player);
+            game.startGameForPlayer(player);
+        }
+        game.setPlayerThatStarts();
     }
-
 
     public ArrayList<PlayerStateResponse> getPlayerStatesList(Long gameId) throws NoGameFoundException {
         return getGameFromRepo(gameId).getPlayerStatesList();
@@ -62,7 +72,7 @@ public class GameService {
         gameRoomRepository.findByGameRoomID(game.getGameRoomId()).get().setGameStarted(false);
         List<User> users = gameRoom.getUserList();
         for (User user : users){
-            statisticsService.saveHistoryEntry(game.getMap(), user, game.getPlayer(user.getUserId()).getPlayerResult(), 100);
+            statisticsService.saveHistoryEntry(game.getMap(), user, game.getPlayer(user.getUserId()).checkPlayerResult(), 100);
         }
     }
 }

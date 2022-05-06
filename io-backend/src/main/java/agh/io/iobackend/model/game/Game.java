@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Proxy;
 
 import javax.persistence.*;
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @Entity(name = "Game")
+//@Proxy(lazy = false)
 
 public class Game {
 
@@ -48,7 +50,10 @@ public class Game {
     @OneToOne
     private GameMap gameMap;
 
-    @OneToMany
+    @ElementCollection
+    private List<Long> playersQueue;
+
+    @OneToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
     private final Map<Long, Player> players = new HashMap<>();
 
     private int currentPlayerIndex;
@@ -62,12 +67,24 @@ public class Game {
 
     public void startGame(ArrayList<PlayerInitialCoord> playerInitialCoordsList) {
         for (PlayerInitialCoord playerInitialCoord : playerInitialCoordsList) {
+            playersQueue.add(playerInitialCoord.getUserId());
             players.put(playerInitialCoord.getUserId(),
                     new Player(playerInitialCoord.getXCoord(),
                             playerInitialCoord.getYCoord(), playerInitialCoord.getUserId()));
         }
         System.out.println("in createGame " + players);
-        Long currentPlayerId = getListOfUserIds().get(currentPlayerIndex);
+        Long currentPlayerId = playersQueue.get(currentPlayerIndex);
+//        Long currentPlayerId = getListOfUserIds().get(currentPlayerIndex);
+        players.get(currentPlayerId).setPlayerStatus(PlayerStatus.PLAYING);
+    }
+
+    public void startGameForPlayer(Player player) {
+        playersQueue.add(player.getPlayerId());
+        players.put(player.getPlayerId(), player);
+    }
+
+    public void setPlayerThatStarts(){
+        Long currentPlayerId = playersQueue.get(currentPlayerIndex);
         players.get(currentPlayerId).setPlayerStatus(PlayerStatus.PLAYING);
     }
 
@@ -78,9 +95,9 @@ public class Game {
             PlayerStateResponse playerStateResponse = new PlayerStateResponse();
             playerStateResponse.setPlayerId(entry.getKey());
             playerStateResponse.setPlayerStatus(entry.getValue().getPlayerStatus());
-            playerStateResponse.setXCoordinate(entry.getValue().getxCoordinate());
-            playerStateResponse.setYCoordinate(entry.getValue().getyCoordinate());
-            playerStateResponse.setVector(new Vector(entry.getValue().getxVector(), entry.getValue().getyVector()));
+            playerStateResponse.setXCoordinate(entry.getValue().getXCoordinate());
+            playerStateResponse.setYCoordinate(entry.getValue().getYCoordinate());
+            playerStateResponse.setVector(new Vector(entry.getValue().getXVector(), entry.getValue().getYVector()));
             playerStatesList.add(playerStateResponse);
         }
         return playerStatesList;
@@ -96,7 +113,8 @@ public class Game {
     }
 
     private List<Long> getListOfUserIds(){
-        return gameRoom.getUserList().stream().map(User::getUserId).collect(Collectors.toList());
+        return playersQueue;
+//        return gameRoom.getUserList().stream().map(User::getUserId).collect(Collectors.toList());
     }
 
     public void changeGameState(PlayerMoveRequest playerMove) {
@@ -112,7 +130,8 @@ public class Game {
     }
 
     public Long getCurrentPlayerId() {
-        return getListOfUserIds().get(currentPlayerIndex);
+        return playersQueue.get(currentPlayerIndex);
+//        return getListOfUserIds().get(currentPlayerIndex);
     }
 
     public Long getGameId() {
@@ -127,5 +146,8 @@ public class Game {
         return gameRoomId;
     }
 
+    public void addPlayersToQueue(Long id){
+
+    }
 
 }

@@ -4,6 +4,7 @@ import agh.io.iobackend.model.map.GameMap;
 import agh.io.iobackend.model.user.User;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Proxy;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @Entity(name = "GameRoom")
+@Proxy(lazy = false)
 public class GameRoom {
 
     @Id

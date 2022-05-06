@@ -1,18 +1,21 @@
 package agh.io.iobackend.model.player;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 
-@Entity
-@NoArgsConstructor
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
 public class Player {
 
-    @Column
+    @Id
+    @GeneratedValue
+    private Long id;
+
     private Long playerId;
 
     private PlayerStatus playerStatus;
@@ -21,8 +24,6 @@ public class Player {
     private int xVector;
     private int yVector;
 
-
-    private Long id;
 
     public Player(int xCoordinate, int yCoordinate, Long userId) {
         this.playerId = userId;
@@ -38,7 +39,7 @@ public class Player {
         this.playerStatus = playerStatus;
     }
 
-    public Boolean getPlayerResult(){
+    public Boolean checkPlayerResult(){
         return playerStatus != PlayerStatus.LOST;
     }
 
@@ -57,27 +58,4 @@ public class Player {
         this.yCoordinate = yCoordinate;
     }
 
-    public int getxCoordinate(){
-        return xCoordinate;
-    }
-
-    public int getyCoordinate(){
-        return yCoordinate;
-    }
-
-    public int getxVector() {
-        return this.xVector;
-    }
-    public int getyVector(){
-        return yVector;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    @Id
-    public Long getId() {
-        return id;
-    }
 }

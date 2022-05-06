@@ -11,11 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 
 @CrossOrigin
 @RestController
 @RequestMapping("/game/")
+@Transactional
 public class GameController {
     private static final Logger logger = LoggerFactory.getLogger(GameController.class);
 
