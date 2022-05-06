@@ -62,8 +62,8 @@ public class GameControllerTest {
     private static Long gameId;
 
     int x1 = 1, y1 = 1;
-    int x2 = 4; int y2 = 4;
-
+    int x2 = 4;
+    int y2 = 4;
 
 
     private static void createUsers(AuthController authController) {
@@ -152,7 +152,7 @@ public class GameControllerTest {
         assertNotNull(gameRoomRepository.findByGameRoomID(roomId));
 
         // add users
-        gameRoomController.joinGameRoom(roomId,  gameMasterId);
+        gameRoomController.joinGameRoom(roomId, gameMasterId);
         gameRoomController.joinGameRoom(roomId, user1Id);
 
         // create game
@@ -164,7 +164,7 @@ public class GameControllerTest {
     }
 
     @BeforeEach
-    public void setInitialCoord(){
+    public void setInitialCoord() {
         ArrayList<PlayerInitialCoord> playerInitialCoordArrayList = new ArrayList<>();
 
         PlayerInitialCoord playerInitialCoord1 = new PlayerInitialCoord();
@@ -184,20 +184,20 @@ public class GameControllerTest {
     }
 
     @Test
-    public void setInitialCoordinatesWithStartGame(){
+    public void setInitialCoordinatesWithStartGame() {
         //given
         PlayerStateResponse expectedPlayerStateResponse1 = new PlayerStateResponse();
         expectedPlayerStateResponse1.setPlayerId(user1Id);
         expectedPlayerStateResponse1.setXCoordinate(x1);
         expectedPlayerStateResponse1.setYCoordinate(y1);
-        expectedPlayerStateResponse1.setVector(new Vector(0,0));
+        expectedPlayerStateResponse1.setVector(new Vector(0, 0));
         expectedPlayerStateResponse1.setPlayerStatus(PlayerStatus.PLAYING);
 
         PlayerStateResponse expectedPlayerStateResponse2 = new PlayerStateResponse();
         expectedPlayerStateResponse2.setPlayerId(gameMasterId);
         expectedPlayerStateResponse2.setXCoordinate(x2);
         expectedPlayerStateResponse2.setYCoordinate(y2);
-        expectedPlayerStateResponse2.setVector(new Vector(0,0));
+        expectedPlayerStateResponse2.setVector(new Vector(0, 0));
         expectedPlayerStateResponse2.setPlayerStatus(PlayerStatus.WAITING);
 
         //when
@@ -212,11 +212,11 @@ public class GameControllerTest {
     }
 
     @Test
-    public void makeMoveAndGetGameState(){
-        PlayerMoveRequest playerMoveRequest= new PlayerMoveRequest();
+    public void makeMoveAndGetGameState() {
+        PlayerMoveRequest playerMoveRequest = new PlayerMoveRequest();
         playerMoveRequest.setPlayerId(user1Id);
         playerMoveRequest.setPlayerStatus(PlayerStatus.WAITING);
-        playerMoveRequest.setVector(new Vector(1,1));
+        playerMoveRequest.setVector(new Vector(1, 1));
         playerMoveRequest.setXCoordinate(x1);
         playerMoveRequest.setYCoordinate(y1);
 
@@ -224,7 +224,7 @@ public class GameControllerTest {
         expectedPlayerStateResponse1.setPlayerId(user1Id);
         expectedPlayerStateResponse1.setXCoordinate(x1);
         expectedPlayerStateResponse1.setYCoordinate(y1);
-        expectedPlayerStateResponse1.setVector(new Vector(1,1));
+        expectedPlayerStateResponse1.setVector(new Vector(1, 1));
         expectedPlayerStateResponse1.setPlayerStatus(PlayerStatus.WAITING);
 
         //when
@@ -237,13 +237,13 @@ public class GameControllerTest {
 
     //TODO
     @Test
-    public void playersQueueWorksFine(){
+    public void playersQueueWorksFine() {
 
     }
 
 
     @Test
-    public void endGame(){
+    public void endGame() {
 
     }
 

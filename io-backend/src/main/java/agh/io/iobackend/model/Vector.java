@@ -18,9 +18,4 @@ public class Vector {
         this.x = x;
         this.y = y;
     }
-
-    public void changeVector(int xChange, int yChange) {
-        this.x += xChange;
-        this.y += yChange;
-    }
 }

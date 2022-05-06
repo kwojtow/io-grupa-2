@@ -39,19 +39,19 @@ public class Player {
         this.playerStatus = playerStatus;
     }
 
-    public Boolean checkPlayerResult(){
+    public Boolean checkPlayerResult() {
         return playerStatus != PlayerStatus.LOST;
     }
 
-    public PlayerStatus getPlayerStatus(){
+    public PlayerStatus getPlayerStatus() {
         return playerStatus;
     }
 
-    public void setPlayerStatus(PlayerStatus playerStatus){
+    public void setPlayerStatus(PlayerStatus playerStatus) {
         this.playerStatus = playerStatus;
     }
 
-    private void updateVectorAndCoordinates(int xCoordinate, int yCoordinate, int xVector, int yVector){
+    private void updateVectorAndCoordinates(int xCoordinate, int yCoordinate, int xVector, int yVector) {
         this.xVector = xVector;
         this.yVector = yVector;
         this.xCoordinate = xCoordinate;

@@ -53,7 +53,7 @@ public class Game {
     @ElementCollection
     private List<Long> playersQueue;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private final Map<Long, Player> players = new HashMap<>();
 
     private int currentPlayerIndex;
@@ -85,7 +85,7 @@ public class Game {
         players.put(player.getPlayerId(), player);
     }
 
-    public void setPlayerThatStarts(){
+    public void setPlayerThatStarts() {
         Long currentPlayerId = playersQueue.get(currentPlayerIndex);
         players.get(currentPlayerId).setPlayerStatus(PlayerStatus.PLAYING);
         System.out.println("curr" + currentPlayerIndex + currentPlayerId);
@@ -93,7 +93,7 @@ public class Game {
 
     public ArrayList<PlayerStateResponse> getPlayerStatesList() {
         ArrayList<PlayerStateResponse> playerStatesList = new ArrayList<>();
-        System.out.println("in getPlayers State" +  players);
+        System.out.println("in getPlayers State" + players);
         for (Long playerId : playersQueue) {
             PlayerStateResponse playerStateResponse = new PlayerStateResponse();
             Player playerDetails = players.get(playerId);
@@ -110,13 +110,15 @@ public class Game {
     private void nextPlayerTurn() {
         currentPlayerIndex = (currentPlayerIndex + 1) % getListOfUserIds().size();
 
-        while (players.get(getCurrentPlayerId()).getPlayerStatus() != PlayerStatus.WAITING) { // TODO why != WAITING ?
+        while (players.get(getCurrentPlayerId()).getPlayerStatus() != PlayerStatus.WAITING) { // TODO why != WAITING ? sprawdze czy to dziala XD
             currentPlayerIndex = (currentPlayerIndex + 1) % getListOfUserIds().size();
         }
         players.get(getCurrentPlayerId()).setPlayerStatus(PlayerStatus.PLAYING);
     }
 
-    private List<Long> getListOfUserIds(){
+    //TODO
+    // na razie to zwraca playersQueue ale plan byl taki zeby z GameRoom liste bralo - tylko wtedy trzeba dodac tam na pewno jakas adnotacje
+    private List<Long> getListOfUserIds() {
         return playersQueue;
 //        return gameRoom.getUserList().stream().map(User::getUserId).collect(Collectors.toList());
     }
@@ -149,9 +151,4 @@ public class Game {
     public Long getGameRoomId() {
         return gameRoomId;
     }
-
-    public void addPlayersToQueue(Long id){
-
-    }
-
 }
