@@ -85,7 +85,7 @@ public class InitialRunner implements CommandLineRunner {
 
         gameRoomService.createGameRoom(gameRoom);
 
-        Game game = new Game(gameRoom, gameMap);
+        Game game = new Game(gameRoom.getGameRoomID(), gameMap.getMapId());
 
         gameService.createGame(game);
 

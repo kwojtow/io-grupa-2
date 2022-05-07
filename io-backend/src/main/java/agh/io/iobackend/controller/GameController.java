@@ -44,7 +44,6 @@ public class GameController {
         ArrayList<PlayerStateResponse> playersList = null;
         try {
             playersList = gameService.getPlayerStatesList(id);
-            System.out.println(playersList);
         } catch (NoGameFoundException e) {
             return ResponseEntity.badRequest().body(null);
         }
@@ -63,7 +62,7 @@ public class GameController {
     @DeleteMapping("/{id}/state")
     public ResponseEntity<String> endGame(@PathVariable Long id) {
         try {
-            gameService.endGame(id); // changes also gameStarted in GameRoom
+            gameService.endGame(id);
         } catch (NoGameFoundException e) {
             return ResponseEntity.badRequest().body("Game not found");
         }

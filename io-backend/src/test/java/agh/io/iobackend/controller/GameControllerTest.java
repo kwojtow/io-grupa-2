@@ -12,45 +12,30 @@ import agh.io.iobackend.controller.payload.room.GameRoomResponse;
 import agh.io.iobackend.exceptions.GameRoomNotFoundException;
 import agh.io.iobackend.exceptions.NoGameFoundException;
 import agh.io.iobackend.model.Vector;
-import agh.io.iobackend.model.game.Game;
 import agh.io.iobackend.model.map.GameMap;
 import agh.io.iobackend.model.map.MapStructure;
 import agh.io.iobackend.model.player.PlayerStatus;
-import agh.io.iobackend.repository.GameRepository;
 import agh.io.iobackend.repository.GameRoomRepository;
-import agh.io.iobackend.service.GameService;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
-import java.util.Map;
-import java.util.Objects;
+
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.when;
 
 @SpringBootTest
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class GameControllerTest {
 
     @Autowired
     private GameController gameController;
 
     @Autowired
-    private GameService gameService;
-
-    @Autowired
-    private GameRepository gameRepository;
-
-    @Autowired
     private GameRoomController gameRoomController;
-
-    @Autowired
-    private GameRoomRepository gameRoomRepository;
 
     private static Long roomId;
     private static Long mapId = 1L;
@@ -61,24 +46,25 @@ public class GameControllerTest {
 
     private static Long gameId;
 
-    int x1 = 1, y1 = 1;
-    int x2 = 4;
-    int y2 = 4;
+    static int x1 = 1;
+    static int y1 = 1;
+    static int x2 = 4;
+    static int y2 = 4;
 
 
     private static void createUsers(AuthController authController) {
 
         // user - gameMaster
         SignupRequest signupRequest = new SignupRequest();
-        signupRequest.setUsername("uname");
-        signupRequest.setEmail("email123@mail.com");
+        signupRequest.setUsername("uname1");
+        signupRequest.setEmail("email12345@mail.com");
         signupRequest.setPassword("pass");
 
         ResponseEntity<String> signupResponse = authController.registerUser(signupRequest);
         assertEquals(200, signupResponse.getStatusCodeValue());
 
         SigninRequest signinRequest = new SigninRequest();
-        signinRequest.setUsername("uname");
+        signinRequest.setUsername("uname1");
         signinRequest.setPassword("pass");
 
         ResponseEntity<JwtResponse> signinResponse = authController.loginUser(signinRequest);
@@ -87,15 +73,15 @@ public class GameControllerTest {
 
         // user1
         signupRequest = new SignupRequest();
-        signupRequest.setUsername("uname2");
-        signupRequest.setEmail("email1234@mail.com");
+        signupRequest.setUsername("uname11");
+        signupRequest.setEmail("email123456@mail.com");
         signupRequest.setPassword("pass");
 
         signupResponse = authController.registerUser(signupRequest);
         assertEquals(200, signupResponse.getStatusCodeValue());
 
         signinRequest = new SigninRequest();
-        signinRequest.setUsername("uname2");
+        signinRequest.setUsername("uname11");
         signinRequest.setPassword("pass");
 
         signinResponse = authController.loginUser(signinRequest);
@@ -128,9 +114,9 @@ public class GameControllerTest {
     @BeforeAll
     static void createRoomAndGame(@Autowired GameRoomController gameRoomController,
                                   @Autowired GameRoomRepository gameRoomRepository,
+                                  @Autowired GameController gameController,
                                   @Autowired AuthController authController,
-                                  @Autowired MapController mapController,
-                                  @Autowired GameService gameService) throws GameRoomNotFoundException, NoGameFoundException {
+                                  @Autowired MapController mapController) throws GameRoomNotFoundException, NoGameFoundException {
 
         createUsers(authController);
         createMap(mapController);
@@ -161,10 +147,7 @@ public class GameControllerTest {
         gameId = gameIdResponse.getBody();
         assertEquals(200, gameIdResponse.getStatusCodeValue());
         assertEquals(roomId, gameIdResponse.getBody().longValue());
-    }
 
-    @BeforeEach
-    public void setInitialCoord() {
         ArrayList<PlayerInitialCoord> playerInitialCoordArrayList = new ArrayList<>();
 
         PlayerInitialCoord playerInitialCoord1 = new PlayerInitialCoord();
@@ -180,10 +163,10 @@ public class GameControllerTest {
         playerInitialCoordArrayList.add(playerInitialCoord2);
 
         gameController.startGame(playerInitialCoordArrayList, gameId);
-
     }
 
     @Test
+    @Order(1)
     public void setInitialCoordinatesWithStartGame() {
         //given
         PlayerStateResponse expectedPlayerStateResponse1 = new PlayerStateResponse();
@@ -205,49 +188,99 @@ public class GameControllerTest {
 
         //then
         ResponseEntity<Long> gameIdResponse = gameRoomController.checkIfGameStarted(roomId);
-        assertEquals(gameIdResponse.getBody(), gameId);
-        assertEquals(playerStates.getBody().get(0), expectedPlayerStateResponse1);
-        assertEquals(playerStates.getBody().get(1), expectedPlayerStateResponse2);
+        assertEquals(gameId, gameIdResponse.getBody());
+        assertEquals(expectedPlayerStateResponse1, playerStates.getBody().get(0));
+        assertEquals(expectedPlayerStateResponse2, playerStates.getBody().get(1));
 
     }
 
     @Test
+    @Order(2)
     public void makeMoveAndGetGameState() {
+        //given
         PlayerMoveRequest playerMoveRequest = new PlayerMoveRequest();
         playerMoveRequest.setPlayerId(user1Id);
-        playerMoveRequest.setPlayerStatus(PlayerStatus.WAITING);
+        playerMoveRequest.setPlayerStatus(PlayerStatus.WAITING); // frontend part changes it to WAITING?
         playerMoveRequest.setVector(new Vector(1, 1));
-        playerMoveRequest.setXCoordinate(x1);
-        playerMoveRequest.setYCoordinate(y1);
+        playerMoveRequest.setXCoordinate(x1 + 1);
+        playerMoveRequest.setYCoordinate(y1 + 1);
 
-        PlayerStateResponse expectedPlayerStateResponse1 = new PlayerStateResponse();
-        expectedPlayerStateResponse1.setPlayerId(user1Id);
-        expectedPlayerStateResponse1.setXCoordinate(x1);
-        expectedPlayerStateResponse1.setYCoordinate(y1);
-        expectedPlayerStateResponse1.setVector(new Vector(1, 1));
-        expectedPlayerStateResponse1.setPlayerStatus(PlayerStatus.WAITING);
+        PlayerStateResponse expectedPlayerStateResponse = new PlayerStateResponse();
+        expectedPlayerStateResponse.setPlayerId(user1Id);
+        expectedPlayerStateResponse.setXCoordinate(x1 + 1);
+        expectedPlayerStateResponse.setYCoordinate(y1 + 1);
+        expectedPlayerStateResponse.setVector(new Vector(1, 1));
+        expectedPlayerStateResponse.setPlayerStatus(PlayerStatus.WAITING);
+
+        PlayerStateResponse expectedPlayerStateResponseForGameMaster = new PlayerStateResponse();
+        expectedPlayerStateResponseForGameMaster.setPlayerId(gameMasterId);
+        expectedPlayerStateResponseForGameMaster.setXCoordinate(x2);
+        expectedPlayerStateResponseForGameMaster.setYCoordinate(y2);
+        expectedPlayerStateResponseForGameMaster.setVector(new Vector(0, 0));
+        expectedPlayerStateResponseForGameMaster.setPlayerStatus(PlayerStatus.PLAYING);
 
         //when
-        ResponseEntity<String> responseEntity = gameController.changePosition(playerMoveRequest, gameId);
+        ResponseEntity<String> responseEntity = gameController.changePosition(playerMoveRequest, gameId); //user1 made move
         ResponseEntity<ArrayList<PlayerStateResponse>> playerStates = gameController.getGameState(gameId);
 
         //then
-        assertEquals(playerStates.getBody().get(0), expectedPlayerStateResponse1);
+        assertEquals(expectedPlayerStateResponse, playerStates.getBody().get(0));
+        assertEquals(expectedPlayerStateResponseForGameMaster, playerStates.getBody().get(1)); //getting the game state (GameMaster's status should be set as playing)
     }
 
-    //TODO
     @Test
+    @Order(3)
     public void playersQueueWorksFine() {
+        //given - now the gameMater is moving
+        PlayerMoveRequest playerMoveRequest = new PlayerMoveRequest();
+        playerMoveRequest.setPlayerId(gameMasterId);
+        playerMoveRequest.setPlayerStatus(PlayerStatus.WAITING);
+        playerMoveRequest.setVector(new Vector(1, 0));
+        playerMoveRequest.setXCoordinate(x2 + 1);
+        playerMoveRequest.setYCoordinate(y2);
 
+        PlayerStateResponse expectedPlayerStateResponse = new PlayerStateResponse();
+        expectedPlayerStateResponse.setPlayerId(gameMasterId);
+        expectedPlayerStateResponse.setXCoordinate(x2 + 1);
+        expectedPlayerStateResponse.setYCoordinate(y2);
+        expectedPlayerStateResponse.setVector(new Vector(1, 0));
+        expectedPlayerStateResponse.setPlayerStatus(PlayerStatus.WAITING);
+
+        PlayerStateResponse expectedPlayerStateResponseForPlayingUser = new PlayerStateResponse();
+        expectedPlayerStateResponseForPlayingUser.setPlayerId(user1Id);
+        expectedPlayerStateResponseForPlayingUser.setXCoordinate(x1 + 1);
+        expectedPlayerStateResponseForPlayingUser.setYCoordinate(y1 + 1);
+        expectedPlayerStateResponseForPlayingUser.setVector(new Vector(1, 1));
+        expectedPlayerStateResponseForPlayingUser.setPlayerStatus(PlayerStatus.PLAYING);
+
+        //when
+        ResponseEntity<String> responseEntity = gameController.changePosition(playerMoveRequest, gameId); //user1 made move
+        ResponseEntity<ArrayList<PlayerStateResponse>> playerStates = gameController.getGameState(gameId);
+
+        //then
+        assertEquals(expectedPlayerStateResponseForPlayingUser, playerStates.getBody().get(0));
     }
-
 
     @Test
+    @Order(4)
     public void endGame() {
+        //given
+        PlayerMoveRequest playerMoveRequest = new PlayerMoveRequest();
+        playerMoveRequest.setPlayerId(gameMasterId);
+        playerMoveRequest.setPlayerStatus(PlayerStatus.WAITING);
+        playerMoveRequest.setVector(new Vector(1, 0));
+        playerMoveRequest.setXCoordinate(x2 + 1);
+        playerMoveRequest.setYCoordinate(y2);
 
+        //when
+        ResponseEntity<String> responseEntity = gameController.endGame(gameId);
+        ResponseEntity<ArrayList<PlayerStateResponse>> gettingGameState = gameController.getGameState(gameId);
+        ResponseEntity<String> changingPosition = gameController.changePosition(playerMoveRequest, gameId);
+
+        //then
+        assertEquals(400, gettingGameState.getStatusCodeValue());
+        assertEquals(400, changingPosition.getStatusCodeValue());
     }
-
-
 }
 
 

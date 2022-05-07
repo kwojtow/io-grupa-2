@@ -6,6 +6,8 @@ import agh.io.iobackend.controller.payload.auth.SignupRequest;
 import agh.io.iobackend.model.Vector;
 import agh.io.iobackend.model.map.GameMap;
 import agh.io.iobackend.model.map.MapStructure;
+import agh.io.iobackend.service.GameRoomService;
+import agh.io.iobackend.service.GameService;
 import agh.io.iobackend.service.MapService;
 import agh.io.iobackend.service.StatisticsService;
 import org.checkerframework.checker.units.qual.A;
@@ -36,9 +38,13 @@ class MapControllerTest {
     @BeforeAll
     static void registerAndLogin(@Autowired AuthController authController,
                                  @Autowired MapService mapService,
-                                 @Autowired StatisticsService statisticsService) {
+                                 @Autowired StatisticsService statisticsService,
+                                 @Autowired GameRoomService gameRoomService,
+                                 @Autowired GameService gameService) {
 
         statisticsService.clearMapHistory();
+        gameRoomService.clearGameRooms();
+        gameService.clearGames();
         mapService.clearMapRatings();
         mapService.clearMaps();
 

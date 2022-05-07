@@ -95,7 +95,7 @@ public class GameRoomController {
             return ResponseEntity.badRequest().body(null);
         }
         gameRoom.setGameStarted(true);
-        Game game = new Game(gameRoomService.getGameRoom(id), gameRoom.getGameMap());
+        Game game = new Game(id, gameRoom.getGameMap());
         Game savedGame = gameService.createGame(game);
         gameRoom.setGame(savedGame);
 
@@ -128,12 +128,13 @@ public class GameRoomController {
 
     @CrossOrigin
     @DeleteMapping("/{id}/users-list/{user}") // room id
-    public void leaveGameRoom(@PathVariable Long id, @PathVariable Long user) throws GameRoomNotFoundException {
+    public void leaveGameRoom(@PathVariable Long id, @PathVariable Long user) throws GameRoomNotFoundException, NoGameFoundException {
         GameRoom gameRoom = gameRoomService.getGameRoom(id);
         gameRoom.removePlayer(userService.getUserById(user).get());
         if (gameRoom.getUserList().size() == 0) {
             gameRoomService.deleteGameRoom(id);
         }
+        gameService.removeFromGame(id, user); //TODO przetestowac
     }
 
     @CrossOrigin
@@ -148,6 +149,9 @@ public class GameRoomController {
                 }
             } else {
                 return ResponseEntity.badRequest().body("No user");
+            }
+            if (gameRoom.getGameStarted()){
+                return ResponseEntity.badRequest().body("Game has already started, cannot join");
             }
         } catch (GameRoomNotFoundException e) {
             return ResponseEntity.badRequest().body("No room");

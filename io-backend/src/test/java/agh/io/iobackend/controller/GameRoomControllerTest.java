@@ -6,6 +6,7 @@ import agh.io.iobackend.controller.payload.auth.SignupRequest;
 import agh.io.iobackend.controller.payload.room.GameRoomRequest;
 import agh.io.iobackend.controller.payload.room.GameRoomResponse;
 import agh.io.iobackend.exceptions.GameRoomNotFoundException;
+import agh.io.iobackend.exceptions.NoGameFoundException;
 import agh.io.iobackend.model.Vector;
 import agh.io.iobackend.model.map.GameMap;
 import agh.io.iobackend.model.map.MapStructure;
@@ -48,6 +49,7 @@ public class GameRoomControllerTest {
         signupRequest.setPassword("pass");
 
         ResponseEntity<String> signupResponse = authController.registerUser(signupRequest);
+        System.out.println(signupResponse.getBody());
         assertEquals(200, signupResponse.getStatusCodeValue());
 
         SigninRequest signinRequest = new SigninRequest();
@@ -104,6 +106,7 @@ public class GameRoomControllerTest {
                                   @Autowired AuthController authController,
                                   @Autowired MapController mapController) throws GameRoomNotFoundException {
 
+
         createUsers(authController);
         createMap(mapController);
 
@@ -144,7 +147,7 @@ public class GameRoomControllerTest {
     }
 
     @Test
-    void usersListTests() throws GameRoomNotFoundException {
+    void usersListTests() throws GameRoomNotFoundException, NoGameFoundException {
         ResponseEntity<List<User>> usersListInRoom = gameRoomController.getUserListInRoom(roomId);
         assertEquals(0, Objects.requireNonNull(usersListInRoom.getBody()).size());
 

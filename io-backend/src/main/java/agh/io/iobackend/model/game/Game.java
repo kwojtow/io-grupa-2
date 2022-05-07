@@ -1,28 +1,21 @@
 package agh.io.iobackend.model.game;
 
-import agh.io.iobackend.controller.payload.game.PlayerInitialCoord;
 import agh.io.iobackend.controller.payload.game.PlayerMoveRequest;
 import agh.io.iobackend.controller.payload.game.PlayerStateResponse;
 import agh.io.iobackend.model.Vector;
 import agh.io.iobackend.model.map.GameMap;
 import agh.io.iobackend.model.player.Player;
 import agh.io.iobackend.model.player.PlayerStatus;
-import agh.io.iobackend.model.user.User;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Proxy;
 
 import javax.persistence.*;
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @Entity(name = "Game")
-//@Proxy(lazy = false)
-
 public class Game {
 
     @Id
@@ -45,9 +38,6 @@ public class Game {
     private Long gameRoomId; // czy GameRoom
 
     @OneToOne
-    private GameRoom gameRoom;
-
-    @OneToOne
     private GameMap gameMap;
 
     @ElementCollection
@@ -58,26 +48,14 @@ public class Game {
 
     private int currentPlayerIndex;
 
-    public Game(GameRoom gameRoom, GameMap map) {
-        this.gameRoom = gameRoom;
+    public Game(Long gameRoomId, GameMap map) {
+        this.gameRoomId = gameRoomId;
         this.gameMap = map;
         this.currentPlayerIndex = 0;
     }
 
-// startGame nie uzywam bo tworze to wszystko wyzej, zapisujac playera do bazy :/
-
-//    public void startGame(ArrayList<PlayerInitialCoord> playerInitialCoordsList) {
-//        for (PlayerInitialCoord playerInitialCoord : playerInitialCoordsList) {
-//            playersQueue.add(playerInitialCoord.getUserId());
-//            players.put(playerInitialCoord.getUserId(),
-//                    new Player(playerInitialCoord.getXCoord(),
-//                            playerInitialCoord.getYCoord(), playerInitialCoord.getUserId()));
-//        }
-//        System.out.println("in createGame " + players);
-//        Long currentPlayerId = playersQueue.get(currentPlayerIndex);
-////        Long currentPlayerId = getListOfUserIds().get(currentPlayerIndex);
-//        players.get(currentPlayerId).setPlayerStatus(PlayerStatus.PLAYING);
-//    }
+    public Game(Long gameId, Long mapId) {
+    }
 
     public void startGameForPlayer(Player player) {
         System.out.println("Game started for + " + player);
@@ -108,19 +86,12 @@ public class Game {
     }
 
     private void nextPlayerTurn() {
-        currentPlayerIndex = (currentPlayerIndex + 1) % getListOfUserIds().size();
+        currentPlayerIndex = (currentPlayerIndex + 1) % playersQueue.size();
 
-        while (players.get(getCurrentPlayerId()).getPlayerStatus() != PlayerStatus.WAITING) { // TODO why != WAITING ? sprawdze czy to dziala XD
-            currentPlayerIndex = (currentPlayerIndex + 1) % getListOfUserIds().size();
+        while (players.get(getCurrentPlayerId()).getPlayerStatus() != PlayerStatus.WAITING) { // TODO why != WAITING ? wydaje mi se ze to dziala, bo po prostu kolejny czekajacy jest brany
+            currentPlayerIndex = (currentPlayerIndex + 1) % playersQueue.size();  // frontend zmienia z playing na waiting albo na lost a waiting zostaje, bo oni chyba nie wiedza kto nastepny (?)
         }
         players.get(getCurrentPlayerId()).setPlayerStatus(PlayerStatus.PLAYING);
-    }
-
-    //TODO
-    // na razie to zwraca playersQueue ale plan byl taki zeby z GameRoom liste bralo - tylko wtedy trzeba dodac tam na pewno jakas adnotacje
-    private List<Long> getListOfUserIds() {
-        return playersQueue;
-//        return gameRoom.getUserList().stream().map(User::getUserId).collect(Collectors.toList());
     }
 
     public void changeGameState(PlayerMoveRequest playerMove) {
@@ -137,7 +108,6 @@ public class Game {
 
     public Long getCurrentPlayerId() {
         return playersQueue.get(currentPlayerIndex);
-//        return getListOfUserIds().get(currentPlayerIndex);
     }
 
     public Long getGameId() {
@@ -150,5 +120,10 @@ public class Game {
 
     public Long getGameRoomId() {
         return gameRoomId;
+    }
+
+    public void removePlayer(Long playerId) {
+        this.playersQueue.remove(playerId);
+        this.players.remove(playerId);
     }
 }

@@ -32,8 +32,11 @@ class MapServiceTest {
     private static Long map2Id;
 
     @BeforeAll
-    static void prepareData(@Autowired MapService mapService, @Autowired StatisticsService statisticsService, @Autowired UserService userService) {
+    static void prepareData(@Autowired MapService mapService, @Autowired StatisticsService statisticsService, @Autowired UserService userService,
+                            @Autowired GameRoomService gameRoomService, @Autowired GameService gameService) {
         statisticsService.clearMapHistory();
+        gameRoomService.clearGameRooms();
+        gameService.clearGames();
         mapService.clearMapRatings();
         mapService.clearMaps();
 

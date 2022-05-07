@@ -74,5 +74,19 @@ public class GameService {
         for (User user : users){
             statisticsService.saveHistoryEntry(game.getMap(), user, game.getPlayer(user.getUserId()).checkPlayerResult(), 100);
         }
+        gameRoom.setGame(null);
+        gameRepository.delete(game);
+    }
+
+    public void clearGames(){
+        gameRepository.deleteAll();
+    }
+
+    public void removeFromGame(Long gameRoomId, Long PlayerId) throws NoGameFoundException {
+        GameRoom gameRoom = gameRoomRepository.getById(gameRoomId);
+        Game game = getGameFromRepo(gameRoom.getGame().getGameId());
+        game.removePlayer(PlayerId);
     }
 }
+
+//TODO jesli ktos przegra jako ostatni - to nie powinien dostac wiecej pukntow niz ten ktory przegral jako pierwszy?
