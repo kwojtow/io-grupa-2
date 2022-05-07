@@ -88,50 +88,6 @@ public class MapService {
         if (mapRatings.size() == 0) return null;
         return avgRating / mapRatings.size();
     }
-    public void saveRating(GameMap map, User user, Integer rating) {
-        List<MapRating> mapRatings = gameMapRatingsRepository.findAllByMap(map);
-        List<MapRating> prevMapRating = mapRatings.stream().filter(mapRating -> mapRating.getUser().equals(user)).collect(Collectors.toList());
-        if (prevMapRating.size() == 1) {
-            gameMapRatingsRepository.delete(prevMapRating.get(0));
-        }
-        MapRating mapRating = MapRating.builder().map(map).user(user).rating(rating).build();
-        gameMapRatingsRepository.save(mapRating);
-    }
-
-    public Double getAverageRating(GameMap map) {
-        List<MapRating> mapRatings = gameMapRatingsRepository.findAllByMap(map);
-        double avgRating = 0d;
-        for (MapRating mapRating : mapRatings) {
-            avgRating += mapRating.getRating().doubleValue();
-        }
-        if (mapRatings.size() == 0) return null;
-        return avgRating / mapRatings.size();
-    }
-
-    public LinkedHashMap<GameMap, Double> getMapsRanking() {
-        List<MapRating> mapRatings = gameMapRatingsRepository.findAll();
-        Map<GameMap, Double> ratingsSum = new HashMap<>();
-        Map<GameMap, Integer> ratingsNumber = new HashMap<>();
-        for (MapRating mapRating : mapRatings) {
-            GameMap map = mapRating.getMap();
-            if (ratingsNumber.containsKey(map)) {
-                Double currRatingsSum = ratingsSum.get(map);
-                ratingsSum.put(map, currRatingsSum + mapRating.getRating());
-                Integer currRatingsNum = ratingsNumber.get(map);
-                ratingsNumber.put(map, currRatingsNum + 1);
-            } else {
-                ratingsSum.put(map, mapRating.getRating().doubleValue());
-                ratingsNumber.put(map, 1);
-            }
-        }
-        ratingsSum.replaceAll((k, v) -> v / ratingsNumber.get(k));
-        return ratingsSum.entrySet()
-                .stream()
-                .sorted((c1, c2) -> -1 * c1.getValue().compareTo(c2.getValue()))
-                .collect(
-                        toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2, LinkedHashMap::new));
-    }
-}
 
     public LinkedHashMap<GameMap, Double> getMapsRanking() {
         List<MapRating> mapRatings = gameMapRatingsRepository.findAll();

@@ -11,12 +11,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 
 
 @RestController
 @CrossOrigin
 @RequestMapping("/game/")
+@Transactional
 public class GameController {
     private static final Logger logger = LoggerFactory.getLogger(GameController.class);
 
@@ -34,9 +36,6 @@ public class GameController {
         } catch (NoGameFoundException e) {
             return ResponseEntity.badRequest().body("Game not found");
         }
-
-        gameService.updateGameStateAfterMove(gameService.getGame(id), playerMove);
-
         return ResponseEntity.ok("PLayer moved");
     }
 
