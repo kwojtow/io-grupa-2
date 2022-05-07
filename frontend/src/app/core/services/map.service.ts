@@ -3,9 +3,11 @@ import {RaceMap} from "../../shared/models/RaceMap";
 import {Vector} from "../../shared/models/Vector";
 import {Player} from "../../shared/models/Player";
 import {Game} from "../../shared/models/Game";
+import {BehaviorSubject, map} from "rxjs";
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { MapResponse } from 'src/app/payload/MapResponse';
+import {PlayerState} from "../../shared/models/PlayerState";
 
 @Injectable({
   providedIn: 'root'
@@ -18,11 +20,12 @@ export class MapService {
   OBSTACLE_COLOR = 'black';
 
   static game: Game;
-  private _map: RaceMap;
+  private _map: BehaviorSubject<RaceMap>;
   private _canvas: HTMLCanvasElement;
   private _ctx: CanvasRenderingContext2D;
 
   constructor(private http : HttpClient) {
+    this._map = new BehaviorSubject<RaceMap>(undefined);
   }
 
   getMap(id: number) : Observable<MapResponse> {
@@ -33,7 +36,39 @@ export class MapService {
         'Authorization': "Bearer " + JSON.parse(localStorage.getItem("jwtResponse")).token,
       })
     };
-      return this.http.get<MapResponse>("http://localhost:8080/map/" + id, httpOptions);
+      return this.http.get<MapResponse>("http://localhost:8080/map/" + id, httpOptions)
+        .pipe(map(mapResponse =>{
+          let finishLine = new Array<Vector>();
+          let startLine = new Array<Vector>();
+          let obstacles = new Array<Vector>();
+          mapResponse.mapStructure.finishLine.forEach(v => {
+            finishLine.push(new Vector(v.x, v.y));
+          })
+          mapResponse.mapStructure.startLine.forEach(v => {
+            startLine.push(new Vector(v.x, v.y));
+          })
+          mapResponse.mapStructure.obstacles.forEach(v => {
+            obstacles.push(new Vector(v.x, v.y));
+          })
+          return new MapResponse(mapResponse.mapId,
+            mapResponse.name,
+            mapResponse.width,
+            mapResponse.height,
+            mapResponse.userId,
+            {finishLine, startLine, obstacles}
+
+            )
+        }));
+    }
+
+    getMaps()  {
+      let httpOptions = {
+        headers: new HttpHeaders({
+          'Content-Type': 'application/json',
+          'Authorization': "Bearer " + JSON.parse(localStorage.getItem("jwtResponse")).token,
+        })
+      };
+        return this.http.get<any>("http://localhost:8080/map/list", httpOptions);
     }
 
   static getCursorPosition(canvas: HTMLCanvasElement, event: MouseEvent): Vector {
@@ -58,10 +93,10 @@ export class MapService {
                         canvas: HTMLCanvasElement,
                         width: number,
                         height: number,
-                        cursorPosX: number,
-                        cursorPosY: number): Vector{
-    return new Vector(Math.floor(cursorPosX/width),
-      Math.floor(cursorPosY/height));
+                        cursorx: number,
+                        cursory: number): Vector{
+    return new Vector(Math.floor(cursorx/width),
+      Math.floor(cursory/height));
   }
 
   initMap(map: RaceMap, players: Array<Player>, isMyTurn: boolean, player?: Player,){
@@ -75,6 +110,8 @@ export class MapService {
         this.canvas.removeAllListeners('mousemove');
         this.canvas.removeAllListeners('click');
         let currentPlayer = players.find(p => p.playerId === player.playerId);
+        console.log(players)
+        console.log(currentPlayer)
         if(isMyTurn && currentPlayer !== null)
           this.drawPlayerVectors(this._canvas, this._ctx, map, currentPlayer);
       }
@@ -93,8 +130,8 @@ export class MapService {
 
     ctx.fillStyle = color;
 
-    ctx.fillRect(fieldWidth * v.posX + this.LINE_WIDTH,
-      fieldWidth * v.posY + this.LINE_WIDTH,
+    ctx.fillRect(fieldWidth * v.x + this.LINE_WIDTH,
+      fieldWidth * v.y + this.LINE_WIDTH,
       fieldWidth - 2 * this.LINE_WIDTH,
       fieldWidth - 2 * this.LINE_WIDTH);
   }
@@ -106,8 +143,8 @@ export class MapService {
     for(let i = 0; i < 5; i ++){
       for(let j = 0; j < 5; j++){
         if((j % 2 == 0 && i % 2 == 0) || j% 2 == 1 && i % 2 == 1)
-          ctx.fillRect(fieldWidth * v.posX + this.LINE_WIDTH + miniFieldWidth*i,
-            fieldWidth * v.posY + this.LINE_WIDTH + miniFieldWidth*j,
+          ctx.fillRect(fieldWidth * v.x + this.LINE_WIDTH + miniFieldWidth*i,
+            fieldWidth * v.y + this.LINE_WIDTH + miniFieldWidth*j,
             miniFieldWidth,
             miniFieldWidth);
       }
@@ -154,16 +191,16 @@ export class MapService {
 
   public drawPlayer(player: Player, ctx: CanvasRenderingContext2D, fieldWidth: number, lineWidth: number): void{
     const miniFieldWidth = (fieldWidth - lineWidth * 2)/5;
-    
+
     if(player.playerStatus == "PLAYING") {
       ctx.fillStyle = "#ffaa0088";
-      ctx.fillRect(fieldWidth*player.position.posX, fieldWidth*player.position.posY, fieldWidth, fieldWidth);
+      ctx.fillRect(fieldWidth*player.position.x, fieldWidth*player.position.y, fieldWidth, fieldWidth);
     }
 
     let car = new Path2D();
     ctx.fillStyle = player.color;
-    let leftUpperX: number =  fieldWidth * player.position.posX + lineWidth;
-    let leftUpperY: number = fieldWidth * player.position.posY + lineWidth;
+    let leftUpperX: number =  fieldWidth * player.position.x + lineWidth;
+    let leftUpperY: number = fieldWidth * player.position.y + lineWidth;
     car.moveTo(leftUpperX + miniFieldWidth+10, leftUpperY + miniFieldWidth*1.5);
     car.lineTo(leftUpperX + miniFieldWidth*4-10, leftUpperY + miniFieldWidth*1.5);
 
@@ -261,15 +298,15 @@ export class MapService {
     arrowPositions.forEach(arrowPosition => {
       let i = arrowPositions.indexOf(arrowPosition);
       arrows[i] =
-        this.createArrow(arrowPosition[0].posX + currentVectorPositionPx.posX,
-                         arrowPosition[0].posY + currentVectorPositionPx.posY,
-                         arrowPosition[1].posX + currentVectorPositionPx.posX,
-                         arrowPosition[1].posY + currentVectorPositionPx.posY,
+        this.createArrow(arrowPosition[0].x + currentVectorPositionPx.x,
+                         arrowPosition[0].y + currentVectorPositionPx.y,
+                         arrowPosition[1].x + currentVectorPositionPx.x,
+                         arrowPosition[1].y + currentVectorPositionPx.y,
                          arrowWidth, arrowHeadLen
                         );
     });
-    arrows[arrows.length - 1].arc(currentVectorPositionPx.posX + fieldWidth/2,
-    currentVectorPositionPx.posY + fieldWidth/2,
+    arrows[arrows.length - 1].arc(currentVectorPositionPx.x + fieldWidth/2,
+    currentVectorPositionPx.y + fieldWidth/2,
     fieldWidth/8, 0, Math.PI*2, true);
 
     return arrows;
@@ -290,16 +327,16 @@ export class MapService {
           const path = availableVectorsPaths[i];
           const vector = availableVectors[i];
           const isCurrentVector = vector.equals(player.getCurrentVectorPosition());
-          const isPointInPath = ctx.isPointInPath(path, v.posX*fieldWidth + 2*lineWidth,
-                                                  v.posY*fieldWidth + 2*lineWidth);
+          const isPointInPath = ctx.isPointInPath(path, v.x*fieldWidth + 2*lineWidth,
+                                                  v.y*fieldWidth + 2*lineWidth);
           const isOnObstacle = onObstacle(vector, map);
 
           if(isPointInPath) ctx.fillStyle =  (isCurrentVector) ? "#0066ffff" : "#00ff66ff";
           else ctx.fillStyle =  (isCurrentVector) ? "#0066ff77" : "#00ff6677";
 
           if(!isOnObstacle){
-            ctx.clearRect(fieldWidth * vector.posX + lineWidth,
-            fieldWidth * vector.posY + lineWidth,
+            ctx.clearRect(fieldWidth * vector.x + lineWidth,
+            fieldWidth * vector.y + lineWidth,
             fieldWidth - 2 * lineWidth,
             fieldWidth - 2 * lineWidth);
             ctx.fill(path);
@@ -333,20 +370,20 @@ export class MapService {
       let v = MapService.getCursorPosition(canvas, event);
 
       for(let i = availableVectorsPaths.length-1; i >= 0; --i) {
-          
+
           const path = availableVectorsPaths[i];
           const vector = availableVectors[i];
           const isCurrentVector = vector.equals(player.getCurrentVectorPosition());
-          const isPointInPath = ctx.isPointInPath(path, v.posX*fieldWidth + 2*lineWidth,
-                                                  v.posY*fieldWidth + 2*lineWidth);
+          const isPointInPath = ctx.isPointInPath(path, v.x*fieldWidth + 2*lineWidth,
+                                                  v.y*fieldWidth + 2*lineWidth);
           const isOnObstacle = onObstacle(vector, map);
 
           if(isPointInPath) ctx.fillStyle =  (isCurrentVector) ? "#001155ff" : "#005511ff";
           else ctx.fillStyle =  (isCurrentVector) ? "#0066ff77" : "#00ff6677";
 
           if(!isOnObstacle){
-            ctx.clearRect(fieldWidth * vector.posX + lineWidth,
-            fieldWidth * vector.posY + lineWidth,
+            ctx.clearRect(fieldWidth * vector.x + lineWidth,
+            fieldWidth * vector.y + lineWidth,
             fieldWidth - 2 * lineWidth,
             fieldWidth - 2 * lineWidth);
             ctx.fill(path);
@@ -355,8 +392,19 @@ export class MapService {
             ctx.fillStyle = "#ff9900";
             ctx.strokeStyle = "#ff9900";
             canvas.style.cursor = 'grabbing';
-            player.setNewVector(new Vector(availableVectors[i].posX - player.position.posX,
-                                           availableVectors[i].posY - player.position.posY));
+
+            player.setNewVector(new Vector(availableVectors[i].x - player.position.x,
+                                           availableVectors[i].y - player.position.y));
+            for(let finish of map.finishLine){
+              if(finish.equals(player.position)) setTimeout(function() { alert('Wygrałeś'); }, 1);
+            }
+
+            let isAvailableVector = false;
+            for(let vector of player.getAvailableVectors()) {
+              if(!onObstacle(vector, map) && vector.x >= 0 && vector.x < map.mapWidth &&
+                vector.y >= 0 && vector.y < map.mapHeight ) isAvailableVector = true;
+            }
+            if(!isAvailableVector) setTimeout(function() { alert('Przegrałeś'); }, 1);
           }
           else{
             ctx.fillStyle = "#454545";
@@ -383,8 +431,8 @@ export class MapService {
           ctx.fillStyle = (vector.equals(player.getCurrentVectorPosition())) ? "#0066ff77" : "#00ff6677";
           if(!this.onObstacle(vector, map) || vector.equals(player.getCurrentVectorPosition())){
             if(this.onObstacle(vector, map)) ctx.fillStyle = "#0066ff77";
-            p.rect(fieldWidth * vector.posX + this.LINE_WIDTH,
-                   fieldWidth * vector.posY + this.LINE_WIDTH,
+            p.rect(fieldWidth * vector.x + this.LINE_WIDTH,
+                   fieldWidth * vector.y + this.LINE_WIDTH,
                    fieldWidth - 2 * this.LINE_WIDTH,
                    fieldWidth - 2 * this.LINE_WIDTH);
             ctx.fill(p);
@@ -408,16 +456,12 @@ export class MapService {
         }
 
       })
-      
       this.highlightAvaliableVectors(canvas, ctx, map, player, availableVectorsPaths, arrows);
       this.changePosition(canvas, ctx, map, player, availableVectorsPaths, arrows);
   }
 
-  get map(): RaceMap {
+  get map(): BehaviorSubject<RaceMap> {
     return this._map;
-  }
-  set map(value: RaceMap) {
-    this._map = value;
   }
 
   get canvas(): HTMLCanvasElement {

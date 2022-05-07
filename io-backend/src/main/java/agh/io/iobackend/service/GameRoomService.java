@@ -30,6 +30,10 @@ public class GameRoomService {
         }
     }
 
+    public void clearGameRooms(){ // for tests
+        gameRoomRepository.deleteAll();
+    }
+
     public Long getGameIdByRoomId(Long gameRoomID) throws GameRoomNotFoundException {
         Optional<GameRoom> gameRoom= gameRoomRepository.findByGameRoomID(gameRoomID);
         if (gameRoom.isPresent()) {
@@ -42,9 +46,6 @@ public class GameRoomService {
         }
     }
 
-    public void clearGameRooms(){ // for tests
-        gameRoomRepository.deleteAll();
-    }
 
 //    public void deleteGameRoom(String roomCode) throws GameRoomNotFoundException {
 //        Optional<GameRoom> gameRoom2Trash = gameRoomRepository.findByRoomCode(roomCode);
@@ -70,5 +71,3 @@ public class GameRoomService {
         }
 
     }
-
-}

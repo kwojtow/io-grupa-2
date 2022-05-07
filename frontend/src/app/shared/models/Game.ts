@@ -40,4 +40,8 @@ export class Game{
     return this._gameId;
   }
 
+
+  set gameId(value: number) {
+    this._gameId = value;
+  }
 }

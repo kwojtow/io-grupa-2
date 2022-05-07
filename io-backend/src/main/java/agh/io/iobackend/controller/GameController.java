@@ -11,13 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 
-@CrossOrigin
+
 @RestController
+@CrossOrigin
 @RequestMapping("/game/")
-@Transactional
 public class GameController {
     private static final Logger logger = LoggerFactory.getLogger(GameController.class);
 
@@ -36,7 +35,9 @@ public class GameController {
             return ResponseEntity.badRequest().body("Game not found");
         }
 
-        return ResponseEntity.ok("Player moved");
+        gameService.updateGameStateAfterMove(gameService.getGame(id), playerMove);
+
+        return ResponseEntity.ok("PLayer moved");
     }
 
     @GetMapping("/{id}/state")
@@ -50,6 +51,7 @@ public class GameController {
         return ResponseEntity.ok(playersList);
     }
 
+    @PostMapping("/{id}") // game id - poczatkowe wspolrzedne
     public ResponseEntity<String> startGame(@RequestBody ArrayList<PlayerInitialCoord> playerInitialCoordList, @PathVariable Long id) {
         try {
             gameService.startGame(id, playerInitialCoordList);
