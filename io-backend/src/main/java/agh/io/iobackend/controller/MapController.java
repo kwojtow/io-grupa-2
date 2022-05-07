@@ -1,5 +1,6 @@
 package agh.io.iobackend.controller;
 
+import agh.io.iobackend.controller.payload.MapResponse;
 import agh.io.iobackend.model.map.GameMap;
 import agh.io.iobackend.service.MapService;
 import agh.io.iobackend.service.StatisticsService;
@@ -8,12 +9,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @RestController
 @RequestMapping("/map")
+@CrossOrigin
 public class MapController {
 
     @Autowired
@@ -51,15 +55,50 @@ public class MapController {
         return ResponseEntity.ok(map.getMapId());
     }
 
+    @PostMapping("/{mapId}")
+    public ResponseEntity<GameMap> updateMap(@PathVariable Long mapId, @RequestBody GameMap gameMap) {
+        return ResponseEntity.ok().body(mapService.updateMap(mapId, gameMap));
+    }
+
+    @CrossOrigin
+    @DeleteMapping("/{mapId}")
+    public ResponseEntity<String> removeMapById(@PathVariable Long mapId) {
+        mapService.removeMapById(mapId);
+        return ResponseEntity.ok().body("Map deleted");
+    }
+
     @GetMapping("/user-wins")
-    public void getMapsWithTheMostWinsForUser() {
-        statisticsService.getMapsWithTheMostWinsForUser(userService.getCurrentUserId());
+    public ResponseEntity<List<MapResponse>> getMapsWithTheMostWinsForUser() {
+        List<MapResponse> result = statisticsService.getMapsWithTheMostWinsForUser(userService.getCurrentUserId())
+                .entrySet().stream()
+                .map(e -> MapResponse.builder()
+                        .map(e.getKey())
+                        .games(e.getValue())
+                        .build())
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/user-games")
-    public void getMapsWithTheMostGamesForUser() {
-        statisticsService.getMapsWithTheMostGamesForUser(userService.getCurrentUserId());
+    public ResponseEntity<List<MapResponse>> getMapsWithTheMostGamesForUser() {
+        List<MapResponse> result = statisticsService.getMapsWithTheMostGamesForUser(userService.getCurrentUserId())
+                .entrySet().stream()
+                .map(e -> MapResponse.builder()
+                        .map(e.getKey())
+                        .games(e.getValue())
+                        .build())
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(result);
     }
 
-    // TODO getMapRanking
+    @PostMapping("/rating/{mapId}")
+    public ResponseEntity<String> saveMapRating(@PathVariable Long mapId, @RequestParam Integer rating) {
+        mapService.saveRating(mapService.getMapById(mapId).get(), userService.getCurrentUser(), rating);
+        return ResponseEntity.ok().body("Rating added successfully");
+    }
+
+    @GetMapping("/ranking")
+    public ResponseEntity<LinkedHashMap<GameMap, Double>> getMapRanking() {
+        return ResponseEntity.ok().body(mapService.getMapsRanking());
+    }
 }

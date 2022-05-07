@@ -1,4 +1,4 @@
-package agh.io.iobackend.model;
+package agh.io.iobackend.model.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -37,5 +37,9 @@ public class User {
     private String email;
 
     private String password;
+
+    // TODO avatar
+
+
 
 }

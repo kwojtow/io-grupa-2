@@ -1,4 +1,4 @@
-package agh.io.iobackend.controller.payload;
+package agh.io.iobackend.controller.payload.game;
 
 import lombok.Data;
 

@@ -1,16 +1,22 @@
 package agh.io.iobackend.service;
 
-import agh.io.iobackend.controller.payload.PlayerInitialCoord;
-import agh.io.iobackend.controller.payload.PlayerMoveRequest;
-import agh.io.iobackend.controller.payload.PlayerStateResponse;
-import agh.io.iobackend.model.GameRoom;
-import agh.io.iobackend.model.GameState;
+import agh.io.iobackend.controller.payload.game.PlayerInitialCoord;
+import agh.io.iobackend.controller.payload.game.PlayerMoveRequest;
+import agh.io.iobackend.controller.payload.game.PlayerStateResponse;
+import agh.io.iobackend.exceptions.NoGameFoundException;
+import agh.io.iobackend.model.game.Game;
+import agh.io.iobackend.model.game.GameRoom;
+import agh.io.iobackend.model.player.Player;
+import agh.io.iobackend.model.user.User;
 import agh.io.iobackend.repository.GameRepository;
+import agh.io.iobackend.repository.GameRoomRepository;
+import agh.io.iobackend.repository.PlayerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class GameService {
@@ -18,58 +24,69 @@ public class GameService {
     @Autowired
     private GameRepository gameRepository;
 
-    // gameId -> GameState
-    private final HashMap<Long, GameState> games;
+    @Autowired
+    private StatisticsService statisticsService;
 
-    public GameService() {
-        this.games = new HashMap<>();
+    @Autowired
+    private GameRoomRepository gameRoomRepository;
+
+    @Autowired
+    private PlayerRepository playerRepository;
+
+
+    public Game createGame(Game game) {
+        return gameRepository.save(game);
     }
 
-//    public Game createGame(Game game) {
-//        return gameRepository.save(game);
-//    }
-//
-//    public Game getGameFromRepo(Long id) throws NoGameFoundException {
-//        Optional<Game> game = gameRepository.findById(id);
-//        if (game.isPresent()){
-//            return game.get();
-//        }
-//        else{
-//            throw new NoGameFoundException("Cannot find the room");
-//        }
-//    }
-
-    // funkcja do czasu az bedzie lepsza obsługa gier i gra sama wygeneruje sobie Id
-    public void createGame(GameRoom gameRoom){
-        GameState gameState = new GameState(gameRoom.getGameRoomID(), gameRoom.getGameRoomID(), gameRoom.getGameMap(), gameRoom.getGameMasterID());
-        addGame(gameRoom.getGameRoomID(), gameState);
+    public Game getGameFromRepo(Long id) throws NoGameFoundException {
+        Optional<Game> game = gameRepository.findById(id);
+        if (game.isPresent()){
+            return game.get();
+        }
+        else{
+            throw new NoGameFoundException("Cannot find the room");
+        }
     }
 
-    public void startGame(Long gameId, ArrayList<PlayerInitialCoord> playerInitialCoordsList){
-        getGame(gameId).startGame(playerInitialCoordsList);
+    public void startGame(Long gameId, ArrayList<PlayerInitialCoord> playerInitialCoordsList) throws NoGameFoundException {
+        Game game = getGameFromRepo(gameId);
+        for (PlayerInitialCoord playerInitialCoord : playerInitialCoordsList){
+            Player player = new Player(playerInitialCoord.getXCoord(), playerInitialCoord.getYCoord(), playerInitialCoord.getUserId());
+            playerRepository.save(player);
+            game.startGameForPlayer(player);
+        }
+        game.setPlayerThatStarts();
     }
 
-    public GameState getGame(Long gameId) {
-        return games.get(gameId);
+    public ArrayList<PlayerStateResponse> getPlayerStatesList(Long gameId) throws NoGameFoundException {
+        return getGameFromRepo(gameId).getPlayerStatesList();
     }
 
-    public ArrayList<PlayerStateResponse> getPlayerStatesList(Long gameId){
-        return getGame(gameId).getPlayerStatesList();
+    public void updateGameStateAfterMove(Game game, PlayerMoveRequest playerMove) {
+        game.changeGameState(playerMove);
     }
 
-    public void updateGameStateAfterMove(GameState gameState, PlayerMoveRequest playerMove) {
-        gameState.changeGameState(playerMove);
+    public void endGame(Long gameId) throws NoGameFoundException{
+        Game game = getGameFromRepo(gameId);
+        GameRoom gameRoom = gameRoomRepository.getById(gameId);
+        gameRoomRepository.findByGameRoomID(game.getGameRoomId()).get().setGameStarted(false);
+        List<User> users = gameRoom.getUserList();
+        for (User user : users){
+            statisticsService.saveHistoryEntry(game.getMap(), user, game.getPlayer(user.getUserId()).checkPlayerResult(), 100);
+        }
+        gameRoom.setGame(null);
+        gameRepository.delete(game);
     }
 
-    public void deleteGame(Long gameId){
-        this.games.remove(gameId);
+    public void clearGames(){
+        gameRepository.deleteAll();
     }
 
-    public Boolean existsByGameId(Long gameId){
-        return this.getGame(gameId) != null;
-    }
-
-    public void addGame(Long gameId, GameState gameState){
-        this.games.put(gameId, gameState);
+    public void removeFromGame(Long gameRoomId, Long PlayerId) throws NoGameFoundException {
+        GameRoom gameRoom = gameRoomRepository.getById(gameRoomId);
+        Game game = getGameFromRepo(gameRoom.getGame().getGameId());
+        game.removePlayer(PlayerId);
     }
 }
+
+//TODO jesli ktos przegra jako ostatni - to nie powinien dostac wiecej pukntow niz ten ktory przegral jako pierwszy?

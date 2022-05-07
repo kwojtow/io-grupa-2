@@ -1,7 +1,7 @@
 package agh.io.iobackend.service;
 
 import agh.io.iobackend.exceptions.GameRoomNotFoundException;
-import agh.io.iobackend.model.GameRoom;
+import agh.io.iobackend.model.game.GameRoom;
 import agh.io.iobackend.repository.GameRoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,6 +30,22 @@ public class GameRoomService {
         }
     }
 
+    public Long getGameIdByRoomId(Long gameRoomID) throws GameRoomNotFoundException {
+        Optional<GameRoom> gameRoom= gameRoomRepository.findByGameRoomID(gameRoomID);
+        if (gameRoom.isPresent()) {
+            return gameRoom.get().getGame().getGameId();
+        }
+        else {
+            throw new GameRoomNotFoundException(
+                    "Can not delete game room " + gameRoomID.toString() + ", it does not exist!"
+            );
+        }
+    }
+
+    public void clearGameRooms(){ // for tests
+        gameRoomRepository.deleteAll();
+    }
+
 //    public void deleteGameRoom(String roomCode) throws GameRoomNotFoundException {
 //        Optional<GameRoom> gameRoom2Trash = gameRoomRepository.findByRoomCode(roomCode);
 //        if (gameRoom2Trash.isPresent()) {
@@ -54,4 +70,5 @@ public class GameRoomService {
         }
 
     }
+
 }

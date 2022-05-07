@@ -1,4 +1,4 @@
-package agh.io.iobackend.controller.payload;
+package agh.io.iobackend.controller.payload.stats;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,11 +1,16 @@
 package agh.io.iobackend.controller;
 
-import agh.io.iobackend.controller.payload.JwtResponse;
-import agh.io.iobackend.controller.payload.SigninRequest;
-import agh.io.iobackend.controller.payload.SignupRequest;
+import agh.io.iobackend.controller.payload.auth.JwtResponse;
+import agh.io.iobackend.controller.payload.auth.SigninRequest;
+import agh.io.iobackend.controller.payload.auth.SignupRequest;
 import agh.io.iobackend.model.Vector;
 import agh.io.iobackend.model.map.GameMap;
 import agh.io.iobackend.model.map.MapStructure;
+import agh.io.iobackend.service.GameRoomService;
+import agh.io.iobackend.service.GameService;
+import agh.io.iobackend.service.MapService;
+import agh.io.iobackend.service.StatisticsService;
+import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +36,18 @@ class MapControllerTest {
     private static Long userId;
 
     @BeforeAll
-    static void registerAndLogin(@Autowired AuthController authController) {
+    static void registerAndLogin(@Autowired AuthController authController,
+                                 @Autowired MapService mapService,
+                                 @Autowired StatisticsService statisticsService,
+                                 @Autowired GameRoomService gameRoomService,
+                                 @Autowired GameService gameService) {
+
+        statisticsService.clearMapHistory();
+        gameRoomService.clearGameRooms();
+        gameService.clearGames();
+        mapService.clearMapRatings();
+        mapService.clearMaps();
+
         SignupRequest signupRequest = new SignupRequest();
         signupRequest.setUsername(username);
         signupRequest.setEmail(email);

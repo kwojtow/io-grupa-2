@@ -5,15 +5,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 public class Vector {
-
     private int x;
     private int y;
 
-    public void changeVector(int xChange, int yChange) {
-        this.x += xChange;
-        this.y += yChange;
+    public Vector(int x, int y){
+        this.x = x;
+        this.y = y;
     }
 }
