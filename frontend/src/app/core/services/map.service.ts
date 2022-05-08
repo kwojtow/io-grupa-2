@@ -310,7 +310,7 @@ export class MapService {
     
     canvas.onmousemove = function(event) {
       let v = MapService.getCursorPosition(canvas, event);
-
+      let yellowArrow = false;
       for(let i = availableVectorsPaths.length-1; i >= 0; --i) {
           const path = availableVectorsPaths[i];
           const vector = availableVectors[i];
@@ -329,17 +329,22 @@ export class MapService {
             fieldWidth - 2 * lineWidth);
             ctx.fill(path);
           }
-          if(isPointInPath && !isOnObstacle){
-            ctx.fillStyle = "#ff9900";
-            ctx.strokeStyle = "#ff9900";
-            canvas.style.cursor = 'pointer';
-          }
-          else{
-            ctx.fillStyle = "#454545";
-            ctx.strokeStyle = "#454545";
-          }
-          drawArrow(ctx, arrow);
+          if(isPointInPath && !isOnObstacle) yellowArrow = true;
+      
+
+          
       }
+      if(yellowArrow){
+        canvas.style.cursor = 'pointer';
+        ctx.fillStyle = "#ff9900";
+        ctx.strokeStyle = "#ff9900";
+
+      } 
+      else {
+        ctx.fillStyle = "#454545";
+        ctx.strokeStyle = "#454545";
+      }
+      drawArrow(ctx, arrow);
     }
   }
 
