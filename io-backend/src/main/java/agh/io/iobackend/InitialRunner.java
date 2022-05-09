@@ -92,7 +92,6 @@ public class InitialRunner implements CommandLineRunner {
         System.out.println("User id: " + user2.getUserId());
         System.out.println(user2);
         System.out.println("Map id: " + gameMap.getMapId());
-        System.out.println("Game room id: " + gameRoom.getGameRoomID());
-        
+        System.out.println("Game Room id: " + gameRoom.getGameRoomID());
     }
 }
