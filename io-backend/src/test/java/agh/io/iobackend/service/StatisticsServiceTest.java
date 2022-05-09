@@ -26,8 +26,15 @@ class StatisticsServiceTest {
     private static GameMap gameMap2;
 
     @BeforeAll
-    public static void prepareData(@Autowired UserService userService, @Autowired MapService mapService, @Autowired StatisticsService statisticsService) {
-        System.out.println("prepring data");
+    public static void prepareData(@Autowired UserService userService,
+                                   @Autowired MapService mapService,
+                                   @Autowired StatisticsService statisticsService,
+                                   @Autowired GameRoomService gameRoomService) {
+        statisticsService.clearMapHistory();
+        mapService.clearMapRatings();
+        gameRoomService.clearGameRooms();
+        mapService.clearMaps();
+        userService.clearUsers();
         user1 = User
                 .builder()
                 .email("user1@gmail.com")

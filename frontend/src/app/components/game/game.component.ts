@@ -3,6 +3,11 @@ import {GameService} from "../../core/services/game.service";
 import {Player} from "../../shared/models/Player";
 import {interval, mergeMap, Observable, timer} from "rxjs";
 import {PlayerState} from "../../shared/models/PlayerState";
+import {ActivatedRoute, Router} from "@angular/router";
+import {Game} from "../../shared/models/Game";
+import {MockDataProviderService} from "../../core/services/mock-data-provider.service";
+import {GameSettings} from "../../shared/models/GameSettings";
+import {UserService} from "../../core/services/user.service";
 
 @Component({
   selector: 'app-game',
@@ -16,31 +21,44 @@ export class GameComponent implements OnInit {
   currentPlayer: Player; //currently playing
   authorizedPlayer: Player;       // authorized user
   gameId: number;
-
-  constructor(private _gameService: GameService) {
-
-    this.gameId = _gameService.game.gameId;
-    this.playersList = _gameService.game.players;
-    this.authorizedPlayer = _gameService.player;
-
-    this.timer = this._gameService.game.settings.roundTime;   // TODO: timer animation
-
-    this.updateGameState();
+  gameLoaded: boolean = false;
+  constructor(private _gameService: GameService,
+              private router: Router,
+              private _route: ActivatedRoute) {
+    this.gameId = +this._route.snapshot.params['id'];
+    this._gameService.initGame(this.gameId);
+    this._gameService.gameLoaded.subscribe(gameLoaded => {
+      if(gameLoaded === true){
+        this.playersList = _gameService.game.players;
+        this.authorizedPlayer = _gameService.player;
+        this.timer = this._gameService.game.settings.roundTime;   // TODO: timer animation
+        this.updateGameState();
+        this.gameLoaded = true;
+      }
+    })
   }
+
   updateGameState(){
-    this._gameService.postPlayerNewPosition(this._gameService.game.players[0]);
+    if(this.authorizedPlayer != null)
+      this._gameService.postPlayerNewPosition(this.authorizedPlayer);
     timer(0, this._gameService.REFRESH_TIME) // GET game state in every 0.5s
-      .pipe(mergeMap(() => this._gameService.getMockGameState())) // to test: getMockGameState()
+      .pipe(mergeMap(() => this._gameService.getGameState(this.gameId))) // to test: getMockGameState()
       .subscribe(playersStates => {
         this.playersList = this._gameService.updatePlayersStates(playersStates);
         this.currentPlayer = this._gameService.updateCurrentPlaying(this.playersList);
         this._gameService.updateMap(this.playersList);
-      })
+        console.log('update')
+      },
+        error => {
+          if(error.status === 401){
+            this.router.navigate(['/']);
+          }
+        })
   }
   ngOnInit(): void {
   }
 
   leaveGame() {
-    //TODO: leave game
+    this.router.navigate(['start'])
   }
 }

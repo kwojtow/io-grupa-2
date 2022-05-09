@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 
-@CrossOrigin
+
 @RestController
 @RequestMapping("/game/")
 public class GameController {
@@ -44,9 +44,9 @@ public class GameController {
     }
 
     @PostMapping("/{id}") // game id - poczatkowe wspolrzedne
-    public ResponseEntity<String> startGame(@RequestBody ArrayList<PlayerInitialCoord> playerInitialCoordList, @PathVariable Long id) {
+    public ResponseEntity startGame(@RequestBody ArrayList<PlayerInitialCoord> playerInitialCoordList, @PathVariable Long id) {
         gameService.startGame(id, playerInitialCoordList);
-        return ResponseEntity.ok("Game created");
+        return ResponseEntity.ok().build();
     }
 }
 

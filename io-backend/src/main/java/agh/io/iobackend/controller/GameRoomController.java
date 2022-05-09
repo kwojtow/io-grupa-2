@@ -19,9 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@CrossOrigin
+
 @RestController
 @RequestMapping("/game-room")
+@CrossOrigin
 @Transactional // for tests, because of "org.hibernate.LazyInitializationException"
 public class GameRoomController {
 
