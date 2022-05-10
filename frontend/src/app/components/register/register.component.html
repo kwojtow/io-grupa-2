@@ -4,8 +4,8 @@
     <div id="box" class="col-md-3 align-self-center">
       <h4>Rejestracja</h4>
       <form [formGroup]="signupForm">
-        <div *ngIf="showLoginErrorMessage" class="errorMessage">
-          Podany login jest już zajęty
+        <div *ngIf="showUsernameErrorMessage" class="errorMessage">
+          Podana nazwa jest już zajęta
         </div>
         <div *ngIf="showEmailErrorMessage" class="errorMessage">
           Podany adres e-mail jest już zajęty
@@ -52,7 +52,7 @@
               type="text"
               id="username"
               class="form-control"
-              placeholder="Login"
+              placeholder="Nazwa gracza"
               formControlName="username"
               required
             />
@@ -67,13 +67,13 @@
                 *ngIf="signupForm.get('username')?.hasError('minlength')"
                 class="errorMessage"
               >
-                Login powinien zawierać co najmniej 3 znaki
+                Nazwa powinna zawierać co najmniej 3 znaki
               </div>
               <div
                 *ngIf="signupForm.get('username')?.hasError('maxlength')"
                 class="errorMessage"
               >
-                Login nie może zawierać więcej niż 20 znaków
+                Nazwa nie może zawierać więcej niż 20 znaków
               </div>
             </div>
           </div>
@@ -100,13 +100,13 @@
             *ngIf="signupForm.get('password')?.hasError('minlength')"
             class="errorMessage"
           >
-            Hasło powinien zawierać co najmniej 6 znaków
+            Hasło powinno zawierać co najmniej 6 znaków
           </div>
           <div
             *ngIf="signupForm.get('password')?.hasError('maxlength')"
             class="errorMessage"
           >
-            Login nie może zawierać więcej niż 40 znaków
+            Hasło nie może zawierać więcej niż 40 znaków
           </div>
         </div>
         <div class="form-group">
