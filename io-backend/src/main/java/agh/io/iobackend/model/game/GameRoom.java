@@ -1,6 +1,7 @@
 package agh.io.iobackend.model.game;
 
 import agh.io.iobackend.model.map.GameMap;
+import org.hibernate.annotations.GenericGenerator;
 import agh.io.iobackend.model.user.User;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,6 +26,10 @@ public class GameRoom {
     @GeneratedValue(
             strategy = GenerationType.SEQUENCE,
             generator = "gameRoom_sequence"
+    )
+    @GenericGenerator(
+            name = "gameRoom_sequence",
+            strategy = "agh.io.iobackend.model.GameRoomSequenceIdGenerator"
     )
     @Column(
             name = "gameRoomID",

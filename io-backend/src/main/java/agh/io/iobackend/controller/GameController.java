@@ -16,7 +16,6 @@ import java.util.ArrayList;
 
 
 @RestController
-@CrossOrigin
 @RequestMapping("/game/")
 @Transactional
 public class GameController {

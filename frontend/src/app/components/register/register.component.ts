@@ -16,7 +16,7 @@ import { UserService } from 'src/app/core/services/user.service';
 })
 export class RegisterComponent implements OnInit {
   signupForm: FormGroup;
-  showLoginErrorMessage: boolean;
+  showUsernameErrorMessage: boolean;
   showEmailErrorMessage: boolean;
 
   constructor(
@@ -30,7 +30,7 @@ export class RegisterComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.showLoginErrorMessage = false;
+    this.showUsernameErrorMessage = false;
     this.showEmailErrorMessage = false;
     this.signupForm = this.formBuilder.group(
       {
@@ -73,7 +73,7 @@ export class RegisterComponent implements OnInit {
         },
         (err) => {
           if (err.error === 'Error: Username is already taken!') {
-            this.showLoginErrorMessage = true;
+            this.showUsernameErrorMessage = true;
           }
           if(err.error === 'Error: Email is already taken!'){
             this.showEmailErrorMessage = true;
