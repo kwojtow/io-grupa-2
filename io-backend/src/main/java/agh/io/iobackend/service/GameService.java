@@ -3,6 +3,7 @@ package agh.io.iobackend.service;
 import agh.io.iobackend.controller.payload.game.PlayerInitialCoord;
 import agh.io.iobackend.controller.payload.game.PlayerMoveRequest;
 import agh.io.iobackend.controller.payload.game.PlayerStateResponse;
+import agh.io.iobackend.exceptions.GameRoomNotFoundException;
 import agh.io.iobackend.exceptions.NoGameFoundException;
 import agh.io.iobackend.model.game.Game;
 import agh.io.iobackend.model.game.GameRoom;
@@ -29,6 +30,9 @@ public class GameService {
 
     @Autowired
     private GameRoomRepository gameRoomRepository;
+
+    @Autowired
+    private GameRoomService gameRoomService;
 
     @Autowired
     private PlayerRepository playerRepository;
@@ -66,13 +70,16 @@ public class GameService {
         game.changeGameState(playerMove);
     }
 
-    public void endGame(Long gameId) throws NoGameFoundException{
+    public void endGame(Long gameId) throws NoGameFoundException, GameRoomNotFoundException {
         Game game = getGameFromRepo(gameId);
-        GameRoom gameRoom = gameRoomRepository.getById(gameId);
-        gameRoomRepository.findByGameRoomID(game.getGameRoomId()).get().setGameStarted(false);
+        Long gameRoomId = game.getGameRoomId();
+        GameRoom gameRoom = gameRoomService.getGameRoom(gameRoomId);
+        gameRoom.setGameStarted(false);
         List<User> users = gameRoom.getUserList();
-        for (User user : users){
-            statisticsService.saveHistoryEntry(game.getMap(), user, game.getPlayer(user.getUserId()).checkPlayerResult(), 100);
+        if (users.size() == game.getNumOfPlayers()) {  // szczegolnie do testow potrzebne
+            for (User user : users) {
+                statisticsService.saveHistoryEntry(game.getMap(), user, game.getPlayer(user.getUserId()).checkPlayerResult(), 100);
+            }
         }
         gameRoom.setGame(null);
         gameRepository.delete(game);

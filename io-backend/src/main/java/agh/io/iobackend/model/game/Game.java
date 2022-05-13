@@ -35,7 +35,7 @@ public class Game {
     private Long gameId;
 
     @Column(name = "gameRoomId")
-    private Long gameRoomId; // czy GameRoom
+    private Long gameRoomId;
 
     @OneToOne
     private GameMap gameMap;
@@ -44,7 +44,7 @@ public class Game {
     private List<Long> playersQueue;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private final Map<Long, Player> players = new HashMap<>();
+    private final Map<Long, Player> players =new HashMap<>();
 
     private int currentPlayerIndex;
 
@@ -52,13 +52,13 @@ public class Game {
         this.gameRoomId = gameRoomId;
         this.gameMap = map;
         this.currentPlayerIndex = 0;
+        this.playersQueue = new ArrayList<>();
     }
 
     public Game(Long gameId, Long mapId) {
     }
 
     public void startGameForPlayer(Player player) {
-        System.out.println("Game started for + " + player);
         playersQueue.add(player.getPlayerId());
         players.put(player.getPlayerId(), player);
     }
@@ -66,7 +66,6 @@ public class Game {
     public void setPlayerThatStarts() {
         Long currentPlayerId = playersQueue.get(currentPlayerIndex);
         players.get(currentPlayerId).setPlayerStatus(PlayerStatus.PLAYING);
-        System.out.println("curr" + currentPlayerIndex + currentPlayerId);
     }
 
     public ArrayList<PlayerStateResponse> getPlayerStatesList() {
@@ -88,8 +87,8 @@ public class Game {
     private void nextPlayerTurn() {
         currentPlayerIndex = (currentPlayerIndex + 1) % playersQueue.size();
 
-        while (players.get(getCurrentPlayerId()).getPlayerStatus() != PlayerStatus.WAITING) { // TODO why != WAITING ? wydaje mi se ze to dziala, bo po prostu kolejny czekajacy jest brany
-            currentPlayerIndex = (currentPlayerIndex + 1) % playersQueue.size();  // frontend zmienia z playing na waiting albo na lost a waiting zostaje, bo oni chyba nie wiedza kto nastepny (?)
+        while (players.get(getCurrentPlayerId()).getPlayerStatus() != PlayerStatus.WAITING) {
+            currentPlayerIndex = (currentPlayerIndex + 1) % playersQueue.size();
         }
         players.get(getCurrentPlayerId()).setPlayerStatus(PlayerStatus.PLAYING);
     }
@@ -125,5 +124,9 @@ public class Game {
     public void removePlayer(Long playerId) {
         this.playersQueue.remove(playerId);
         this.players.remove(playerId);
+    }
+
+    public int getNumOfPlayers(){
+        return players.size();
     }
 }

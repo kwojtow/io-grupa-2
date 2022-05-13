@@ -53,7 +53,7 @@ public class GameRoomController {
                 gameRoomRequest.getGameMasterId()
         );
         GameRoom savedGameRoom = gameRoomService.createGameRoom(gameRoom);
-//        savedGameRoom.addPlayer(userService.getUserById(gameRoomRequest.getGameMasterId()).get());
+        savedGameRoom.addPlayer(userService.getUserById(gameRoomRequest.getGameMasterId()).get()); // add GameMaster
         GameRoomResponse gameRoomResponse = new GameRoomResponse();
         gameRoomResponse.setRoomId(savedGameRoom.getGameRoomID());
         gameRoomResponse.setGameMasterId(gameRoomRequest.getGameMasterId());
@@ -105,11 +105,17 @@ public class GameRoomController {
     @DeleteMapping("/{id}") // room id
     public ResponseEntity<String> deleteRoom(@PathVariable Long id) {
         try {
+            GameRoom gameRoom = gameRoomService.getGameRoom(id);
+            if (gameRoom.getGameStarted()){
+                System.out.println(gameRoom.getGame().getGameId());
+                gameService.endGame(gameRoom.getGame().getGameId());
+            }
             gameRoomService.deleteGameRoom(id);
         } catch (GameRoomNotFoundException e) {
             return ResponseEntity.badRequest().body("Game room not found");
+        } catch (NoGameFoundException e) {
+            return ResponseEntity.badRequest().body("Game not found");
         }
-        // cos jeszcze?
         return ResponseEntity.ok("Room deleted");
     }
 
@@ -133,7 +139,7 @@ public class GameRoomController {
         if (gameRoom.getUserList().size() == 0) {
             gameRoomService.deleteGameRoom(id);
         }
-        gameService.removeFromGame(id, user); //TODO przetestowac
+        gameService.removeFromGame(id, user);
     }
 
     @CrossOrigin

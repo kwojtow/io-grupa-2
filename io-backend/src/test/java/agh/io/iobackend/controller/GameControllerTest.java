@@ -144,7 +144,6 @@ public class GameControllerTest {
         ResponseEntity<Long> gameIdResponse = gameRoomController.createGame(roomId);
         gameId = gameIdResponse.getBody();
         assertEquals(200, gameIdResponse.getStatusCodeValue());
-        assertEquals(roomId, gameIdResponse.getBody().longValue());
 
         ArrayList<PlayerInitialCoord> playerInitialCoordArrayList = new ArrayList<>();
 

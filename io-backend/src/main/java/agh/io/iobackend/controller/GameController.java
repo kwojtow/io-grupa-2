@@ -3,6 +3,7 @@ package agh.io.iobackend.controller;
 import agh.io.iobackend.controller.payload.game.PlayerInitialCoord;
 import agh.io.iobackend.controller.payload.game.PlayerMoveRequest;
 import agh.io.iobackend.controller.payload.game.PlayerStateResponse;
+import agh.io.iobackend.exceptions.GameRoomNotFoundException;
 import agh.io.iobackend.exceptions.NoGameFoundException;
 import agh.io.iobackend.service.GameService;
 import org.slf4j.Logger;
@@ -65,6 +66,8 @@ public class GameController {
             gameService.endGame(id);
         } catch (NoGameFoundException e) {
             return ResponseEntity.badRequest().body("Game not found");
+        } catch (GameRoomNotFoundException e) {
+            return ResponseEntity.badRequest().body("Room not found");
         }
         return ResponseEntity.ok("Game ended");
     }
