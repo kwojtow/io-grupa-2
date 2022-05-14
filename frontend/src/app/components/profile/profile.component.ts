@@ -1,6 +1,6 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
-import { Observable} from "rxjs";
+import {map, Observable} from "rxjs";
 import {User} from "../../shared/models/User";
 import {MapService} from "../../core/services/map.service";
 import {UserService} from "../../core/services/user.service";
@@ -13,7 +13,7 @@ import {RaceMap} from "../../shared/models/RaceMap";
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css']
 })
-export class ProfileComponent implements OnInit {
+export class ProfileComponent implements OnInit, OnDestroy {
 
   mapList = new Array<MapWithStats>();
   user: User;
@@ -62,6 +62,9 @@ export class ProfileComponent implements OnInit {
   }
   ngOnInit(): void {
   }
+  ngOnDestroy() {
+    this._mapService.clearMap();
+  }
 
   switchToStartView() {
     this.router.navigate(['start']).then();
@@ -93,6 +96,7 @@ export class ProfileComponent implements OnInit {
     }else if(idx){
       mapListObs = this._userService.getMapsWithMostGames();
     }
+    this._mapService.clearMap();
     mapListObs.subscribe(mapList => {
       this.mapList = mapList
       if(this.mapList.length > 0) MapService.map.next(this.mapList[0].raceMap);

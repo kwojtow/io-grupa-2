@@ -43,10 +43,11 @@
         </div>
         <div class="stat-info">{{allGames}}</div>
         <div *ngIf="mapListsCategories.indexOf(chosenCategory) !== 0" class="fw-bold stat-info">
-          <label class="d-block " *ngIf="mapListsCategories.indexOf(chosenCategory)">Moich wygranych: </label>
-          <label class="d-block " *ngIf="mapListsCategories.indexOf(chosenCategory)">Moich rozegranych: </label>
+          <label class="d-block " *ngIf="mapListsCategories.indexOf(chosenCategory) === 1">Moich wygranych: </label>
+          <label class="d-block " *ngIf="mapListsCategories.indexOf(chosenCategory) === 2">Moich rozegranych: </label>
+          <div class="stat-info">{{this.chosenMap?.games}}</div>
+
         </div>
-        <div class="stat-info">{{this.mapList[0]?.games}}</div>
       </div>
       <div>
         <div class="fw-bold stat-info">Ocena</div>

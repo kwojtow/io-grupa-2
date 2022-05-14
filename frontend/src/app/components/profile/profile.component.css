@@ -179,9 +179,9 @@ body{
     grid-template-columns: 1fr 1fr 1fr;
     grid-template-rows: 0.2fr 1.3fr 0.9fr;
     grid-template-areas:
-    "choose-map-category choose-map new-map-btn"
-    "map-preview map-preview map-preview"
-    "map-stats map-stats map-stats";
+    "new-map-btn new-map-btn ."
+    "map-preview map-preview choose-map"
+    "map-stats map-stats choose-map";
     grid-area: 3 / 1 / 4 / 5;
   }
   .stat-info{
