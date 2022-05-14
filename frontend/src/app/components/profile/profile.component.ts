@@ -87,7 +87,8 @@ export class ProfileComponent implements OnInit {
     });
   }
   deleteMap(){
-    this._mapService.deleteMap(this.chosenMap.raceMap.mapId);
+    if(this.chosenMap !== null)
+      this._mapService.deleteMap(this.chosenMap.raceMap.mapId);
   }
 
 }
