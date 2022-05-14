@@ -18,7 +18,7 @@ export class ProfileComponent implements OnInit {
   user: User;
   mapListsCategories = new Array<string>( 'Moje mapy', 'Najlepsze mapy', 'Najczęstsze mapy');
   chosenCategory = this.mapListsCategories[0];
-
+  chosenMap: MapWithStats;
   allGames = 12345;// TODO: map stats
   mapRate = '9.5/10';
 
@@ -85,6 +85,9 @@ export class ProfileComponent implements OnInit {
       this.mapList = mapList
       if(this.mapList.length > 0) this._mapService.map.next(this.mapList[0].raceMap);
     });
+  }
+  deleteMap(){
+    this._mapService.deleteMap(this.chosenMap.raceMap.mapId);
   }
 
 }

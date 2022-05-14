@@ -23,7 +23,12 @@ export class MapService {
   private _map: BehaviorSubject<RaceMap>;
   private _canvas: HTMLCanvasElement;
   private _ctx: CanvasRenderingContext2D;
-
+  httpOptions = {
+    headers: new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': "Bearer " + JSON.parse(localStorage.getItem("jwtResponse")).token,
+    })
+  };
   constructor(private http : HttpClient) {
     this._map = new BehaviorSubject<RaceMap>(undefined);
   }
@@ -62,14 +67,12 @@ export class MapService {
     }
 
     getMaps()  {
-      let httpOptions = {
-        headers: new HttpHeaders({
-          'Content-Type': 'application/json',
-          'Authorization': "Bearer " + JSON.parse(localStorage.getItem("jwtResponse")).token,
-        })
-      };
-        return this.http.get<any>("http://localhost:8080/map/list", httpOptions);
+        return this.http.get<any>("http://localhost:8080/map/list", this.httpOptions);
     }
+
+  deleteMap(mapId: number) {
+      this.http.delete("http://localhost:8080/map/" + mapId).subscribe();
+  }
 
   static getCursorPosition(canvas: HTMLCanvasElement, event: MouseEvent): Vector {
     const ctx = canvas.getContext('2d');
@@ -479,5 +482,6 @@ export class MapService {
   set ctx(value: CanvasRenderingContext2D) {
     this._ctx = value;
   }
+
 
 }
