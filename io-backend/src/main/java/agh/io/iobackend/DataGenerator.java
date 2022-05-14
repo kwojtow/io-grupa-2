@@ -122,9 +122,9 @@ public class DataGenerator {
     }
 
     private void addGameMapRatings(){
-        mapService.saveRating(mapService.getMapById(map1Id).get(), userService.getUserById(user1Id).get(), 8);
-        mapService.saveRating(mapService.getMapById(map2Id).get(), userService.getUserById(user1Id).get(), 6);
-        mapService.saveRating(mapService.getMapById(map1Id).get(), userService.getUserById(user2Id).get(), 9);
-        mapService.saveRating(mapService.getMapById(map2Id).get(), userService.getUserById(user2Id).get(), 2);
+        mapService.saveRating(mapService.getMapById(map1Id), userService.getUserById(user1Id).get(), 8);
+        mapService.saveRating(mapService.getMapById(map2Id), userService.getUserById(user1Id).get(), 6);
+        mapService.saveRating(mapService.getMapById(map1Id), userService.getUserById(user2Id).get(), 9);
+        mapService.saveRating(mapService.getMapById(map2Id), userService.getUserById(user2Id).get(), 2);
     }
 }

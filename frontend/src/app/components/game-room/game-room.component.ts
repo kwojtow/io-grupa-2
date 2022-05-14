@@ -135,12 +135,13 @@ export class GameRoomComponent implements OnInit {
               data2.mapStructure.obstacles
             ),
             name: data2.name,
-            gamesPlayed: 0,
-            rate: 0,
+            gamesPlayed: data2.gamesPlayed,
+            rate: data2.rating,
             author: mapAuthor
           }
           this.gameRoomData.mapDto = mapDto;
-        }
+          this.mapService.map.next(<RaceMap>mapDto.raceMap);
+          }
         )
 
         this.userService2.getUserData(data.gameMasterId).subscribe(data => this.gameRoomData.owner = data);
