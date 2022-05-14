@@ -30,9 +30,9 @@ body{
   gap: 0px 0px;
   grid-auto-flow: row;
   grid-template-areas:
-    "map-preview choose-map-category choose-map new-map-btn  "
-    "map-preview map-stats map-stats map-stats"
-    "map-preview map-stats map-stats map-stats";
+    "map-preview choose-map new-map-btn  new-map-btn  "
+    "map-preview choose-map map-stats map-stats"
+    "map-preview choose-map map-stats map-stats";
   grid-area: 3 / 1 / 4 / 5;
 }
 .choose-map-category{
@@ -50,6 +50,8 @@ body{
   padding-top: 15px;
 }
 .map-select{
+  list-style: none;
+  cursor: pointer;
   width:150px;
   border-radius: 10px;
   height: 33px;
@@ -83,15 +85,15 @@ body{
   font-size: 23px;
 }
 .user-info {  display: grid;
-  margin: auto;
   grid-template-columns: 1fr 1.1fr 0.9fr;
   grid-template-rows: 0.5fr 0.5fr 0.3fr;
   gap: 0px 100px;
+  margin-left: 20px;
   grid-auto-flow: row;
   grid-template-areas:
     "name ranking avatar"
     "email ranking avatar"
-    "my-map-label ranking avatar";
+    "my-map-label my-map-label my-map-label";
   grid-area: 2 / 1 / 3 / 5;
 }
 .user-info>div{
@@ -102,9 +104,6 @@ body{
 
 .my-map-label{
   grid-area: my-map-label;
-}
-.my-map-label>div{
-  padding-left: 10px;
 }
 .avatar { grid-area: avatar; }
 
@@ -337,4 +336,20 @@ span{
 
 #randomGame{
   transform: rotate(45deg);
+}
+.my-map-label>div{
+  border: rgba(78, 42, 106, 100) 2px solid;
+  border-radius: 10px;
+  padding-right: 20px;
+  margin-left: 5px;
+  margin-right: 5px;
+  cursor: pointer;
+}
+.maps-category{
+  color: rgba(78, 42, 106, 100);
+}
+.chosen-category{
+  font-weight: bold;
+  background-color: rgba(78, 42, 106, 100);
+  color: white;
 }

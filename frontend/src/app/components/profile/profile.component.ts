@@ -6,6 +6,7 @@ import {MapService} from "../../core/services/map.service";
 import {UserService} from "../../core/services/user.service";
 import {MapWithStats} from "../../shared/models/MapWithStats";
 import {MockDataProviderService} from "../../core/services/mock-data-provider.service";
+import {RaceMap} from "../../shared/models/RaceMap";
 
 @Component({
   selector: 'app-profile',
@@ -19,6 +20,7 @@ export class ProfileComponent implements OnInit {
   mapListsCategories = new Array<string>( 'Moje mapy', 'Najlepsze mapy', 'Najczęstsze mapy');
   chosenCategory = this.mapListsCategories[0];
   chosenMap: MapWithStats;
+
   allGames = 12345;// TODO: map stats
   mapRate = '9.5/10';
 
@@ -27,6 +29,7 @@ export class ProfileComponent implements OnInit {
               private _userService: UserService,
               private _mockData: MockDataProviderService) {
     this.getProfileData();
+
     // this.getMockProfileData();
 
   }
@@ -42,8 +45,13 @@ export class ProfileComponent implements OnInit {
         this._userService.getUserRanksInfo(user.userId).subscribe(ranks => this.user.ranks = ranks);
         this._userService.getUserMaps(user.userId).subscribe(mapList => {
           this.mapList = mapList
-          if(this.mapList.length > 0) MapService.map.next(this.mapList[0].raceMap);
+          if(this.mapList.length > 0) this._mapService.map.next(this.mapList[0].raceMap);
+          this.chosenMap = mapList.filter(map => map.raceMap.mapId === this._mapService.map.getValue().mapId).shift();
+          // for(let i = 0 ; i < 10; i ++){
+          //   this.mapList.push(new MapWithStats(new RaceMap(i+10, 'map' + i, 1, 60, 30, [], [], []), 10))
+          // }
         });
+
       },
       error => {
         if(error.status === 401){
@@ -64,21 +72,25 @@ export class ProfileComponent implements OnInit {
   }
 
   switchToNewMapView() {
-    this.router.navigate(['create-map']).then()
+    this.router.navigate(['create']).then()
   }
 
-  changeMap(selectRef: HTMLSelectElement) {
-    MapService.map.next(this.mapList[selectRef.selectedIndex].raceMap);
+  changeMap(selectRef: number) {
+    this._mapService.map.next(this.mapList[this.mapList.findIndex(map => map.raceMap.mapId === selectRef)].raceMap);
+    this.chosenMap = this.mapList.filter(map => map.raceMap.mapId === this._mapService.map.getValue().mapId).shift();
+
   }
 
-  changeMapCategory(selectRef: HTMLSelectElement) {
-    this.chosenCategory = this.mapListsCategories[selectRef.selectedIndex];
+  changeMapCategory(selectRef: string) {
+
+    this.chosenCategory = selectRef;
+    let idx = this.mapListsCategories.indexOf(selectRef);
     let mapListObs: Observable<Array<MapWithStats>>;
-    if(selectRef.selectedIndex === 0){
+    if(idx === 0){
       mapListObs = this._userService.getUserMaps(this.user.userId);
-    }else if(selectRef.selectedIndex === 1){
+    }else if(idx === 1){
       mapListObs = this._userService.getMapsWithMostWins();
-    }else if(selectRef.selectedIndex){
+    }else if(idx){
       mapListObs = this._userService.getMapsWithMostGames();
     }
     mapListObs.subscribe(mapList => {
