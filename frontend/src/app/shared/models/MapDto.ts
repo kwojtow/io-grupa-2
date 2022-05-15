@@ -1,7 +1,8 @@
 import { User } from "./User";
+import {RaceMap} from "./RaceMap";
 
 export interface MapDto{
-    raceMap : Object;
+    raceMap : RaceMap;
     name: String;
     gamesPlayed : Number;
     rate : Number;

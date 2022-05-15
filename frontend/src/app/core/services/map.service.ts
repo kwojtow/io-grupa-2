@@ -459,6 +459,8 @@ export class MapService {
   set ctx(value: CanvasRenderingContext2D) {
     this._ctx = value;
   }
-
+  clearMap(){
+    this.map.next(undefined);
+  }
 
 }
