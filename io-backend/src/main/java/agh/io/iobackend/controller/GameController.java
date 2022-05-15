@@ -51,13 +51,12 @@ public class GameController {
     }
 
     @PostMapping("/{id}") // game id - poczatkowe wspolrzedne
-    public ResponseEntity<String> startGame(@RequestBody ArrayList<PlayerInitialCoord> playerInitialCoordList, @PathVariable Long id) {
+    public void startGame(@RequestBody ArrayList<PlayerInitialCoord> playerInitialCoordList, @PathVariable Long id) {
         try {
             gameService.startGame(id, playerInitialCoordList);
         } catch (NoGameFoundException e) {
-            return ResponseEntity.badRequest().body("Game not found");
+            logger.info("No game found");
         }
-        return ResponseEntity.ok("Game created");
     }
 
     @DeleteMapping("/{id}/state")
