@@ -98,15 +98,16 @@ width: 3000px;
 }
 .container1 {  display: grid;
   grid-template-columns: 1fr 1.6fr 0.4fr;
-  grid-template-rows: 0.7fr 0.7fr 0.7fr 0.7fr 2.2fr;
+  grid-template-rows: 0.7fr 0.7fr 0.7fr 0.7fr 0.7fr 2.2fr;
   gap: 0px 40px;
   grid-auto-flow: row;
   grid-template-areas:
     "map map row1"
+    "map map row6"
     "map map row2"
     "map map row3"
     "map map row4"
-    "map map row5";
+  "map map row5";
   padding-right: 20px;
 }
 
@@ -118,7 +119,7 @@ width: 3000px;
 
 .row4 { grid-area: row4; }
 .row5 { grid-area: row5; }
-
+.row6 { grid-area: row6;}
 .map { grid-area: map; }
 
 /*div{border: 1px solid black}*/

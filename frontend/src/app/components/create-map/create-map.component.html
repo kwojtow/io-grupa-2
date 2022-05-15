@@ -24,6 +24,9 @@
       <div class="row5">
         <button style="background-color: darkgray" class="btn draw-buttons" (click)="changeObjectType(objectTypeEnum.NONE)">Wyczyść pole</button>
       </div>
+      <div class="row6">
+        <button style="background-color: red" class="btn draw-buttons" (click)="changeMapSize()">Rozmiar: {{this.availableSizes[this.chosenSizeIdx]}}</button>
+      </div>
       <div class="map">
         <app-map (click)="drawObject($event);"></app-map>
       </div>

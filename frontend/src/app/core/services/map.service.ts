@@ -14,7 +14,7 @@ import {PlayerState} from "../../shared/models/PlayerState";
 })
 export class MapService {
 
-  LINE_WIDTH = 5;
+  LINE_WIDTH = 1;
   FINISH_LINE_COLOR = 'black';
   START_LINE_COLOR = 'blue';
   OBSTACLE_COLOR = 'black';
