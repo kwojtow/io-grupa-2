@@ -18,21 +18,12 @@ export class CreateMapComponent implements OnInit {
   objectTypeEnum = ObjectType;
   map: RaceMap;
   chosenObject = ObjectType.NONE;
-  availableSizes = ['Mały', 'Średni', 'Duży']
+  mapSizes =[
+    {name: 'Mały', width: 40, height: 28},
+    {name: 'Średni', width: 60, height: 42},
+    {name: 'Duży', width: 102, height: 70},
+  ]
   chosenSizeIdx = 0;
-
-  sizes = [{
-    width: 20,
-    height: 15
-  },
-    {
-      width: 60,
-      height: 40
-    },
-    {
-      width: 120,
-      height: 100
-    }]
 
   constructor(private _mapService: MapService,
               private _http: HttpClient) {
@@ -111,12 +102,12 @@ export class CreateMapComponent implements OnInit {
   }
   resetMap(){
     const userId: number = JSON.parse(localStorage.getItem('jwtResponse')).id;
-    this.map = new RaceMap('', userId, this.sizes[this.chosenSizeIdx].width, this.sizes[this.chosenSizeIdx].height, [], [], []);
+    this.map = new RaceMap('', userId, this.mapSizes[this.chosenSizeIdx].width, this.mapSizes[this.chosenSizeIdx].height, [], [], []);
     MapService.map.next(this.map);
   }
 
   changeMapSize() {
-    this.chosenSizeIdx = (this.chosenSizeIdx + 1) % 3;
+    this.chosenSizeIdx = (this.chosenSizeIdx + 1) % this.mapSizes.length;
     this.resetMap();
   }
 }
