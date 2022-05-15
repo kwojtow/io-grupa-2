@@ -34,6 +34,11 @@ export class GameService {
               private _gameRoomService: GameRoomService) {
 
   }
+  clearGame(){
+    this._game = undefined;
+    this.gameLoaded.next(false);
+    this._mapService.clearMap();
+  }
   setGameInfo(authorizedPlayer: Player, game: Game){
     this._player = authorizedPlayer;
     this._game =   game;

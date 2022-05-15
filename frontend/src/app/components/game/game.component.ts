@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {GameService} from "../../core/services/game.service";
 import {Player} from "../../shared/models/Player";
-import {interval, mergeMap, Observable, timer} from "rxjs";
+import {interval, mergeMap, Observable, Subscription, timer} from "rxjs";
 import {PlayerState} from "../../shared/models/PlayerState";
 import {ActivatedRoute, Router} from "@angular/router";
 import {Game} from "../../shared/models/Game";
@@ -14,7 +14,7 @@ import {UserService} from "../../core/services/user.service";
   templateUrl: './game.component.html',
   styleUrls: ['./game.component.css']
 })
-export class GameComponent implements OnInit {
+export class GameComponent implements OnInit, OnDestroy {
 
   playersList: Player[];
   timer: number;
@@ -22,6 +22,7 @@ export class GameComponent implements OnInit {
   authorizedPlayer: Player;       // authorized user
   gameId: number;
   gameLoaded: boolean = false;
+  gameSubscription: Subscription;
   constructor(private _gameService: GameService,
               private router: Router,
               private _route: ActivatedRoute) {
@@ -32,7 +33,8 @@ export class GameComponent implements OnInit {
         this.playersList = _gameService.game.players;
         this.authorizedPlayer = _gameService.player;
         this.timer = this._gameService.game.settings.roundTime;   // TODO: timer animation
-        this.updateGameState();
+        if(this.gameSubscription === undefined)
+          this.updateGameState();
         this.gameLoaded = true;
       }
     })
@@ -41,13 +43,14 @@ export class GameComponent implements OnInit {
   updateGameState(){
     if(this.authorizedPlayer != null)
       this._gameService.postPlayerNewPosition(this.authorizedPlayer);
-    timer(0, this._gameService.REFRESH_TIME) // GET game state in every 0.5s
+    this.gameSubscription = timer(0, this._gameService.REFRESH_TIME) // GET game state in every 0.5s
       .pipe(mergeMap(() => this._gameService.getGameState(this.gameId))) // to test: getMockGameState()
       .subscribe(playersStates => {
-        this.playersList = this._gameService.updatePlayersStates(playersStates);
+          console.log('update')
+
+          this.playersList = this._gameService.updatePlayersStates(playersStates);
         this.currentPlayer = this._gameService.updateCurrentPlaying(this.playersList);
         this._gameService.updateMap(this.playersList);
-        console.log('update')
       },
         error => {
           if(error.status === 401){
@@ -56,6 +59,10 @@ export class GameComponent implements OnInit {
         })
   }
   ngOnInit(): void {
+  }
+  ngOnDestroy() {
+    this.gameSubscription.unsubscribe();
+    this._gameService.clearGame();
   }
 
   leaveGame() {
