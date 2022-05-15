@@ -42,8 +42,6 @@ public class GameControllerTest {
     private static Integer playersLimit = 2;
     private static Long user1Id;
 
-    private static Long gameId;
-
     static int x1 = 1;
     static int y1 = 1;
     static int x2 = 4;
@@ -142,7 +140,7 @@ public class GameControllerTest {
         // create game
 
         ResponseEntity<Long> gameIdResponse = gameRoomController.createGame(roomId);
-        gameId = gameIdResponse.getBody();
+        roomId = gameIdResponse.getBody();
         assertEquals(200, gameIdResponse.getStatusCodeValue());
 
         ArrayList<PlayerInitialCoord> playerInitialCoordArrayList = new ArrayList<>();
@@ -159,7 +157,7 @@ public class GameControllerTest {
         playerInitialCoord2.setYCoord(y2);
         playerInitialCoordArrayList.add(playerInitialCoord2);
 
-        gameController.startGame(playerInitialCoordArrayList, gameId);
+        gameController.startGame(playerInitialCoordArrayList, roomId);
     }
 
     @Test
@@ -181,11 +179,11 @@ public class GameControllerTest {
         expectedPlayerStateResponse2.setPlayerStatus(PlayerStatus.WAITING);
 
         //when
-        ResponseEntity<ArrayList<PlayerStateResponse>> playerStates = gameController.getGameState(gameId);
+        ResponseEntity<ArrayList<PlayerStateResponse>> playerStates = gameController.getGameState(roomId);
 
         //then
         ResponseEntity<Long> gameIdResponse = gameRoomController.checkIfGameStarted(roomId);
-        assertEquals(gameId, gameIdResponse.getBody());
+        assertEquals(roomId, gameIdResponse.getBody());
         assertEquals(expectedPlayerStateResponse1, playerStates.getBody().get(0));
         assertEquals(expectedPlayerStateResponse2, playerStates.getBody().get(1));
 
@@ -217,8 +215,8 @@ public class GameControllerTest {
         expectedPlayerStateResponseForGameMaster.setPlayerStatus(PlayerStatus.PLAYING);
 
         //when
-        ResponseEntity<String> responseEntity = gameController.changePosition(playerMoveRequest, gameId); //user1 made move
-        ResponseEntity<ArrayList<PlayerStateResponse>> playerStates = gameController.getGameState(gameId);
+        ResponseEntity<String> responseEntity = gameController.changePosition(playerMoveRequest, roomId); //user1 made move
+        ResponseEntity<ArrayList<PlayerStateResponse>> playerStates = gameController.getGameState(roomId);
 
         //then
         assertEquals(expectedPlayerStateResponse, playerStates.getBody().get(0));
@@ -251,8 +249,8 @@ public class GameControllerTest {
         expectedPlayerStateResponseForPlayingUser.setPlayerStatus(PlayerStatus.PLAYING);
 
         //when
-        ResponseEntity<String> responseEntity = gameController.changePosition(playerMoveRequest, gameId); //user1 made move
-        ResponseEntity<ArrayList<PlayerStateResponse>> playerStates = gameController.getGameState(gameId);
+        ResponseEntity<String> responseEntity = gameController.changePosition(playerMoveRequest, roomId); //user1 made move
+        ResponseEntity<ArrayList<PlayerStateResponse>> playerStates = gameController.getGameState(roomId);
 
         //then
         assertEquals(expectedPlayerStateResponseForPlayingUser, playerStates.getBody().get(0));
@@ -270,9 +268,9 @@ public class GameControllerTest {
         playerMoveRequest.setYCoordinate(y2);
 
         //when
-        ResponseEntity<String> responseEntity = gameController.endGame(gameId);
-        ResponseEntity<ArrayList<PlayerStateResponse>> gettingGameState = gameController.getGameState(gameId);
-        ResponseEntity<String> changingPosition = gameController.changePosition(playerMoveRequest, gameId);
+        ResponseEntity<String> responseEntity = gameController.endGame(roomId);
+        ResponseEntity<ArrayList<PlayerStateResponse>> gettingGameState = gameController.getGameState(roomId);
+        ResponseEntity<String> changingPosition = gameController.changePosition(playerMoveRequest, roomId);
 
         //then
         assertEquals(400, gettingGameState.getStatusCodeValue());

@@ -43,7 +43,7 @@ public class GameService {
     }
 
     public Game getGameFromRepo(Long id) throws NoGameFoundException {
-        Optional<Game> game = gameRepository.findById(id);
+        Optional<Game> game = gameRepository.findByGameId(id);
         if (game.isPresent()){
             return game.get();
         }

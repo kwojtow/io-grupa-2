@@ -29,13 +29,13 @@ public class Game {
             generator = "game_sequence"
     )
     @Column(
-            name = "game_id",
+            name = "id",
             updatable = false
     )
-    private Long gameId;
+    private Long id;
 
-    @Column(name = "gameRoomId")
-    private Long gameRoomId;
+    @Column(name = "game_id")
+    private Long gameId; // gameRoomId
 
     @OneToOne
     private GameMap gameMap;
@@ -49,7 +49,7 @@ public class Game {
     private int currentPlayerIndex;
 
     public Game(Long gameRoomId, GameMap map) {
-        this.gameRoomId = gameRoomId;
+        this.gameId = gameRoomId;
         this.gameMap = map;
         this.currentPlayerIndex = 0;
         this.playersQueue = new ArrayList<>();
@@ -118,7 +118,7 @@ public class Game {
     }
 
     public Long getGameRoomId() {
-        return gameRoomId;
+        return gameId;
     }
 
     public void removePlayer(Long playerId) {

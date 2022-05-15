@@ -13,6 +13,8 @@ import agh.io.iobackend.service.GameRoomService;
 import agh.io.iobackend.service.GameService;
 import agh.io.iobackend.service.MapService;
 import agh.io.iobackend.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +29,8 @@ import java.util.List;
 @CrossOrigin
 @Transactional // for tests, because of "org.hibernate.LazyInitializationException"
 public class GameRoomController {
+    private static final Logger logger = LoggerFactory.getLogger(GameController.class);
+
 
     @Autowired
     private GameRoomService gameRoomService;
@@ -133,13 +137,23 @@ public class GameRoomController {
 
     @CrossOrigin
     @DeleteMapping("/{id}/users-list/{user}") // room id
-    public void leaveGameRoom(@PathVariable Long id, @PathVariable Long user) throws GameRoomNotFoundException, NoGameFoundException {
-        GameRoom gameRoom = gameRoomService.getGameRoom(id);
+    public void leaveGameRoom(@PathVariable Long id, @PathVariable Long user) throws NoGameFoundException {
+       GameRoom gameRoom = null;
+        try {
+            gameRoom = gameRoomService.getGameRoom(id);
+       }
+       catch (GameRoomNotFoundException e){
+           logger.error("No room");
+       }
+        gameService.removeFromGame(id, user);
         gameRoom.removePlayer(userService.getUserById(user).get());
         if (gameRoom.getUserList().size() == 0) {
-            gameRoomService.deleteGameRoom(id);
+            try {
+                gameRoomService.deleteGameRoom(id);
+            } catch (GameRoomNotFoundException e){
+                logger.error("No room");
+            }
         }
-        gameService.removeFromGame(id, user);
     }
 
     @CrossOrigin

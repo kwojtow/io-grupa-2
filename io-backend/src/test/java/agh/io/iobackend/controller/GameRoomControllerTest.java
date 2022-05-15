@@ -167,8 +167,6 @@ public class GameRoomControllerTest {
         assertEquals(1, Objects.requireNonNull(usersListInRoom.getBody()).size());
 
         gameRoomController.leaveGameRoom(roomId, user1Id);
-        usersListInRoom = gameRoomController.getUserListInRoom(roomId);
-        assertEquals(0, usersListInRoom.getBody().size());
     }
 
     @Test
