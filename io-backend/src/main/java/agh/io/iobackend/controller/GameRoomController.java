@@ -44,8 +44,8 @@ public class GameRoomController {
     @Autowired
     private MapService mapService;
 
-    // TODO sprawdz czy gra istnieje, czy uzytkownik istnieje
-    // TODO obsługa błędów
+
+    //TODO gdy GameMaster wychodzi powinno chyba zamykac pokoj, bo gracz i tak nie moze rozpoczac
 
     @CrossOrigin
     @PostMapping("")
@@ -145,8 +145,10 @@ public class GameRoomController {
        catch (GameRoomNotFoundException e){
            logger.error("No room");
        }
-        gameService.removeFromGame(id, user);
         gameRoom.removePlayer(userService.getUserById(user).get());
+        if (gameRoom.getGameStarted()){
+            gameService.removeFromGame(id, user);
+        }
         if (gameRoom.getUserList().size() == 0) {
             try {
                 gameRoomService.deleteGameRoom(id);
