@@ -53,7 +53,7 @@ public class GameRoomController {
                 gameRoomRequest.getGameMasterId()
         );
         GameRoom savedGameRoom = gameRoomService.createGameRoom(gameRoom);
-        savedGameRoom.addPlayer(userService.getUserById(gameRoomRequest.getGameMasterId()).get()); // add GameMaster
+//        savedGameRoom.addPlayer(userService.getUserById(gameRoomRequest.getGameMasterId()).get()); // add GameMaster
         GameRoomResponse gameRoomResponse = new GameRoomResponse();
         gameRoomResponse.setRoomId(savedGameRoom.getGameRoomID());
         gameRoomResponse.setGameMasterId(gameRoomRequest.getGameMasterId());
@@ -176,10 +176,6 @@ public class GameRoomController {
             return ResponseEntity.badRequest().body(-1L);
         }
         // zwraca gameId - jak gameStarted to false to zwraca -1 moze tak byc??
-        // w przeciwnym przypadku zwraca gameId już wygenerowane poprzez rozpoczecie
-        // gry przez GameMastera (prez klikniecie start-game)
-        // i teraz zarowno gracze jak i gameMaster zwracaja się do GameController - startGame
-        // po wspolrzedne poczatkowe graczy
         return ResponseEntity.ok(gameId);
     }
 

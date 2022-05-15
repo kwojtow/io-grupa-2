@@ -29,6 +29,7 @@ export class GameRoomComponent implements OnInit {
   usersExtensions : UserExtension[] = new Array();
 
   gameRoomId : number;
+  gameId : number;
   gameStarted: boolean = false;
 
   timer: number = 3;
@@ -112,7 +113,9 @@ export class GameRoomComponent implements OnInit {
 
   startGame(){
     this.gameStarted = true;
-    this.gameRoomService.startGame(this.gameRoomId).subscribe();
+    this.gameRoomService.startGame(this.gameRoomId).subscribe((data : number) => {
+      this.gameId = data
+    })
   }
 
   getGameRoomData() {
@@ -184,10 +187,11 @@ export class GameRoomComponent implements OnInit {
   }
 
   getGameStarted(roomId: number) {
-    this.gameRoomService.getGameStarted(roomId).subscribe((data: boolean) => {
-      if (!this.gameStarted && data == true) {
+    this.gameRoomService.getGameStarted(roomId).subscribe((data: number) => {
+      if (!this.gameStarted && data != -1) {
         console.log("Starting game")
         this.gameStarted = true;
+        this.gameId = data;
         this.showModal();
       }
     });
@@ -198,8 +202,9 @@ export class GameRoomComponent implements OnInit {
       .forEach(user => {
         players.push(new Player(user.userId, user.login, new Vector(0,0), 'green'))
       })
-    this.gameRoomService.initGame(players, this.gameRoomId).subscribe(response => {
-      this.router.navigate(["/game/" + this.gameRoomId]).then(() =>{
+    this.gameRoomService.initGame(players, this.gameId).subscribe(response => {
+      console.log(this.gameId);
+      this.router.navigate(["/game/" + this.gameId]).then(() =>{
       })
     })
   }

@@ -63,6 +63,7 @@ public class GameRoom {
 
     public GameRoom(GameMap map, int playersLimit, int roundTime, Long gameMasterId) {
         this.gameMap = map;
+        this.gameStarted = false;
         this.limitOfPlayers = playersLimit;
         this.roundTime = roundTime;
         this.gameMasterID = gameMasterId;
