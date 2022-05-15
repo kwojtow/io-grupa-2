@@ -23,6 +23,8 @@
     </div>
     <div class="new-map-btn">
       <button (click)="switchToNewMapView()">Utwórz nową</button>
+      <button *ngIf="chosenCategory === mapListsCategories[0]" (click)="deleteMap()">Usuń mapę</button>
+
     </div>
     <div class="map-preview">
       <app-map></app-map>
