@@ -22,6 +22,9 @@ public class MapService {
     @Autowired
     private GameMapRatingsRepository gameMapRatingsRepository;
 
+    @Autowired
+    private StatisticsService statisticsService;
+
     public GameMap saveMap(GameMap gameMap) {
         return mapRepository.save(gameMap);
     }
@@ -39,6 +42,7 @@ public class MapService {
         List<GameMap> gameMaps = mapRepository.findAll();
         for (GameMap gameMap : gameMaps) {
             gameMap.setRating(getAverageRating(gameMap));
+            gameMap.setGamesPlayed(statisticsService.getMapGamesPlayed(gameMap.getMapId()));
         }
         return gameMaps;
     }
@@ -51,15 +55,20 @@ public class MapService {
         gameMapRatingsRepository.deleteAll();
     }
 
-    public Optional<GameMap> getMapById(Long mapId) {
-        return mapRepository.findById(mapId);
+    public GameMap getMapById(Long mapId) {
+        Optional<GameMap> map = mapRepository.findById(mapId);
+        if (map.isEmpty()) return null;
+        else {
+            GameMap gameMap = map.get();
+            gameMap.setRating(getAverageRating(gameMap));
+            gameMap.setGamesPlayed(statisticsService.getMapGamesPlayed(gameMap.getMapId()));
+            return gameMap;
+        }
     }
 
     public void removeMapById(Long mapId) {
-        Optional<GameMap> gameMap = getMapById(mapId);
-        if (gameMap.isPresent()) {
-            mapRepository.delete(getMapById(mapId).get());
-        }
+        Optional<GameMap> gameMap = mapRepository.findById(mapId);
+        gameMap.ifPresent(map -> mapRepository.delete(map));
     }
 
     public List<GameMap> getMapsCreatedByUser(Long userId) {

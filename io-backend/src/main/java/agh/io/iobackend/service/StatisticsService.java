@@ -47,6 +47,10 @@ public class StatisticsService {
         return gameMapHistoryRepository.findAll().stream().filter(result -> result.getUser().getUserId().equals(userId)).count();
     }
 
+    public long getMapGamesPlayed(Long mapId) {
+        return gameMapHistoryRepository.findAll().stream().filter(result -> result.getMap().getMapId().equals(mapId)).count();
+    }
+
     public LinkedHashMap<User, Integer> getUsersRanking() {
         List<GameMapHistory> gameMapHistories = gameMapHistoryRepository.findAll();
         Map<User, Integer> points = new HashMap<>();

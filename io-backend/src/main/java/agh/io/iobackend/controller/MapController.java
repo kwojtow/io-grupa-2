@@ -42,11 +42,11 @@ public class MapController {
     @CrossOrigin
     @GetMapping("/{mapId}")
     public ResponseEntity<GameMap> getMapById(@PathVariable Long mapId) {
-        Optional<GameMap> map = mapService.getMapById(mapId);
-        if (map.isEmpty()) {
+        GameMap map = mapService.getMapById(mapId);
+        if (map == null) {
             return ResponseEntity.badRequest().body(null);
         }
-        return ResponseEntity.ok(map.get());
+        return ResponseEntity.ok(map);
     }
 
     @PostMapping
@@ -93,7 +93,7 @@ public class MapController {
 
     @PostMapping("/rating/{mapId}")
     public ResponseEntity<String> saveMapRating(@PathVariable Long mapId, @RequestParam Integer rating) {
-        mapService.saveRating(mapService.getMapById(mapId).get(), userService.getCurrentUser(), rating);
+        mapService.saveRating(mapService.getMapById(mapId), userService.getCurrentUser(), rating);
         return ResponseEntity.ok().body("Rating added successfully");
     }
 

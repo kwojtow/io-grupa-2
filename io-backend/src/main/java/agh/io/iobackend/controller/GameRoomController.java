@@ -45,7 +45,7 @@ public class GameRoomController {
     @CrossOrigin
     @PostMapping("")
     public ResponseEntity<GameRoomResponse> createRoom(@RequestBody GameRoomRequest gameRoomRequest) {
-        GameRoom gameRoom = new GameRoom(mapService.getMapById(gameRoomRequest.getMapId()).get(), gameRoomRequest.getPlayersLimit(),
+        GameRoom gameRoom = new GameRoom(mapService.getMapById(gameRoomRequest.getMapId()), gameRoomRequest.getPlayersLimit(),
                 gameRoomRequest.getRoundTime(), gameRoomRequest.getGameMasterId());
         // czy potrzebna jest ta nowa zmienna?
         GameRoom savedGameRoom = gameRoomService.createGameRoom(gameRoom);

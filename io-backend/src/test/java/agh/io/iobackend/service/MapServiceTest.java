@@ -32,9 +32,11 @@ class MapServiceTest {
     private static Long map2Id;
 
     @BeforeAll
-    static void prepareData(@Autowired MapService mapService, @Autowired StatisticsService statisticsService, @Autowired UserService userService) {
+    static void prepareData(@Autowired MapService mapService, @Autowired StatisticsService statisticsService,
+                            @Autowired UserService userService, @Autowired GameRoomService gameRoomService) {
         statisticsService.clearMapHistory();
         mapService.clearMapRatings();
+        gameRoomService.clearGameRooms();
         mapService.clearMaps();
 
         User user1 = User.builder().login("login1").email("email1").build();
@@ -75,19 +77,19 @@ class MapServiceTest {
 
     @Test
     void averageRatingsAndRankingTest() {
-        mapService.saveRating(mapService.getMapById(map1Id).get(), userService.getUserById(user1Id).get(), 8);
-        mapService.saveRating(mapService.getMapById(map1Id).get(), userService.getUserById(user1Id).get(), 6);
+        mapService.saveRating(mapService.getMapById(map1Id), userService.getUserById(user1Id).get(), 8);
+        mapService.saveRating(mapService.getMapById(map1Id), userService.getUserById(user1Id).get(), 6);
 
-        assertEquals(6.0, mapService.getAverageRating(mapService.getMapById(map1Id).get()));
+        assertEquals(6.0, mapService.getAverageRating(mapService.getMapById(map1Id)));
 
-        mapService.saveRating(mapService.getMapById(map1Id).get(), userService.getUserById(user2Id).get(), 8);
+        mapService.saveRating(mapService.getMapById(map1Id), userService.getUserById(user2Id).get(), 8);
 
-        assertEquals(7.0, mapService.getAverageRating(mapService.getMapById(map1Id).get()));
+        assertEquals(7.0, mapService.getAverageRating(mapService.getMapById(map1Id)));
 
-        assertNull(mapService.getAverageRating(mapService.getMapById(map2Id).get()));
+        assertNull(mapService.getAverageRating(mapService.getMapById(map2Id)));
 
-        mapService.saveRating(mapService.getMapById(map2Id).get(), userService.getUserById(user1Id).get(), 5);
-        mapService.saveRating(mapService.getMapById(map2Id).get(), userService.getUserById(user2Id).get(), 3);
+        mapService.saveRating(mapService.getMapById(map2Id), userService.getUserById(user1Id).get(), 5);
+        mapService.saveRating(mapService.getMapById(map2Id), userService.getUserById(user2Id).get(), 3);
 
         LinkedHashMap<GameMap, Double> mapRanking = mapService.getMapsRanking();
         List<Double> ratings = List.of(7.0, 4.0);

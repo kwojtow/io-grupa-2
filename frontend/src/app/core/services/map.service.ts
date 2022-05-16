@@ -60,8 +60,9 @@ export class MapService {
             mapResponse.width,
             mapResponse.height,
             mapResponse.userId,
-            {finishLine, startLine, obstacles}
-
+            {finishLine, startLine, obstacles},
+            mapResponse.rating,
+            mapResponse.gamesPlayed
             )
         }));
     }
