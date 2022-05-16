@@ -62,6 +62,7 @@ export class CreateGameRoomComponent implements OnInit, OnDestroy {
     ].valueChanges.subscribe((value) => {
       this.selectedMapId = value;
       console.log(value);
+      this.mapService.map.next(<RaceMap>this.mapDtoMap.get(value).raceMap);
     });
   }
 
@@ -85,13 +86,14 @@ export class CreateGameRoomComponent implements OnInit, OnDestroy {
         ),
         // name: data.name,
         name: mapId.toString(),
-        gamesPlayed: 0,
-        rate: 0,
+        gamesPlayed: data.gamesPlayed,
+        rate: data.rating,
         author: mapAuthor,
       };
       this.mapDatas.push(mapDto);
       this.mapDtoMap.set(mapId.toString(), mapDto);
       this.selectedMapId = this.mapDatas[0].name;
+      this.mapService.map.next(<RaceMap>this.mapDtoMap.get(this.selectedMapId).raceMap);
     });
   }
 

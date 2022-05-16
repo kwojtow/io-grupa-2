@@ -42,4 +42,8 @@ public class GameMap {
 
     @Transient
     private Double rating;
+
+    @Transient
+    private Long gamesPlayed;
+
 }

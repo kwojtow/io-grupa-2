@@ -10,7 +10,6 @@ import agh.io.iobackend.service.GameRoomService;
 import agh.io.iobackend.service.GameService;
 import agh.io.iobackend.service.MapService;
 import agh.io.iobackend.service.StatisticsService;
-import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

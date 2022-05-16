@@ -31,10 +31,10 @@ public class InitialRunner implements CommandLineRunner {
     private UserService userService;
 
     @Autowired
-    GameRoomService gameRoomService;
+    private GameRoomService gameRoomService;
 
     @Autowired
-    GameService gameService;
+    private GameService gameService;
 
 
     @Override
