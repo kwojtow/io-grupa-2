@@ -51,7 +51,6 @@ public class MapController {
 
     @PostMapping
     public ResponseEntity<Long> saveMap(@RequestBody GameMap gameMap) {
-        System.out.println(gameMap);
         GameMap map = mapService.saveMap(gameMap);
         return ResponseEntity.ok(map.getMapId());
     }
