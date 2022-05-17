@@ -1,3 +1,147 @@
-p{
-  font-size: 40px;
+#top-bar{
+  background-color: rgba(78, 42, 106, 100);
+  height: 100px;
 }
+
+#header{
+  color: white;
+  padding: 1%;
+}
+
+.btn {
+  border-radius: 20px;
+  font-size: larger;
+  height: 55px;
+
+
+}
+.draw-buttons{
+  color: white;
+  font-size: 23px;
+  width: 100%;
+}
+#buttons{
+  justify-content: right;
+}
+
+.btn-outline-primary{
+  background-color: rgba(78, 42, 106, 100);
+  color: rgba(255, 255, 255, 100);
+  border: 1px solid rgba(255, 255, 255, 100);
+}
+
+.btn-primary{
+  background-color: rgba(255, 255, 255, 100);
+  color: rgba(78, 42, 106, 100);
+  border: 1px solid rgba(255, 255, 255, 100);
+}
+
+.col-md-3{
+  border: 1px solid rgba(187,187,187,100);
+  text-align: center;
+  margin: 2%;
+  box-shadow: 7px 7px 6px 0px rgba(0,0,0,0.4);
+  padding: 1%;
+}
+
+.col-md-3:hover{
+  background-color:rgba(78, 42, 106, 100);
+  cursor: pointer;
+  color: white;
+}
+
+.col-md-3:hover .description {
+  color: white;
+}
+
+#min{
+  margin-left: -80px;
+}
+
+
+#content{
+  height: 80vh;
+  padding: 5%;
+}
+
+.dialog{
+  z-index: 2;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  width: 90%;
+}
+
+.description{
+  color: rgba(16,16,16,100);
+  font-size:30px;
+  margin-top: 20%;
+}
+
+.cardView{
+  margin-top: 20%;
+  margin-bottom: 15%;
+}
+
+
+span{
+  font-size: 118px;
+}
+#test{background-color: #630c78;
+width: 3000px;
+  height: 100px;}
+#randomGame{
+  transform: rotate(45deg);
+}
+#map-name-input{
+  font-size: 23px;
+}
+.container1 {  display: grid;
+  grid-template-columns: 1fr 1.6fr 0.4fr;
+  grid-template-rows: 0.7fr 0.7fr 0.7fr 0.7fr 0.7fr 2.2fr;
+  gap: 0px 40px;
+  grid-auto-flow: row;
+  grid-template-areas:
+    "map map row1"
+    "map map row6"
+    "map map row2"
+    "map map row3"
+    "map map row4"
+  "map map row5";
+  padding-right: 20px;
+}
+
+.row1 { grid-area: row1; }
+
+.row2 { grid-area: row2; }
+
+.row3 { grid-area: row3; }
+
+.row4 { grid-area: row4; }
+.row5 { grid-area: row5; }
+.row6 { grid-area: row6;}
+.map { grid-area: map; }
+
+/*div{border: 1px solid black}*/
+
+@media(max-width: 1200px) {
+  .container1 {  display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-rows: 5fr 1fr 1fr;
+    gap: 0px 10px;
+    grid-auto-flow: row;
+    grid-template-areas:
+    "map map map map"
+    "row2 row3 row4 row5"
+    "row1 row1 row1 row1 ";
+    font-size: 18px;
+  }
+}
+@media(max-width: 1000px){
+  .draw-buttons{
+    color: white;
+    font-size: 15px;
+    width: 90%;
+  }
+}
+

@@ -38,7 +38,7 @@ export class GameService {
     this._player = authorizedPlayer;
     this._game =   game;
     MapService.game = game;
-    this._mapService.map.next(game.map);
+    MapService.map.next(game.map);
     this.gameLoaded.next(true);
   }
 
@@ -56,14 +56,15 @@ export class GameService {
             player = players.find(player => player.playerId === user.userId)
             this.setGameInfo(player, new Game(gameId,
               new RaceMap(
-              mapResponse.mapId,
+
               mapResponse.name,
               mapResponse.userId,
               mapResponse.width,
               mapResponse.height,
               mapResponse.mapStructure.finishLine,
               mapResponse.mapStructure.startLine,
-              mapResponse.mapStructure.obstacles
+              mapResponse.mapStructure.obstacles,
+                mapResponse.mapId
               ),
               // MockDataProviderService.getExampleMap(),
               players, new GameSettings(gameResponse.roundTime)))
@@ -123,8 +124,8 @@ export class GameService {
       let player = this._game.players.find(player => player.playerId === playerState.playerId);
       if(player){
         for(let finish of this._game.map.finishLine){
-          if(finish.equals(playerState.currentPosition) && !finish.equals(player.position) 
-           ) 
+          if(finish.equals(playerState.currentPosition) && !finish.equals(player.position)
+           )
             setTimeout(function() { alert('Gracz ' + player.name + ' wygrał'); }, 1);
         }
         player.updateState(playerState);
