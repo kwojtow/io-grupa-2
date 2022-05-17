@@ -52,7 +52,7 @@ public class GameRoomController {
     @PostMapping("")
     public ResponseEntity<GameRoomResponse> createRoom(@RequestBody GameRoomRequest gameRoomRequest) {
         GameRoom gameRoom = new GameRoom(
-                mapService.getMapById(gameRoomRequest.getMapId()).get(),
+                mapService.getMapById(gameRoomRequest.getMapId()),
                 gameRoomRequest.getPlayersLimit(),
                 gameRoomRequest.getRoundTime(),
                 gameRoomRequest.getGameMasterId()
