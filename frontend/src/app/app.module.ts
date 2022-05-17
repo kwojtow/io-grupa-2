@@ -14,6 +14,7 @@ import { StartPageComponent } from './components/start-page/start-page.component
 import { GameComponent } from './components/game/game.component';
 import { JoinGameRoomComponent } from './components/start-page/join-game-room/join-game-room.component';
 import {ProfileComponent} from "./components/profile/profile.component";
+import { RankingComponent } from './components/ranking/ranking.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,8 @@ import {ProfileComponent} from "./components/profile/profile.component";
     GameRoomComponent,
     CreateGameRoomComponent,
     GameComponent,
-    ProfileComponent
+    ProfileComponent,
+    RankingComponent
 
   ],
   imports: [
