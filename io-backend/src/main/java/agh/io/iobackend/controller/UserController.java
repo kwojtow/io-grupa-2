@@ -31,6 +31,11 @@ public class UserController {
         return ResponseEntity.ok(userService.getUserById(userId).get());
     }
 
+    @PostMapping("/{userId}")
+    public ResponseEntity<User> saveAvatar(@PathVariable Long userId, @RequestBody byte[] avatarBytes){
+        return ResponseEntity.ok().body(userService.saveAvatar(userId, avatarBytes));
+    }
+
     // TODO update User
 
     @CrossOrigin

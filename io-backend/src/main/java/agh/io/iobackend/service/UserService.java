@@ -25,6 +25,12 @@ public class UserService implements UserDetailsService {
         return userRepository.save(user);
     }
 
+    public User saveAvatar(Long userId, byte[] avatarBytes) {
+        User user = userRepository.findById(userId).get();
+        user.setAvatar(avatarBytes);
+        return userRepository.save(user);
+    }
+
     public void clearUsers() { // for tests
         userRepository.deleteAll();
     }
