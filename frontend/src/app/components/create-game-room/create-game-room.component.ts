@@ -62,7 +62,7 @@ export class CreateGameRoomComponent implements OnInit, OnDestroy {
     ].valueChanges.subscribe((value) => {
       this.selectedMapId = value;
       console.log(value);
-      this.mapService.map.next(<RaceMap>this.mapDtoMap.get(value).raceMap);
+      MapService.map.next(<RaceMap>this.mapDtoMap.get(value).raceMap);
     });
   }
 
@@ -95,7 +95,7 @@ export class CreateGameRoomComponent implements OnInit, OnDestroy {
       this.mapDatas.push(mapDto);
       this.mapDtoMap.set(mapId.toString(), mapDto);
       this.selectedMapId = this.mapDatas[0].name;
-      this.mapService.map.next(<RaceMap>this.mapDtoMap.get(this.selectedMapId).raceMap);
+      MapService.map.next(<RaceMap>this.mapDtoMap.get(this.selectedMapId).raceMap);
     });
   }
 

@@ -92,7 +92,7 @@ export class CreateMapComponent implements OnInit {
         this.map.mapWidth,
         this.map.mapHeight,
         this.map.userId,
-        {finishLine, startLine, obstacles})
+        {finishLine, startLine, obstacles}, 0, 0)
       this.resetMap();
       return this._http.post<any>("http://localhost:8080/map", mapResponse, httpOptions)
         .subscribe(id => {

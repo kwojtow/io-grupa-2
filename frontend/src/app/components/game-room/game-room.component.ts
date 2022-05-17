@@ -141,7 +141,7 @@ export class GameRoomComponent implements OnInit {
             author: mapAuthor
           }
           this.gameRoomData.mapDto = mapDto;
-          this.mapService.map.next(<RaceMap>mapDto.raceMap);
+          MapService.map.next(<RaceMap>mapDto.raceMap);
           }
         )
 
