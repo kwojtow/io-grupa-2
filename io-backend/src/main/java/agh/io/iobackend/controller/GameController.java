@@ -18,8 +18,8 @@ import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/game/")
-@Transactional
 @CrossOrigin
+@Transactional
 public class GameController {
     private static final Logger logger = LoggerFactory.getLogger(GameController.class);
 

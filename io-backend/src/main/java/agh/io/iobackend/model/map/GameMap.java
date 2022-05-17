@@ -38,6 +38,7 @@ public class GameMap {
     private Long userId;
 
     @Convert(converter = MapStructureConverter.class)
+    @Column(length = 20000)
     private MapStructure mapStructure;
 
     @Transient

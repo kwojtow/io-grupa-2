@@ -42,7 +42,7 @@ export class ProfileComponent implements OnInit {
         this._userService.getUserRanksInfo(user.userId).subscribe(ranks => this.user.ranks = ranks);
         this._userService.getUserMaps(user.userId).subscribe(mapList => {
           this.mapList = mapList
-          if(this.mapList.length > 0) this._mapService.map.next(this.mapList[0].raceMap);
+          if(this.mapList.length > 0) MapService.map.next(this.mapList[0].raceMap);
         });
       },
       error => {
@@ -64,11 +64,11 @@ export class ProfileComponent implements OnInit {
   }
 
   switchToNewMapView() {
-    this.router.navigate(['create']).then()
+    this.router.navigate(['create-map']).then()
   }
 
   changeMap(selectRef: HTMLSelectElement) {
-    this._mapService.map.next(this.mapList[selectRef.selectedIndex].raceMap);
+    MapService.map.next(this.mapList[selectRef.selectedIndex].raceMap);
   }
 
   changeMapCategory(selectRef: HTMLSelectElement) {
@@ -83,7 +83,7 @@ export class ProfileComponent implements OnInit {
     }
     mapListObs.subscribe(mapList => {
       this.mapList = mapList
-      if(this.mapList.length > 0) this._mapService.map.next(this.mapList[0].raceMap);
+      if(this.mapList.length > 0) MapService.map.next(this.mapList[0].raceMap);
     });
   }
   deleteMap(){

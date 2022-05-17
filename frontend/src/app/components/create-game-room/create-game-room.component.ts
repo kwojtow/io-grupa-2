@@ -62,7 +62,7 @@ export class CreateGameRoomComponent implements OnInit, OnDestroy {
     ].valueChanges.subscribe((value) => {
       this.selectedMapId = value;
       console.log(value);
-      this.mapService.map.next(<RaceMap>this.mapDtoMap.get(value).raceMap);
+      MapService.map.next(<RaceMap>this.mapDtoMap.get(value).raceMap);
     });
   }
 
@@ -75,14 +75,16 @@ export class CreateGameRoomComponent implements OnInit, OnDestroy {
         .subscribe((data2) => (mapDto.author = data2));
       mapDto = {
         raceMap: new RaceMap(
-          data.mapId,
+
           data.name,
           data.userId,
           data.width,
           data.height,
           data.mapStructure.finishLine,
           data.mapStructure.startLine,
-          data.mapStructure.obstacles
+          data.mapStructure.obstacles,
+          data.mapId
+
         ),
         // name: data.name,
         name: mapId.toString(),
@@ -93,7 +95,7 @@ export class CreateGameRoomComponent implements OnInit, OnDestroy {
       this.mapDatas.push(mapDto);
       this.mapDtoMap.set(mapId.toString(), mapDto);
       this.selectedMapId = this.mapDatas[0].name;
-      this.mapService.map.next(<RaceMap>this.mapDtoMap.get(this.selectedMapId).raceMap);
+      MapService.map.next(<RaceMap>this.mapDtoMap.get(this.selectedMapId).raceMap);
     });
   }
 

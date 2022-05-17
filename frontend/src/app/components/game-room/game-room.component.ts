@@ -128,14 +128,15 @@ export class GameRoomComponent implements OnInit {
           this.userService2.getUserData(data2.userId).subscribe(data3 => mapDto.author = data3)
           mapDto = {
             raceMap : new RaceMap(
-              data2.mapId,
+
               data2.name,
               data2.userId,
               data2.width,
               data2.height,
               data2.mapStructure.finishLine,
               data2.mapStructure.startLine,
-              data2.mapStructure.obstacles
+              data2.mapStructure.obstacles,
+              data2.mapId
             ),
             name: data2.name,
             gamesPlayed: data2.gamesPlayed,
@@ -143,7 +144,7 @@ export class GameRoomComponent implements OnInit {
             author: mapAuthor
           }
           this.gameRoomData.mapDto = mapDto;
-          this.mapService.map.next(<RaceMap>mapDto.raceMap);
+          MapService.map.next(<RaceMap>mapDto.raceMap);
           }
         )
 

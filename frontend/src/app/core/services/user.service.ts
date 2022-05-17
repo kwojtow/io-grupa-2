@@ -100,14 +100,14 @@ export class UserService {
 
   private convertMap(mapJson: { mapId: number; name: string; userId: number; width: number; height: number; mapStructure: { finishLine: any[]; startLine: any[]; obstacles: any[]; }; }): RaceMap{
     return  new RaceMap(
-      mapJson.mapId,
       mapJson.name,
       mapJson.userId,
       mapJson.width,
       mapJson.height,
       mapJson.mapStructure.finishLine.map(v => new Vector(v.x, v.y)),
       mapJson.mapStructure.startLine.map(v => new Vector(v.x, v.y)),
-      mapJson.mapStructure.obstacles.map(v => new Vector(v.x, v.y))
+      mapJson.mapStructure.obstacles.map(v => new Vector(v.x, v.y)),
+      mapJson.mapId
     )
   }
   convertMapListResponse(mapList: { map: { mapId: number; name: string; userId: number; width: number; height: number; mapStructure: { finishLine: any[]; startLine: any[]; obstacles: any[]; }; }; games: number; }[]){
