@@ -114,7 +114,7 @@ export class GameService {
         return this._httpClient.post<any>(this.API_URL + '/game/' + this._game.gameId + '/state',
                                           playerPositionInfo,
                                           requestOptions
-                                          ).subscribe(res => console.log(res));
+                                          ).subscribe(res => {console.log(res)});
       }
     })
   }
@@ -141,14 +141,21 @@ export class GameService {
       this.timerValue.next(value);
       if(value > 0){
         setTimeout(() => {
-          if(this.timerValue.value > 0 && !this.moveDone){
+          if(!this.moveDone){
             this.updateTimer(value-1)
+          }
+          else{
+            this.moveDone = false;
           }
         }, 1000);
       }
       else {
         this.player.setNewVector(this.player.currentVector);
+        this.moveDone = false;
       }
+    }
+    else {
+      this.moveDone = false;
     }
   }
 
@@ -159,7 +166,7 @@ export class GameService {
     return this.authorizedPlayer?.playerId === this.player?.playerId;
   }
   updateMap(playersList: Array<Player>){
-    if(this.isMyTurn() && this.timerValue.value == 0) {
+    if(this.isMyTurn() && this.timerValue.value == 0 && !this.moveDone) {
       this.moveDone = false;
       this.updateTimer(this.game.settings.roundTime);
     }
