@@ -23,7 +23,8 @@ export class GameService {
   private _player: Player;                        // authorized user
   authorizedPlayer: Player;                          // currently playing user
   private _game: Game;
-
+  timerValue = new BehaviorSubject<number>(0);
+  moveDone: boolean = false;
   gameLoaded = new BehaviorSubject<boolean>(false);
 
   constructor(private mockDataProvider: MockDataProviderService,
@@ -92,6 +93,8 @@ export class GameService {
   }
   postPlayerNewPosition(player: Player) {
     player.getChangedPosition().subscribe(() => {
+      this.moveDone = true;
+      this.timerValue.next(0);
       const playerPositionInfo = {
         playerId: player.playerId,
         xcoordinate: player.position.x,
@@ -133,10 +136,33 @@ export class GameService {
     })
     return this._game.players;
   }
+  updateTimer(value: number) {
+    if(!this.moveDone){
+      this.timerValue.next(value);
+      if(value > 0){
+        setTimeout(() => {
+          if(this.timerValue.value > 0 && !this.moveDone){
+            this.updateTimer(value-1)
+          }
+        }, 1000);
+      }
+      else {
+        this.player.setNewVector(this.player.currentVector);
+      }
+    }
+  }
+
+  getTimerValue(): Observable<number>{
+    return this.timerValue.asObservable();
+  }
   isMyTurn(): boolean{
     return this.authorizedPlayer?.playerId === this.player?.playerId;
   }
   updateMap(playersList: Array<Player>){
+    if(this.isMyTurn() && this.timerValue.value == 0) {
+      this.moveDone = false;
+      this.updateTimer(this.game.settings.roundTime);
+    }
     this._mapService.initMap(this.game.map, playersList, this.isMyTurn(), this.player);
   }
   get game(): Game {
