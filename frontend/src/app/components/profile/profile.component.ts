@@ -6,7 +6,7 @@ import {MapService} from "../../core/services/map.service";
 import {UserService} from "../../core/services/user.service";
 import {MapWithStats} from "../../shared/models/MapWithStats";
 import {MockDataProviderService} from "../../core/services/mock-data-provider.service";
-
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
@@ -21,11 +21,13 @@ export class ProfileComponent implements OnInit {
   chosenMap: MapWithStats;
   allGames = 12345;// TODO: map stats
   mapRate = '9.5/10';
+  avatar: SafeResourceUrl;
 
   constructor(private router: Router,
               private _mapService: MapService,
               private _userService: UserService,
-              private _mockData: MockDataProviderService) {
+              private _mockData: MockDataProviderService,
+              private sanitizer: DomSanitizer) {
     this.getProfileData();
     // this.getMockProfileData();
 
@@ -38,6 +40,7 @@ export class ProfileComponent implements OnInit {
   private getProfileData(){
     this._userService.getUser().subscribe(user => {
         this.user = user
+        this.avatar = this._userService.convertImage(this.user.avatar);
         this._userService.getUserStats(user.userId).subscribe(stats => this.user.statistics = stats);
         this._userService.getUserRanksInfo(user.userId).subscribe(ranks => this.user.ranks = ranks);
         this._userService.getUserMaps(user.userId).subscribe(mapList => {
@@ -90,5 +93,6 @@ export class ProfileComponent implements OnInit {
     if(this.chosenMap !== null)
       this._mapService.deleteMap(this.chosenMap.raceMap.mapId);
   }
+
 
 }

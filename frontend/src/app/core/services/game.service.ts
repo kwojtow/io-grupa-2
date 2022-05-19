@@ -49,7 +49,7 @@ export class GameService {
         let player;
         users
           .forEach(user => {
-            players.push(new Player(user.userId, user.login, new Vector(0,0), 'green'))
+            players.push(new Player(user.userId, user.login, new Vector(0,0), 'green', user.avatar))
           })
         this._gameRoomService.getGameRoom(gameId).subscribe(gameResponse => {
           this._mapService.getMap(gameResponse.mapId).subscribe(mapResponse => {
@@ -120,6 +120,7 @@ export class GameService {
     return this.authorizedPlayer;
   }
   updatePlayersStates(playersStates: Array<PlayerState>){
+    console.log(this._game);
     playersStates.forEach(playerState => {
       let player = this._game.players.find(player => player.playerId === playerState.playerId);
       if(player){
