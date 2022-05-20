@@ -67,7 +67,7 @@ export class CreateGameRoomComponent implements OnInit, OnDestroy {
     });
   }
   private setMap(){
-    this.mapService.map.next(this.mapDatas[this.mapDatas.findIndex(map => map.raceMap.mapId == parseInt(this.selectedMapId.toString()))].raceMap)
+    MapService.map.next(this.mapDatas[this.mapDatas.findIndex(map => map.raceMap.mapId == parseInt(this.selectedMapId.toString()))].raceMap)
 
   }
   getMapData(mapId: number, i: number) {
