@@ -460,6 +460,6 @@ export class MapService {
     this._ctx = value;
   }
   clearMap(){
-    this.map.next(undefined);
+    MapService.map.next(undefined);
   }
 }
