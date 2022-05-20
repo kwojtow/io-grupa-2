@@ -73,7 +73,7 @@ export class MapService {
     }
 
   deleteMap(mapId: number) {
-      this.http.delete("http://localhost:8080/map/" + mapId).subscribe();
+      this.http.delete("http://localhost:8080/map/" + mapId, this.httpOptions).subscribe();
   }
 
   static getCursorPosition(canvas: HTMLCanvasElement, event: MouseEvent): Vector {
@@ -312,7 +312,7 @@ export class MapService {
     const availableVectors = player.getAvailableVectors();
     const onObstacle = this.onObstacle;
     const drawArrow = this.drawArrow;
-    
+
     canvas.onmousemove = function(event) {
       let v = MapService.getCursorPosition(canvas, event);
       let yellowArrow = false;
@@ -335,16 +335,16 @@ export class MapService {
             ctx.fill(path);
           }
           if(isPointInPath && !isOnObstacle) yellowArrow = true;
-      
 
-          
+
+
       }
       if(yellowArrow){
         canvas.style.cursor = 'pointer';
         ctx.fillStyle = "#ff9900";
         ctx.strokeStyle = "#ff9900";
 
-      } 
+      }
       else {
         ctx.fillStyle = "#454545";
         ctx.strokeStyle = "#454545";
@@ -439,7 +439,7 @@ export class MapService {
       ctx.fillStyle = '#454545';
       ctx.strokeStyle = '#454545';
       this.drawArrow(this.ctx, arrow);
-      
+
       this.highlightAvaliableVectors(canvas, ctx, map, player, availableVectorsPaths, arrow);
       this.changePosition(canvas, ctx, map, player, availableVectorsPaths, arrow);
   }
