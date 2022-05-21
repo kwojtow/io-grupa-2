@@ -77,6 +77,7 @@ export class UserService {
   public getMapsWithMostWins(): Observable<Array<MapWithStats>> {
     return this.http.get<any>(this.API_URL + '/map/user-wins', this.getAuthorizationHeaders())
       .pipe(map(mapList => {
+        console.log(mapList)
         return this.convertMapListResponse(mapList)
       }))
   }

@@ -1,4 +1,3 @@
-
 <html>
 <head>
   <meta charset="UTF-8">
@@ -19,19 +18,20 @@
 
   <div class="map-section">
     <div class="choose-map-category">
-      <select #selectRefCat (change)="changeMapCategory(selectRefCat)" class="map-select">
-        <option *ngFor="let category of mapListsCategories; let i = index" value="Mapa 1">{{category}}</option>
-      </select>
     </div>
     <div class="choose-map">
-      <select #selectRefMap (change)="changeMap(selectRefMap)" class="map-select">
-        <option *ngFor="let map of mapList; let i = index" value="Mapa 1">{{map.raceMap.name}}</option>
-      </select>
+      <ul>
+        <li class="map-select"
+            [ngClass]="{'chosen-category': map.raceMap.mapId === this.chosenMap.raceMap.mapId}"
+            (click)="changeMap(map.raceMap.mapId)"
+            *ngFor="let map of mapList; let i = index" value="Mapa 1">
+          {{map.raceMap.name}}
+        </li>
+      </ul>
     </div>
     <div class="new-map-btn">
-      <button (click)="switchToNewMapView()">Utwórz nową</button>
+      <button class="m-2" (click)="switchToNewMapView()">Utwórz nową</button>
       <button *ngIf="chosenCategory === mapListsCategories[0]" (click)="deleteMap()">Usuń mapę</button>
-
     </div>
     <div class="map-preview">
       <app-map></app-map>
@@ -42,11 +42,12 @@
           <label>Wszystkich rozegranych:</label>
         </div>
         <div class="stat-info">{{allGames}}</div>
-        <div *ngIf="selectRefCat.selectedIndex !== 0" class="fw-bold stat-info">
-          <label *ngIf="selectRefCat.selectedIndex === 1">Moich wygranych:</label>
-          <label *ngIf="selectRefCat.selectedIndex === 2">Moich rozegranych:</label>
+        <div *ngIf="mapListsCategories.indexOf(chosenCategory) !== 0" class="fw-bold stat-info">
+          <label class="d-block " *ngIf="mapListsCategories.indexOf(chosenCategory) === 1">Moich wygranych: </label>
+          <label class="d-block " *ngIf="mapListsCategories.indexOf(chosenCategory) === 2">Moich rozegranych: </label>
+          <div class="stat-info">{{this.chosenMap?.games}}</div>
+
         </div>
-        <div class="stat-info">{{this.mapList[0]?.games}}</div>
       </div>
       <div>
         <div class="fw-bold stat-info">Ocena</div>
@@ -57,8 +58,9 @@
     </div>
   </div>
   <div class="user-info">
-    <div class="my-map-label" style="font-weight: bold">
-      <div>{{chosenCategory}}</div>
+    <div class="my-map-label">
+      <div (click)="changeMapCategory(cat)"class="d-inline-block" [ngClass]="{'maps-category': chosenCategory!==cat, 'chosen-category': chosenCategory===cat}" *ngFor="let cat of mapListsCategories">{{cat}}
+      </div>
     </div>
     <div class="avatar">
       <div style="font-weight: bold;">Awatar</div>

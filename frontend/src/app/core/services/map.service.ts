@@ -462,5 +462,4 @@ export class MapService {
   clearMap(){
     MapService.map.next(undefined);
   }
-
 }
