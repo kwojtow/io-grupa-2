@@ -31,7 +31,8 @@ export class GameComponent implements OnInit {
       if(gameLoaded === true){
         this.playersList = _gameService.game.players;
         this.authorizedPlayer = _gameService.player;
-        this.timer = this._gameService.game.settings.roundTime;   // TODO: timer animation
+        this._gameService.getTimerValue().subscribe(value => this.timer = value)
+           // TODO: timer animation
         this.updateGameState();
         this.gameLoaded = true;
       }
