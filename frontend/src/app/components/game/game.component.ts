@@ -69,4 +69,8 @@ export class GameComponent implements OnInit, OnDestroy {
   leaveGame() {
     this.router.navigate(['start'])
   }
+
+  getGameId(){
+    return this._gameService.game.map.mapId;
+  }
 }
