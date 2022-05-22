@@ -73,7 +73,7 @@ export class MapService {
     }
 
   deleteMap(mapId: number) {
-      this.http.delete("http://localhost:8080/map/" + mapId).subscribe();
+      this.http.delete("http://localhost:8080/map/" + mapId, this.httpOptions).subscribe();
   }
 
   static getCursorPosition(canvas: HTMLCanvasElement, event: MouseEvent): Vector {

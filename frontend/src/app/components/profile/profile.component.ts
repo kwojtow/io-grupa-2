@@ -103,8 +103,13 @@ export class ProfileComponent implements OnInit, OnDestroy {
     });
   }
   deleteMap(){
-    if(this.chosenMap !== null)
-      this._mapService.deleteMap(this.chosenMap.raceMap.mapId);
+    if(this.chosenMap !== null) {
+      this._mapService.deleteMap(MapService.map.getValue().mapId);
+      setTimeout(() => {
+        window.location.reload();
+      }, 200);
+      // window.location.reload()
+    }
   }
 
 }
