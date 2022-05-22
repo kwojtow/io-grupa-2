@@ -47,7 +47,6 @@ export class ProfileComponent implements OnInit {
     this._userService.getUser().subscribe(
       (user) => {
         this.user = user;
-        console.log(this.user.avatar);
         this.avatar = this._userService.convertImage(this.user.avatar);
         this._userService
           .getUserStats(user.userId)
@@ -115,40 +114,12 @@ export class ProfileComponent implements OnInit {
 
 
   upload(){
-    this.uploadAvatar(this._userService)
-  }
-
-  uploadAvatar(_userService: UserService) {
-    const reader = new FileReader();
-    let byteArray;
-    reader.addEventListener("loadend", function(){
-      console.log(reader.result);
-      byteArray = convertImageToBinary(reader.result);
-      //preview.src = reader.result;
-      _userService.updateAvatar(byteArray).subscribe((result) => {
-      })
-    }, false);
-
-  
-    if(this.file){
-    reader.readAsDataURL(this.file);
-    }
+    const uploadImageData = new FormData();
+    uploadImageData.append('imageFile', this.file);
+    this._userService.uploadAvatar(uploadImageData).subscribe(()=>{
+    });
   }
 }
 
 
-function convertImageToBinary(image: string | ArrayBuffer): any {
-  var base64Index = (image as string).indexOf(';base64,') + ';base64,'.length;
-   var base64 = (image as string).substring(base64Index);
-  var raw = window.atob(base64);
-  var rawLength = raw.length;
-  var array = new Uint8Array(new ArrayBuffer(rawLength));
-  for (var i = 0; i < rawLength; i++) {
-    array[i] = raw.charCodeAt(i);
-  }
-
-  return array;
-
-  
-}
 

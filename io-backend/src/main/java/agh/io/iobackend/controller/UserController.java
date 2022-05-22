@@ -7,6 +7,9 @@ import agh.io.iobackend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/user")
@@ -32,8 +35,8 @@ public class UserController {
     }
 
     @PostMapping("/{userId}")
-    public ResponseEntity<User> saveAvatar(@PathVariable Long userId, @RequestBody byte[] avatarBytes){
-        return ResponseEntity.ok().body(userService.saveAvatar(userId, avatarBytes));
+    public ResponseEntity<User> saveAvatar(@PathVariable Long userId, @RequestPart("imageFile") MultipartFile file) throws IOException {
+        return ResponseEntity.ok().body(userService.saveAvatar(userId, file.getBytes()));
     }
 
     // TODO update User

@@ -50,14 +50,22 @@ export class UserService {
 
   public convertImage(image: string){
     console.log(image);
-    
     return this.sanitizer.bypassSecurityTrustResourceUrl('data:image/jpg;base64,'+ image);
   }
 
-  public updateAvatar( byteArray: string){
+  public uploadAvatar(imageData: FormData){
     let id = JSON.parse(localStorage.getItem('jwtResponse'))['id'];
-    console.log(byteArray);
-    return this.http.post<ArrayBuffer>('http://localhost:8080/user/'+id, byteArray, this.getAuthorizationHeaders())
+    const jwt = localStorage.getItem('jwtResponse');
+    let requestOptions;
+    if (jwt !== null) {
+      const jwtJson = JSON.parse(jwt);
+      const token = jwtJson['type'] + ' ' + jwtJson['token'];
+      requestOptions = {
+        headers: new HttpHeaders()
+          .set('Authorization', token),
+      };
+    }
+      return this.http.post('http://localhost:8080/user/'+id, imageData, requestOptions);
   }
 
   getCurrentLoggedUserId(): number {
