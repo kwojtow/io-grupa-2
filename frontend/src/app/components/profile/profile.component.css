@@ -125,8 +125,14 @@ body{
 }
 
 img{
-  width: 3em;
-  height: 3em;
+  width: 5em;
+  height: 5em;
+  transition: .5s ease;
+}
+
+img:hover{
+  cursor: pointer;
+  opacity: 0.5;
 }
 
 .upload{
@@ -134,8 +140,20 @@ align-self: center;
 grid-area: upload;
 }
 
-input{
+#uploadFile{
   font-size: 0.5em;
+  padding: 0.3em;
+  border: 1px solid rgba(78, 42, 106, 100);
+  background-color: rgba(78, 42, 106, 100);
+  color: rgba(255, 255, 255, 100);
+  border-radius: 0.5em;
+  display: inline-block;
+  cursor: pointer;
+}
+
+
+.custom-file-upload::-webkit-file-upload-button {
+  visibility: hidden;
 }
 
 /*.play-btn {*/
@@ -177,7 +195,7 @@ input{
 
 #player-avatar{
   margin-top: 15px;
-  padding: 30px;
+  /* padding: 30px; */
   text-align: center;
   border: 1px solid black;
 }

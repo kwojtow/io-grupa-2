@@ -63,17 +63,15 @@
     <div class="avatar">
       <div style="font-weight: bold;">Awatar</div>
       <div>
-        <label id="player-avatar"><img [src]="avatar"/>
+        <label id="player-avatar" ><img [src]="avatar" (click)="editAvatar()"/>
         </label>
       </div>
     </div>
-    <div class="uploadAvatar">
+    <div class="uploadAvatar" *ngIf="showEditAvatar">
       <div style="font-weight: bold;">Zmień awatar</div>
-      <form action="/hello">
-        <input type="file" id="uploadFile" name="filename" accept="image/jpeg, image/png" (change)="onChange($event)">
-        <input type="submit" (click)="upload()" >
+      <form >
+        <input type="file" id="uploadFile"  title="Wybierz plik" class="custom-file-upload" name="filename" accept="image/jpeg, image/png" (change)="onChange($event)">
       </form>
-      <img id="preview">
     </div>
     <div class="ranking">
       <div style="font-weight: bold; ">Ranking</div>
