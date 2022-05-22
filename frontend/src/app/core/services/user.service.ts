@@ -49,7 +49,15 @@ export class UserService {
   }
 
   public convertImage(image: string){
+    console.log(image);
+    
     return this.sanitizer.bypassSecurityTrustResourceUrl('data:image/jpg;base64,'+ image);
+  }
+
+  public updateAvatar( byteArray: string){
+    let id = JSON.parse(localStorage.getItem('jwtResponse'))['id'];
+    console.log(byteArray);
+    return this.http.post<ArrayBuffer>('http://localhost:8080/user/'+id, byteArray, this.getAuthorizationHeaders())
   }
 
   getCurrentLoggedUserId(): number {
