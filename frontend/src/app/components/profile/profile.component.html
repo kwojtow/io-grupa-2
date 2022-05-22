@@ -61,6 +61,7 @@
     <div class="my-map-label">
       <div (click)="changeMapCategory(cat)"class="d-inline-block" [ngClass]="{'maps-category': chosenCategory!==cat, 'chosen-category': chosenCategory===cat}" *ngFor="let cat of mapListsCategories">{{cat}}
       </div>
+             <div [routerLink]="'/map/rank'" class="d-inline-block maps-category chosen-category">Pokaż ranking map</div>
     </div>
     <div class="avatar">
       <div style="font-weight: bold;">Awatar</div>

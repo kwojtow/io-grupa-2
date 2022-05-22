@@ -10,6 +10,7 @@ import { CreateGameRoomComponent } from '../components/create-game-room/create-g
 import { GameRoomComponent } from '../components/game-room/game-room.component';
 import {ProfileComponent} from "../components/profile/profile.component";
 import {CreateMapComponent} from "../components/create-map/create-map.component";
+import { MapsRankComponent } from '../components/maps-rank/maps-rank.component';
 
 const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -22,7 +23,8 @@ const routes: Routes = [
   { path: 'create-game-room', component: CreateGameRoomComponent},
   { path: 'game-room/:id', component: GameRoomComponent },
   { path: 'profile', component: ProfileComponent},
-  { path: 'create-map', component: CreateMapComponent}
+  { path: 'create-map', component: CreateMapComponent},
+  { path: 'map/rank', component: MapsRankComponent},
 ];
 
 @NgModule({

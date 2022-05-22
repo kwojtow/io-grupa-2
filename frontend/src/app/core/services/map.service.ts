@@ -7,6 +7,7 @@ import {BehaviorSubject, map} from "rxjs";
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { MapResponse } from 'src/app/payload/MapResponse';
+import { MapRankEntry } from 'src/app/payload/MapRankEntry';
 import {PlayerState} from "../../shared/models/PlayerState";
 
 @Injectable({
@@ -74,6 +75,10 @@ export class MapService {
 
   deleteMap(mapId: number) {
       this.http.delete("http://localhost:8080/map/" + mapId).subscribe();
+  }
+
+  getRank() {
+    return this.http.get<MapRankEntry[]>("http://localhost:8080/map/ranking", this.httpOptions);
   }
 
   static getCursorPosition(canvas: HTMLCanvasElement, event: MouseEvent): Vector {

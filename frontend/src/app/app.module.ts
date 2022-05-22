@@ -15,6 +15,7 @@ import { GameComponent } from './components/game/game.component';
 import { JoinGameRoomComponent } from './components/start-page/join-game-room/join-game-room.component';
 import {ProfileComponent} from "./components/profile/profile.component";
 import {CreateMapComponent} from "./components/create-map/create-map.component";
+import { MapsRankComponent } from './components/maps-rank/maps-rank.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import {CreateMapComponent} from "./components/create-map/create-map.component";
     CreateGameRoomComponent,
     GameComponent,
     ProfileComponent,
-    CreateMapComponent
+    CreateMapComponent,
+    MapsRankComponent
 
   ],
   imports: [
