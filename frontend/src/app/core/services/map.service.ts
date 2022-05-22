@@ -256,6 +256,35 @@ export class MapService {
     return false;
   }
 
+  private isObstacleOnPathToPosition(playerPosition: Vector, vector: Vector, map: RaceMap): boolean {
+    const pos_x = (playerPosition.x - vector.x > 0) ? playerPosition.x - 1 : playerPosition.x + 1;
+    const pos_y = (playerPosition.y - vector.y > 0) ? playerPosition.y - 1 : playerPosition.y + 1;
+    const playerPos = new Vector(pos_x, pos_y);
+    if(playerPosition.x == vector.x) {
+      for(let i = Math.min(playerPos.y, vector.y); i <= Math.max(playerPos.y, vector.y); ++i) {
+        console.log(i);
+        if(this.onObstacle(new Vector(vector.x, i), map)) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    else if(playerPosition.y == vector.y) {
+      for(let i = Math.min(playerPos.x, vector.x); i <= Math.max(playerPos.x, vector.x); ++i) {
+        if(this.onObstacle(new Vector(i, vector.y), map)) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    else {
+      
+    }
+    return false;
+  }
+
   private createArrow(fromx: number, fromy: number,
                       tox: number, toy: number, width: number, headlen: number): Path2D{
 
@@ -423,8 +452,8 @@ export class MapService {
           let p = new Path2D();
           availableVectorsPaths.push(p);
           ctx.fillStyle = (vector.equals(player.getCurrentVectorPosition())) ? "#0066ff77" : "#00ff6677";
-          if(!this.onObstacle(vector, map) || vector.equals(player.getCurrentVectorPosition())){
-            if(this.onObstacle(vector, map)) ctx.fillStyle = "#0066ff77";
+          if(!this.isObstacleOnPathToPosition(player.position, vector, map) ){
+            if(this.isObstacleOnPathToPosition(player.position, vector, map)) ctx.fillStyle = "#0066ff77";
             p.rect(fieldWidth * vector.x + this.LINE_WIDTH,
                    fieldWidth * vector.y + this.LINE_WIDTH,
                    fieldWidth - 2 * this.LINE_WIDTH,
