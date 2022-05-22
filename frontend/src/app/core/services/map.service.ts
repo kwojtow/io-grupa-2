@@ -257,9 +257,9 @@ export class MapService {
   }
 
   private isObstacleOnPathToPosition(playerPosition: Vector, vector: Vector, map: RaceMap): boolean {
-    const pos_x = (playerPosition.x - vector.x > 0) ? playerPosition.x - 1 : playerPosition.x + 1;
-    const pos_y = (playerPosition.y - vector.y > 0) ? playerPosition.y - 1 : playerPosition.y + 1;
-    const playerPos = new Vector(pos_x, pos_y);
+    const pos_x = (playerPosition.x - vector.x > 0) ? -1 : 1;
+    const pos_y = (playerPosition.y - vector.y > 0) ? -1 : 1;
+    const playerPos = new Vector(playerPosition.x + pos_x,playerPosition.y + pos_y);
     if(playerPosition.x == vector.x) {
       for(let i = Math.min(playerPos.y, vector.y); i <= Math.max(playerPos.y, vector.y); ++i) {
         console.log(i);
@@ -280,9 +280,34 @@ export class MapService {
     }
 
     else {
-      
+      const diff_x = Math.abs(playerPosition.x - vector.x);
+      const diff_y = Math.abs(playerPosition.y - vector.y);
+      if (diff_x == diff_y) {
+        for(let i = playerPos.x, j  = playerPos.y; i != vector.x && j != vector.y; i += pos_x, j += pos_y) {
+          if(this.onObstacle(new Vector(i, j), map) || (
+            this.onObstacle(new Vector(i - pos_x, j), map) && this.onObstacle(new Vector(i, j - pos_y), map)
+          )) {
+            return true;
+          }
+        }
+        return false;
+      }
+      else{
+        const diff_div = Math.min(diff_x, diff_y) / Math.max(diff_x, diff_y);
+        if(diff_x < diff_y){
+          for(let i = 0; i < diff_y; ++i) {
+            if(this.onObstacle(new Vector(playerPos.x + Math.ceil(diff_div * i * pos_x), playerPos.y + (i * pos_y)), map)) return true;
+          }
+          return false;
+        }
+        else{
+          for(let i = 0; i < diff_x; ++i) {
+            if(this.onObstacle(new Vector(playerPos.x + (i * pos_x), playerPos.y + Math.ceil(diff_div * i * pos_y)), map)) return true;
+          }
+          return false;
+        }
+      }
     }
-    return false;
   }
 
   private createArrow(fromx: number, fromy: number,
