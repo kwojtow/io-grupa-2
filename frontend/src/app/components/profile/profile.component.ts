@@ -89,7 +89,10 @@ export class ProfileComponent implements OnInit {
   deleteMap(){
     if(this.chosenMap !== null) {
       this._mapService.deleteMap(MapService.map.getValue().mapId);
-      window.location.reload()
+      setTimeout(() => {
+        window.location.reload();
+      }, 200);
+      // window.location.reload()
     }
   }
 
