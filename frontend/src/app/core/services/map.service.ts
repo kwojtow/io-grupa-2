@@ -283,11 +283,10 @@ export class MapService {
       const diff_x = Math.abs(playerPosition.x - vector.x);
       const diff_y = Math.abs(playerPosition.y - vector.y);
       if (diff_x == diff_y) {
-        for(let i = playerPos.x, j  = playerPos.y; i != vector.x && j != vector.y; i += pos_x, j += pos_y) {
-          if(this.onObstacle(new Vector(i, j), map) || (
-            this.onObstacle(new Vector(i - pos_x, j), map) && this.onObstacle(new Vector(i, j - pos_y), map)
-          )) {
-            return true;
+        for(let i = playerPosition.x, j  = playerPosition.y; i != vector.x +pos_x && j != vector.y+pos_y; i += pos_x, j += pos_y) {
+          if(this.onObstacle(new Vector(i, j), map) || ( this.onObstacle(new Vector(i - pos_x, j), map) && 
+          this.onObstacle(new Vector(i, j - pos_y), map))) {
+            if(!(this.onObstacle(new Vector(i, j), map) && playerPosition.equals(new Vector(i, j)))) return true;
           }
         }
         return false;
@@ -295,14 +294,20 @@ export class MapService {
       else{
         const diff_div = Math.min(diff_x, diff_y) / Math.max(diff_x, diff_y);
         if(diff_x < diff_y){
-          for(let i = 0; i < diff_y; ++i) {
-            if(this.onObstacle(new Vector(playerPos.x + Math.ceil(diff_div * i * pos_x), playerPos.y + (i * pos_y)), map)) return true;
+          for(let i = 0; i < diff_y-1; ++i) {
+            let vec = new Vector(playerPos.x + Math.ceil(diff_div * i * pos_x), playerPos.y + (i * pos_y))
+            if(this.onObstacle(vec, map)
+            || (this.onObstacle(new Vector(vec.x - pos_x, vec.y), map) 
+               && this.onObstacle(new Vector(vec.x, vec.y - pos_y), map))) return true;
           }
           return false;
         }
         else{
-          for(let i = 0; i < diff_x; ++i) {
-            if(this.onObstacle(new Vector(playerPos.x + (i * pos_x), playerPos.y + Math.ceil(diff_div * i * pos_y)), map)) return true;
+          for(let i = 0; i < diff_x-1; ++i) {
+            let vec = new Vector(playerPos.x + (i * pos_x), playerPos.y + Math.ceil(diff_div * i * pos_y));
+            if(this.onObstacle(vec, map)
+            || (this.onObstacle(new Vector(vec.x - pos_x, vec.y), map) 
+               && this.onObstacle(new Vector(vec.x, vec.y - pos_y), map))) return true;
           }
           return false;
         }
