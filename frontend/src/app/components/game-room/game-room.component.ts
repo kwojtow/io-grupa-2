@@ -200,14 +200,21 @@ export class GameRoomComponent implements OnInit {
   }
   initGame(){
     let players = new Array<Player>()
-    this.usersExtensions.map(userExtension => userExtension.user)
-      .forEach(user => {
-        players.push(new Player(user.userId, user.login, new Vector(0,0), 'green', user.avatar))
-      })
-    this.gameRoomService.initGame(players, this.gameRoomId).subscribe(response => {
-      this.router.navigate(["/game/" + this.gameRoomId]).then(() =>{
-      })
+    this.gameRoomService.getGameRoom(this.gameRoomId)
+    .subscribe((data: GameRoomResponse) => {
+        this.mapService.getMap(data.mapId).subscribe((data2: MapResponse) => {
+          this.usersExtensions.map(userExtension => userExtension.user)
+            .forEach(user => {
+              let player = new Player(user.userId, user.login, data2.mapStructure.startLine[players.length], 'green', user.avatar);
+              players.push(player);
+            })
+          this.gameRoomService.initGame(players, this.gameRoomId).subscribe(response => {
+            this.router.navigate(["/game/" + this.gameRoomId]).then(() =>{
+            })
+          })
+        })
     })
+
   }
 
   showModal() {

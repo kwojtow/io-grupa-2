@@ -6,6 +6,8 @@ import agh.io.iobackend.controller.payload.PlayerStateResponse;
 import agh.io.iobackend.model.GameRoom;
 import agh.io.iobackend.model.GameState;
 import agh.io.iobackend.repository.GameRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,8 @@ import java.util.HashMap;
 
 @Service
 public class GameService {
+
+    private static final Logger logger = LoggerFactory.getLogger(GameService.class);
 
     @Autowired
     private GameRepository gameRepository;
@@ -41,11 +45,13 @@ public class GameService {
 
     // funkcja do czasu az bedzie lepsza obsługa gier i gra sama wygeneruje sobie Id
     public void createGame(GameRoom gameRoom){
+        logger.info("create game");
         GameState gameState = new GameState(gameRoom.getGameRoomID(), gameRoom.getGameRoomID(), gameRoom.getGameMap(), gameRoom.getGameMasterID());
         addGame(gameRoom.getGameRoomID(), gameState);
     }
 
     public void startGame(Long gameId, ArrayList<PlayerInitialCoord> playerInitialCoordsList){
+        logger.info("start game");
         getGame(gameId).startGame(playerInitialCoordsList);
     }
 
@@ -54,10 +60,12 @@ public class GameService {
     }
 
     public ArrayList<PlayerStateResponse> getPlayerStatesList(Long gameId){
+        logger.info("getPlayerStatesList");
         return getGame(gameId).getPlayerStatesList();
     }
 
     public void updateGameStateAfterMove(GameState gameState, PlayerMoveRequest playerMove) {
+        logger.info("updateGameStateAfterMove");
         gameState.changeGameState(playerMove);
     }
 

@@ -1,11 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { User } from '../../shared/models/User';
 import { MapService } from '../../core/services/map.service';
 import { UserService } from '../../core/services/user.service';
 import { MapWithStats } from '../../shared/models/MapWithStats';
 import { MockDataProviderService } from '../../core/services/mock-data-provider.service';
+import {RaceMap} from "../../shared/models/RaceMap";
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
@@ -13,7 +14,8 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.css'],
 })
-export class ProfileComponent implements OnInit {
+export class ProfileComponent implements OnInit, OnDestroy {
+
   mapList = new Array<MapWithStats>();
   user: User;
   mapListsCategories = new Array<string>(
@@ -23,7 +25,7 @@ export class ProfileComponent implements OnInit {
   );
   chosenCategory = this.mapListsCategories[0];
   chosenMap: MapWithStats;
-  allGames = 12345; // TODO: map stats
+  allGames = 5;// TODO: map stats
   mapRate = '9.5/10';
   avatar: SafeResourceUrl;
   file: File = null;
@@ -36,6 +38,7 @@ export class ProfileComponent implements OnInit {
     private sanitizer: DomSanitizer
   ) {
     this.getProfileData();
+
     // this.getMockProfileData();
   }
   private getMockProfileData() {
@@ -43,22 +46,21 @@ export class ProfileComponent implements OnInit {
     this.user = this._mockData.getExampleUser();
   }
 
-  private getProfileData() {
-    this._userService.getUser().subscribe(
-      (user) => {
-        this.user = user;
+  private getProfileData(){
+    this._userService.getUser().subscribe(user => {
+        this.user = user
         this.avatar = this._userService.convertImage(this.user.avatar);
-        this._userService
-          .getUserStats(user.userId)
-          .subscribe((stats) => (this.user.statistics = stats));
-        this._userService
-          .getUserRanksInfo(user.userId)
-          .subscribe((ranks) => (this.user.ranks = ranks));
-        this._userService.getUserMaps(user.userId).subscribe((mapList) => {
-          this.mapList = mapList;
-          if (this.mapList.length > 0)
-            MapService.map.next(this.mapList[0].raceMap);
+        this._userService.getUserStats(user.userId).subscribe(stats => this.user.statistics = stats);
+        this._userService.getUserRanksInfo(user.userId).subscribe(ranks => this.user.ranks = ranks);
+        this._userService.getUserMaps(user.userId).subscribe(mapList => {
+          this.mapList = mapList
+          if(this.mapList.length > 0) MapService.map.next(this.mapList[0].raceMap);
+          this.chosenMap = mapList.filter(map => map.raceMap.mapId === MapService.map.getValue().mapId).shift();
+          // for(let i = 0 ; i < 10; i ++){
+          //   this.mapList.push(new MapWithStats(new RaceMap(i+10, 'map' + i, 1, 60, 30, [], [], []), 10))
+          // }
         });
+
       },
       (error) => {
         if (error.status === 401) {
@@ -68,6 +70,9 @@ export class ProfileComponent implements OnInit {
     );
   }
   ngOnInit(): void {
+  }
+  ngOnDestroy() {
+    this._mapService.clearMap();
   }
 
   switchToStartView() {
@@ -82,28 +87,38 @@ export class ProfileComponent implements OnInit {
     this.router.navigate(['create-map']).then();
   }
 
-  changeMap(selectRef: HTMLSelectElement) {
-    MapService.map.next(this.mapList[selectRef.selectedIndex].raceMap);
+  changeMap(selectRef: number) {
+    MapService.map.next(this.mapList[this.mapList.findIndex(map => map.raceMap.mapId === selectRef)].raceMap);
+    this.chosenMap = this.mapList.filter(map => map.raceMap.mapId === MapService.map.getValue().mapId).shift();
+
   }
 
-  changeMapCategory(selectRef: HTMLSelectElement) {
-    this.chosenCategory = this.mapListsCategories[selectRef.selectedIndex];
+  changeMapCategory(selectRef: string) {
+
+    this.chosenCategory = selectRef;
+    let idx = this.mapListsCategories.indexOf(selectRef);
     let mapListObs: Observable<Array<MapWithStats>>;
-    if (selectRef.selectedIndex === 0) {
+    if(idx === 0){
       mapListObs = this._userService.getUserMaps(this.user.userId);
-    } else if (selectRef.selectedIndex === 1) {
+    }else if(idx === 1){
       mapListObs = this._userService.getMapsWithMostWins();
-    } else if (selectRef.selectedIndex) {
+    }else if(idx){
       mapListObs = this._userService.getMapsWithMostGames();
     }
-    mapListObs.subscribe((mapList) => {
-      this.mapList = mapList;
-      if (this.mapList.length > 0) MapService.map.next(this.mapList[0].raceMap);
+    this._mapService.clearMap();
+    mapListObs.subscribe(mapList => {
+      this.mapList = mapList
+      if(this.mapList.length > 0) MapService.map.next(this.mapList[0].raceMap);
     });
   }
-  deleteMap() {
-    if (this.chosenMap !== null)
-      this._mapService.deleteMap(this.chosenMap.raceMap.mapId);
+  deleteMap(){
+    if(this.chosenMap !== null) {
+      this._mapService.deleteMap(MapService.map.getValue().mapId);
+      setTimeout(() => {
+        window.location.reload();
+      }, 200);
+      // window.location.reload()
+    }
   }
 
   onChange(event: any) {

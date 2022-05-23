@@ -5,6 +5,8 @@ import agh.io.iobackend.model.map.GameMap;
 import agh.io.iobackend.model.map.MapRating;
 import agh.io.iobackend.repository.GameMapRatingsRepository;
 import agh.io.iobackend.repository.MapRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,8 @@ import static java.util.stream.Collectors.toMap;
 
 @Service
 public class MapService {
+
+    private static final Logger logger = LoggerFactory.getLogger(MapService.class);
 
     @Autowired
     private MapRepository mapRepository;
@@ -30,6 +34,7 @@ public class MapService {
     }
 
     public GameMap updateMap(Long mapId, GameMap gameMap) {
+        logger.info("updateMap");
         GameMap oldGameMap = mapRepository.findById(mapId).get();
         oldGameMap.setMapStructure(gameMap.getMapStructure());
         oldGameMap.setHeight(gameMap.getHeight());
@@ -39,6 +44,7 @@ public class MapService {
     }
 
     public List<GameMap> getAllMaps() {
+        logger.info("getAllMaps");
         List<GameMap> gameMaps = mapRepository.findAll();
         for (GameMap gameMap : gameMaps) {
             gameMap.setRating(getAverageRating(gameMap));
@@ -56,6 +62,7 @@ public class MapService {
     }
 
     public GameMap getMapById(Long mapId) {
+        logger.info("getMapById");
         Optional<GameMap> map = mapRepository.findById(mapId);
         if (map.isEmpty()) return null;
         else {
@@ -67,6 +74,7 @@ public class MapService {
     }
 
     public void removeMapById(Long mapId) {
+        logger.info("removeMapById");
         Optional<GameMap> gameMap = mapRepository.findById(mapId);
         gameMap.ifPresent(map -> mapRepository.delete(map));
     }

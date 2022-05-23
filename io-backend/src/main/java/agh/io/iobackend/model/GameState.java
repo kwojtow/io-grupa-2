@@ -3,6 +3,10 @@ import agh.io.iobackend.controller.payload.PlayerInitialCoord;
 import agh.io.iobackend.controller.payload.PlayerMoveRequest;
 import agh.io.iobackend.controller.payload.PlayerStateResponse;
 import agh.io.iobackend.model.map.GameMap;
+import agh.io.iobackend.service.GameRoomService;
+import agh.io.iobackend.service.GameService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,6 +21,9 @@ public class GameState {
     private int currentPlayerIndex;
     private final ArrayList<Long> playersQueue;
     private Boolean gameStarted;
+
+    private static final Logger logger = LoggerFactory.getLogger(GameState.class);
+
 
     public GameState(Long gameId, Long gameRoomId, GameMap gameMap, Long gameMasterId) {
         this.gameId = gameId;
@@ -92,11 +99,15 @@ public class GameState {
 
     private void nextPlayerTurn() {
         currentPlayerIndex = (currentPlayerIndex + 1) % playersQueue.size();
+        logger.info("playersQueue: " + playersQueue);
 
-        while (players.get(getCurrentPlayerId()).getPlayerStatus() != PlayerStatus.WAITING) {
+        long activePlayers = playersQueue.stream().filter(id -> players.get(id).getPlayerStatus() == PlayerStatus.WAITING).count();
+
+        while (activePlayers > 0 && players.get(getCurrentPlayerId()).getPlayerStatus() != PlayerStatus.WAITING) {
+            logger.info("while in game state");
             currentPlayerIndex = (currentPlayerIndex + 1) % playersQueue.size();
         }
-        players.entrySet().stream().forEach(e -> e.getValue().setPlayerStatus(PlayerStatus.WAITING));
+        players.entrySet().stream().forEach(e -> e.getValue().setPlayerStatus(PlayerStatus.WAITING)); // todo what about playerStatus.LOST ?
         System.out.println("on turn: "+ getCurrentPlayerId());
         players.get(getCurrentPlayerId()).setPlayerStatus(PlayerStatus.PLAYING);
     }
