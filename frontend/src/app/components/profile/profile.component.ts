@@ -27,7 +27,6 @@ export class ProfileComponent implements OnInit {
   mapRate = '9.5/10';
   avatar: SafeResourceUrl;
   file: File = null;
-  showEditAvatar: boolean;
 
   constructor(
     private router: Router,
@@ -69,7 +68,6 @@ export class ProfileComponent implements OnInit {
     );
   }
   ngOnInit(): void {
-    this.showEditAvatar=false;
   }
 
   switchToStartView() {
@@ -108,17 +106,12 @@ export class ProfileComponent implements OnInit {
       this._mapService.deleteMap(this.chosenMap.raceMap.mapId);
   }
 
-  editAvatar(){
-    this.showEditAvatar = !this.showEditAvatar;
-  }
-
   onChange(event: any) {
     this.file = event.target.files[0];
     this.upload();
   }
 
   upload(){
-    this.showEditAvatar=false;
     const uploadImageData = new FormData();
     uploadImageData.append('imageFile', this.file);
     this._userService.uploadAvatar(uploadImageData).subscribe(()=>{
