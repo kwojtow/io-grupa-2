@@ -25,7 +25,8 @@ export class GameComponent implements OnInit, OnDestroy {
   gameSubscription: Subscription;
   constructor(private _gameService: GameService,
               private router: Router,
-              private _route: ActivatedRoute) {
+              private _route: ActivatedRoute,
+              private userService: UserService) {
     this.gameId = +this._route.snapshot.params['id'];
     this._gameService.initGame(this.gameId);
     this._gameService.gameLoaded.subscribe(gameLoaded => {
@@ -68,5 +69,9 @@ export class GameComponent implements OnInit, OnDestroy {
 
   leaveGame() {
     this.router.navigate(['start'])
+  }
+
+  getAvatar(avatar: string){
+    return this.userService.convertImage(avatar);
   }
 }

@@ -1,39 +1,47 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
-import {Router} from "@angular/router";
-import {map, Observable} from "rxjs";
-import {User} from "../../shared/models/User";
-import {MapService} from "../../core/services/map.service";
-import {UserService} from "../../core/services/user.service";
-import {MapWithStats} from "../../shared/models/MapWithStats";
-import {MockDataProviderService} from "../../core/services/mock-data-provider.service";
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
+import { map, Observable } from 'rxjs';
+import { User } from '../../shared/models/User';
+import { MapService } from '../../core/services/map.service';
+import { UserService } from '../../core/services/user.service';
+import { MapWithStats } from '../../shared/models/MapWithStats';
+import { MockDataProviderService } from '../../core/services/mock-data-provider.service';
 import {RaceMap} from "../../shared/models/RaceMap";
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.css']
+  styleUrls: ['./profile.component.css'],
 })
 export class ProfileComponent implements OnInit, OnDestroy {
 
   mapList = new Array<MapWithStats>();
   user: User;
-  mapListsCategories = new Array<string>( 'Moje mapy', 'Najlepsze mapy', 'Najczęstsze mapy');
+  mapListsCategories = new Array<string>(
+    'Moje mapy',
+    'Najlepsze mapy',
+    'Najczęstsze mapy'
+  );
   chosenCategory = this.mapListsCategories[0];
   chosenMap: MapWithStats;
-
   allGames = 5;// TODO: map stats
   mapRate = '9.5/10';
+  avatar: SafeResourceUrl;
+  file: File = null;
 
-  constructor(private router: Router,
-              private _mapService: MapService,
-              private _userService: UserService,
-              private _mockData: MockDataProviderService) {
+  constructor(
+    private router: Router,
+    private _mapService: MapService,
+    private _userService: UserService,
+    private _mockData: MockDataProviderService,
+    private sanitizer: DomSanitizer
+  ) {
     this.getProfileData();
 
     // this.getMockProfileData();
-
   }
-  private getMockProfileData(){
+  private getMockProfileData() {
     this.mapList = this._mockData.getExampleMapResponseList(3);
     this.user = this._mockData.getExampleUser();
   }
@@ -41,6 +49,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   private getProfileData(){
     this._userService.getUser().subscribe(user => {
         this.user = user
+        this.avatar = this._userService.convertImage(this.user.avatar);
         this._userService.getUserStats(user.userId).subscribe(stats => this.user.statistics = stats);
         this._userService.getUserRanksInfo(user.userId).subscribe(ranks => this.user.ranks = ranks);
         this._userService.getUserMaps(user.userId).subscribe(mapList => {
@@ -53,8 +62,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
         });
 
       },
-      error => {
-        if(error.status === 401){
+      (error) => {
+        if (error.status === 401) {
           this.router.navigate(['/']).then();
         }
       }
@@ -75,7 +84,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   switchToNewMapView() {
-    this.router.navigate(['create-map']).then()
+    this.router.navigate(['create-map']).then();
   }
 
   changeMap(selectRef: number) {
@@ -112,4 +121,23 @@ export class ProfileComponent implements OnInit, OnDestroy {
     }
   }
 
+  onChange(event: any) {
+    this.file = event.target.files[0];
+    this.upload();
+  }
+
+  upload(){
+    const uploadImageData = new FormData();
+    uploadImageData.append('imageFile', this.file);
+    this._userService.uploadAvatar(uploadImageData).subscribe(()=>{
+    });
+    this.refresh();
+  }
+
+  refresh(): void {
+    window.location.reload();
 }
+}
+
+
+

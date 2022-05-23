@@ -110,6 +110,10 @@ export class GameRoomComponent implements OnInit {
     }
   }
 
+  getAvatar(avatar: string){
+    return this.userService.convertImage(avatar);
+  }
+
   startGame(){
     this.gameStarted = true;
     this.gameRoomService.startGame(this.gameRoomId).subscribe();
@@ -201,7 +205,7 @@ export class GameRoomComponent implements OnInit {
         this.mapService.getMap(data.mapId).subscribe((data2: MapResponse) => {
           this.usersExtensions.map(userExtension => userExtension.user)
             .forEach(user => {
-              let player = new Player(user.userId, user.login, data2.mapStructure.startLine[players.length], 'green');
+              let player = new Player(user.userId, user.login, data2.mapStructure.startLine[players.length], 'green', user.avatar);
               players.push(player);
             })
           this.gameRoomService.initGame(players, this.gameRoomId).subscribe(response => {
