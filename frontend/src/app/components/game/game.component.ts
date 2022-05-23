@@ -23,6 +23,7 @@ export class GameComponent implements OnInit, OnDestroy {
   gameId: number;
   gameLoaded: boolean = false;
   gameSubscription: Subscription;
+  gameEnd: boolean;
   constructor(private _gameService: GameService,
               private router: Router,
               private _route: ActivatedRoute) {
@@ -67,7 +68,8 @@ export class GameComponent implements OnInit, OnDestroy {
   }
 
   leaveGame() {
-    this.router.navigate(['start'])
+    this.gameEnd = true;
+    // this.router.navigate(['start'])
   }
 
   getGameId(){
