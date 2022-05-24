@@ -155,7 +155,13 @@ export class GameService {
         }, 1000);
       }
       else {
-        this.player.setNewVector(this.player.currentVector);
+        const newVector = new Vector(this.player.position.x + this.player.currentVector.x, 
+          this.player.position.y + this.player.currentVector.y)
+        if(!this._mapService.isObstacleOnPathToPosition(this.player.position,
+          newVector, this.game.map)) {
+            this.player.setNewVector(this.player.currentVector);
+          }
+        
         this.moveDone = false;
       }
     }

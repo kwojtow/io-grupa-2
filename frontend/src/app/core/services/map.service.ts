@@ -256,7 +256,7 @@ export class MapService {
     return false;
   }
 
-  private isObstacleOnPathToPosition(playerPosition: Vector, vector: Vector, map: RaceMap): boolean {
+  public isObstacleOnPathToPosition(playerPosition: Vector, vector: Vector, map: RaceMap): boolean {
     const pos_x = (playerPosition.x - vector.x > 0) ? -1 : 1;
     const pos_y = (playerPosition.y - vector.y > 0) ? -1 : 1;
     const playerPos = new Vector(playerPosition.x + pos_x,playerPosition.y + pos_y);
