@@ -7,7 +7,7 @@ export class User{
   private _password: string;
   private _email: string;
   private _statistics: UserStatistics;
-  avatar: string;
+   avatar: string;
   private _ranks: UserRanks;
 
   constructor( username: string, password: string, email: string, id?: number, statistics?: UserStatistics, ranks?: UserRanks) {

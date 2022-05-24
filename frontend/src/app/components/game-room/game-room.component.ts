@@ -110,8 +110,11 @@ export class GameRoomComponent implements OnInit {
     }
   }
 
+  getAvatar(avatar: string){
+    return this.userService.convertImage(avatar);
+  }
+
   startGame(){
-    this.gameStarted = true;
     this.gameRoomService.startGame(this.gameRoomId).subscribe((data : number) => {
       this.gameId = data
     })
@@ -188,25 +191,29 @@ export class GameRoomComponent implements OnInit {
   }
 
   getGameStarted(roomId: number) {
-    this.gameRoomService.getGameStarted(roomId).subscribe((data: number) => {
-      if (!this.gameStarted && data != -1) {
+    this.gameRoomService.getGameStarted(roomId).subscribe((data: boolean) => {
+      if (!this.gameStarted && data == true) {
         console.log("Starting game")
         this.gameStarted = true;
-        this.gameId = data;
         this.showModal();
       }
     });
   }
   initGame(){
     let players = new Array<Player>()
-    this.usersExtensions.map(userExtension => userExtension.user)
-      .forEach(user => {
-        players.push(new Player(user.userId, user.login, new Vector(0,0), 'green'))
-      })
-    this.gameRoomService.initGame(players, this.gameId).subscribe(response => {
-      console.log(this.gameId);
-      this.router.navigate(["/game/" + this.gameId]).then(() =>{
-      })
+    this.gameRoomService.getGameRoom(this.gameRoomId)
+    .subscribe((data: GameRoomResponse) => {
+        this.mapService.getMap(data.mapId).subscribe((data2: MapResponse) => {
+          this.usersExtensions.map(userExtension => userExtension.user)
+            .forEach(user => {
+              let player = new Player(user.userId, user.login, data2.mapStructure.startLine[players.length], 'green', user.avatar);
+              players.push(player);
+            })
+          this.gameRoomService.initGame(players, this.gameRoomId).subscribe(response => {
+            this.router.navigate(["/game/" + this.gameRoomId]).then(() =>{
+            })
+          })
+        })
     })
   }
 

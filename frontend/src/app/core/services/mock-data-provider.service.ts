@@ -35,17 +35,17 @@ export class MockDataProviderService {
   }
 
   private static getExamplePlayers(){
-    let player1 = new Player(1,'Player1', new Vector(5, 5), 'green');
+    let player1 = new Player(1,'Player1', new Vector(5, 5), 'green', '');
     player1.currentVector = new Vector(1, 2);
-    let player2 = new Player(2,'Player2',new Vector(6, 2), 'red');
-    let player3 = new Player(3,'Player3',new Vector(8, 1), 'yellow');
-    let player4 = new Player(4,'Player4',new Vector(4, 0), 'pink');
+    let player2 = new Player(2,'Player2',new Vector(6, 2), 'red', '');
+    let player3 = new Player(3,'Player3',new Vector(8, 1), 'yellow', '');
+    let player4 = new Player(4,'Player4',new Vector(4, 0), 'pink', '');
     player4.playerStatus = 'LOST';
     return new Array(player1, player2, player3, player4);
   }
 
   getExamplePlayer(): Player{
-    return new Player(1, 'Player1', new Vector(5, 5), 'green');
+    return new Player(1, 'Player1', new Vector(5, 5), 'green', '');
   }
 
   private static getExampleGameSettings(): GameSettings{

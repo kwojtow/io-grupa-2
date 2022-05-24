@@ -106,7 +106,7 @@ export class MapService {
   }
 
   deleteMap(mapId: number) {
-      this.http.delete("http://localhost:8080/map/" + mapId).subscribe();
+      this.http.delete("http://localhost:8080/map/" + mapId, this.httpOptions).subscribe();
   }
 
   static getCursorPosition(canvas: HTMLCanvasElement, event: MouseEvent): Vector {
@@ -280,6 +280,8 @@ export class MapService {
   private onObstacle(vector: Vector, map: RaceMap): boolean {
     const obstacles = map.obstacles;
     const players = MapService.game.players;
+    if(vector.x < 0 || vector.y < 0 
+      || vector.x > map.mapWidth || vector.y > map.mapHeight) return true;
     for(let obstacle of obstacles) {
       if(obstacle.equals(vector)) return true;
     }
@@ -287,6 +289,65 @@ export class MapService {
       if(player.position.equals(vector)) return true;
     }
     return false;
+  }
+
+  public isObstacleOnPathToPosition(playerPosition: Vector, vector: Vector, map: RaceMap): boolean {
+    const pos_x = (playerPosition.x - vector.x > 0) ? -1 : 1;
+    const pos_y = (playerPosition.y - vector.y > 0) ? -1 : 1;
+    const playerPos = new Vector(playerPosition.x + pos_x,playerPosition.y + pos_y);
+    if(this.onObstacle(vector, map)) return true;
+    if(playerPosition.x == vector.x) {
+      for(let i = Math.min(playerPos.y, vector.y); i <= Math.max(playerPos.y, vector.y); ++i) {
+        if(this.onObstacle(new Vector(vector.x, i), map)) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    else if(playerPosition.y == vector.y) {
+      for(let i = Math.min(playerPos.x, vector.x); i <= Math.max(playerPos.x, vector.x); ++i) {
+        if(this.onObstacle(new Vector(i, vector.y), map)) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    else {
+      const diff_x = Math.abs(playerPosition.x - vector.x);
+      const diff_y = Math.abs(playerPosition.y - vector.y);
+      if (diff_x == diff_y) {
+        for(let i = playerPosition.x, j  = playerPosition.y; i != vector.x +pos_x && j != vector.y+pos_y; i += pos_x, j += pos_y) {
+          if(this.onObstacle(new Vector(i, j), map) || ( this.onObstacle(new Vector(i - pos_x, j), map) && 
+          this.onObstacle(new Vector(i, j - pos_y), map))) {
+            if(!(this.onObstacle(new Vector(i, j), map) && playerPosition.equals(new Vector(i, j)))) return true;
+          }
+        }
+        return false;
+      }
+      else{
+        const diff_div = Math.min(diff_x, diff_y) / Math.max(diff_x, diff_y);
+        if(diff_x < diff_y){
+          for(let i = 0; i < diff_y-1; ++i) {
+            let vec = new Vector(playerPos.x + Math.ceil(diff_div * i * pos_x), playerPos.y + (i * pos_y))
+            if(this.onObstacle(vec, map)
+            || (this.onObstacle(new Vector(vec.x - pos_x, vec.y), map) 
+               && this.onObstacle(new Vector(vec.x, vec.y - pos_y), map))) return true;
+          }
+          return false;
+        }
+        else{
+          for(let i = 0; i < diff_x-1; ++i) {
+            let vec = new Vector(playerPos.x + (i * pos_x), playerPos.y + Math.ceil(diff_div * i * pos_y));
+            if(this.onObstacle(vec, map)
+            || (this.onObstacle(new Vector(vec.x - pos_x, vec.y), map) 
+               && this.onObstacle(new Vector(vec.x, vec.y - pos_y), map))) return true;
+          }
+          return false;
+        }
+      }
+    }
   }
 
   private createArrow(fromx: number, fromy: number,
@@ -456,8 +517,8 @@ export class MapService {
           let p = new Path2D();
           availableVectorsPaths.push(p);
           ctx.fillStyle = (vector.equals(player.getCurrentVectorPosition())) ? "#0066ff77" : "#00ff6677";
-          if(!this.onObstacle(vector, map) || vector.equals(player.getCurrentVectorPosition())){
-            if(this.onObstacle(vector, map)) ctx.fillStyle = "#0066ff77";
+          if(!this.isObstacleOnPathToPosition(player.position, vector, map) ){
+            if(this.isObstacleOnPathToPosition(player.position, vector, map)) ctx.fillStyle = "#0066ff77";
             p.rect(fieldWidth * vector.x + this.LINE_WIDTH,
                    fieldWidth * vector.y + this.LINE_WIDTH,
                    fieldWidth - 2 * this.LINE_WIDTH,
