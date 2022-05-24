@@ -2,9 +2,6 @@ package agh.io.iobackend.service;
 
 import agh.io.iobackend.model.user.User;
 import agh.io.iobackend.model.user.UserDetailsImpl;
-import agh.io.iobackend.controller.GameController;
-import agh.io.iobackend.model.User;
-import agh.io.iobackend.model.UserDetailsImpl;
 import agh.io.iobackend.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

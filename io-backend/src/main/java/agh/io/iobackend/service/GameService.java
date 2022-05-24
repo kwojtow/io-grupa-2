@@ -68,13 +68,12 @@ public class GameService {
         game.setPlayerThatStarts();
     }
 
-    public ArrayList<PlayerStateResponse> getPlayerStatesList(Long gameId){
+    public ArrayList<PlayerStateResponse> getPlayerStatesList(Long gameId) throws NoGameFoundException {
         logger.info("getPlayerStatesList");
         return getGameFromRepo(gameId).getPlayerStatesList();
     }
 
-    public void updateGameStateAfterMove(GameState gameState, PlayerMoveRequest playerMove) {
-        logger.info("updateGameStateAfterMove");
+    public void updateGameStateAfterMove(Game game, PlayerMoveRequest playerMove) {
         game.changeGameState(playerMove);
     }
 
