@@ -1,32 +1,39 @@
 package agh.io.iobackend.controller;
 
-import agh.io.iobackend.controller.payload.*;
+import agh.io.iobackend.controller.payload.auth.JwtResponse;
+import agh.io.iobackend.controller.payload.auth.SigninRequest;
+import agh.io.iobackend.controller.payload.auth.SignupRequest;
+import agh.io.iobackend.controller.payload.room.GameRoomRequest;
+import agh.io.iobackend.controller.payload.room.GameRoomResponse;
 import agh.io.iobackend.exceptions.GameRoomNotFoundException;
-import agh.io.iobackend.model.User;
+import agh.io.iobackend.exceptions.NoGameFoundException;
 import agh.io.iobackend.model.Vector;
 import agh.io.iobackend.model.map.GameMap;
 import agh.io.iobackend.model.map.MapStructure;
+import agh.io.iobackend.model.user.User;
 import agh.io.iobackend.repository.GameRoomRepository;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 
 @SpringBootTest
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class GameRoomControllerTest {
 
     @Autowired
     private GameRoomController gameRoomController;
 
     private static Long roomId;
+    private static Long gameId;
     private static Long mapId = 1L;
     private static Long gameMasterId;
     private static Integer roundTime = 4;
@@ -43,6 +50,7 @@ public class GameRoomControllerTest {
         signupRequest.setPassword("pass");
 
         ResponseEntity<String> signupResponse = authController.registerUser(signupRequest);
+        System.out.println(signupResponse.getBody());
         assertEquals(200, signupResponse.getStatusCodeValue());
 
         SigninRequest signinRequest = new SigninRequest();
@@ -99,6 +107,7 @@ public class GameRoomControllerTest {
                                   @Autowired AuthController authController,
                                   @Autowired MapController mapController) throws GameRoomNotFoundException {
 
+
         createUsers(authController);
         createMap(mapController);
 
@@ -122,12 +131,13 @@ public class GameRoomControllerTest {
         // create game
 
         ResponseEntity<Long> gameIdResponse = gameRoomController.createGame(roomId);
+        gameId = gameIdResponse.getBody().longValue();
         assertEquals(200, gameIdResponse.getStatusCodeValue());
-        assertEquals(roomId, gameIdResponse.getBody().longValue());
 
     }
 
     @Test
+    @Order(1)
     void getRoomDetailsTest() throws GameRoomNotFoundException {
         ResponseEntity<GameRoomResponse> gameRoomResponseResponse = gameRoomController.getRoomDetails(roomId);
         GameRoomResponse gameRoomResponse = gameRoomResponseResponse.getBody();
@@ -139,20 +149,30 @@ public class GameRoomControllerTest {
     }
 
     @Test
-    void usersListTests() throws GameRoomNotFoundException {
+    @Order(2)
+    void usersListTests() throws GameRoomNotFoundException, NoGameFoundException {
         ResponseEntity<List<User>> usersListInRoom = gameRoomController.getUserListInRoom(roomId);
-        assertEquals(0, usersListInRoom.getBody().size());
+        assertEquals(0, Objects.requireNonNull(usersListInRoom.getBody()).size());
 
-        gameRoomController.joinGameRoom(roomId, gameMasterId);
+        gameRoomController.joinGameRoom(roomId, 6000L);
         usersListInRoom = gameRoomController.getUserListInRoom(roomId);
-        assertEquals(1, usersListInRoom.getBody().size());
+        assertEquals(0, Objects.requireNonNull(usersListInRoom.getBody()).size());
 
         gameRoomController.joinGameRoom(roomId, user1Id);
         usersListInRoom = gameRoomController.getUserListInRoom(roomId);
-        assertEquals(2, usersListInRoom.getBody().size());
+        assertEquals(1, Objects.requireNonNull(usersListInRoom.getBody()).size());
+
+        gameRoomController.joinGameRoom(roomId, user1Id);
+        usersListInRoom = gameRoomController.getUserListInRoom(roomId);
+        assertEquals(1, Objects.requireNonNull(usersListInRoom.getBody()).size());
 
         gameRoomController.leaveGameRoom(roomId, user1Id);
-        usersListInRoom = gameRoomController.getUserListInRoom(roomId);
-        assertEquals(1, usersListInRoom.getBody().size());
     }
+
+    @Test
+    @Order(3)
+    void deleteRoomWithGame(){
+        gameRoomController.deleteRoom(roomId);
+    }
+
 }

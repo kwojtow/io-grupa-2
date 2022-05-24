@@ -1,13 +1,20 @@
-package agh.io.iobackend.model;
+package agh.io.iobackend.model.game;
 
 import agh.io.iobackend.model.map.GameMap;
 import org.hibernate.annotations.GenericGenerator;
+import agh.io.iobackend.model.user.User;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Proxy;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Data
+@NoArgsConstructor
 @Entity(name = "GameRoom")
+@Proxy(lazy = false)
 public class GameRoom {
 
     @Id
@@ -46,26 +53,21 @@ public class GameRoom {
     private Integer limitOfPlayers;
 
     @Column(name = "gameStarted")
-    // Maximal number of players (apart from Game Master)
     private Boolean gameStarted;
 
     @ManyToMany
     private List<User> userList;
 
-//    @ElementCollection
-//    @Column(name = "gamesList")
-//    private List<Long> gamesList; // kiedy bedzie wiecej gier w 1 pokoju
+    @OneToOne
+    private Game game;
 
     public GameRoom(GameMap map, int playersLimit, int roundTime, Long gameMasterId) {
         this.gameMap = map;
+        this.gameStarted = false;
         this.limitOfPlayers = playersLimit;
         this.roundTime = roundTime;
         this.gameMasterID = gameMasterId;
         this.userList = new ArrayList<>();
-    }
-
-    public GameRoom() {
-
     }
 
     public void removePlayer(User user) {
@@ -73,39 +75,7 @@ public class GameRoom {
     }
 
     public void addPlayer(User user) {
-        if(!userList.contains(user))
+        if (!userList.contains(user))
             userList.add(user);
-    }
-
-    public Long getGameRoomID() {
-        return gameRoomID;
-    }
-
-    public Long getGameMasterID() {
-        return gameMasterID;
-    }
-
-    public Integer getLimitOfPlayers() {
-        return limitOfPlayers;
-    }
-
-    public Integer getRoundTime() {
-        return roundTime;
-    }
-
-    public Boolean getGameStarted() {
-        return this.gameStarted;
-    }
-
-    public void setGameStarted(Boolean gameStarted) {
-        this.gameStarted = gameStarted;
-    }
-
-    public GameMap getGameMap() {
-        return gameMap;
-    }
-
-    public List<User> getUserList() {
-        return userList;
     }
 }

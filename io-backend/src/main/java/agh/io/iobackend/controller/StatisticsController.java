@@ -1,10 +1,8 @@
 package agh.io.iobackend.controller;
 
+import agh.io.iobackend.controller.payload.stats.UserStatsResponse;
 import agh.io.iobackend.controller.payload.RankEntry;
-import agh.io.iobackend.controller.payload.UserStatsResponse;
-import agh.io.iobackend.model.User;
 import agh.io.iobackend.service.StatisticsService;
-import agh.io.iobackend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

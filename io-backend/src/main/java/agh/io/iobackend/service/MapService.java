@@ -1,8 +1,8 @@
 package agh.io.iobackend.service;
 
-import agh.io.iobackend.model.User;
 import agh.io.iobackend.model.map.GameMap;
 import agh.io.iobackend.model.map.MapRating;
+import agh.io.iobackend.model.user.User;
 import agh.io.iobackend.repository.GameMapRatingsRepository;
 import agh.io.iobackend.repository.MapRepository;
 import org.slf4j.Logger;

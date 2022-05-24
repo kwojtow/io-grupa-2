@@ -1,7 +1,7 @@
 package agh.io.iobackend.service;
 
 import agh.io.iobackend.exceptions.GameRoomNotFoundException;
-import agh.io.iobackend.model.GameRoom;
+import agh.io.iobackend.model.game.GameRoom;
 import agh.io.iobackend.repository.GameRoomRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,41 +26,37 @@ public class GameRoomService {
         Optional<GameRoom> gameRoom2Trash = gameRoomRepository.findByGameRoomID(gameRoomID);
         if (gameRoom2Trash.isPresent()) {
             gameRoomRepository.delete(gameRoom2Trash.get());
-        }
-        else {
+        } else {
             throw new GameRoomNotFoundException(
                     "Can not delete game room " + gameRoomID.toString() + ", it does not exist!"
             );
         }
     }
 
-    public void clearGameRooms(){ // for tests
+    public void clearGameRooms() { // for tests
         gameRoomRepository.deleteAll();
     }
 
-//    public void deleteGameRoom(String roomCode) throws GameRoomNotFoundException {
-//        Optional<GameRoom> gameRoom2Trash = gameRoomRepository.findByRoomCode(roomCode);
-//        if (gameRoom2Trash.isPresent()) {
-//            gameRoomRepository.delete(gameRoom2Trash.get());
-//        }
-//        else {
-//            throw new GameRoomNotFoundException(
-//                    "Can not delete game room with code " + roomCode + ", it does not exist!"
-//            );
-//        }
-//    }
+    public Long getGameIdByRoomId(Long gameRoomID) throws GameRoomNotFoundException {
+        Optional<GameRoom> gameRoom = gameRoomRepository.findByGameRoomID(gameRoomID);
+        if (gameRoom.isPresent()) {
+                return gameRoom.get().getGame().getGameId();
+        } else {
+            throw new GameRoomNotFoundException(gameRoomID.toString() + ", it does not exist!");
+        }
+    }
 
     public GameRoom getGameRoom(Long id) throws GameRoomNotFoundException {
         logger.info("get game room");
         Optional<GameRoom> gameRoom = gameRoomRepository.findByGameRoomID(id);
         if (gameRoom.isPresent()) {
             return gameRoom.get();
-        }
-        else {
+        } else {
             throw new GameRoomNotFoundException(
                     "Cannot find the room"
             );
         }
 
     }
+
 }

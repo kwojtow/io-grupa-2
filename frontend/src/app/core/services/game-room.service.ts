@@ -41,8 +41,9 @@ export class GameRoomService {
     return this.http.get<User[]>("http://localhost:8080/game-room/" + roomId + "/users-list", this.httpOptions);
   }
 
-  getGameStarted(roomId: number) {
-    return this.http.get<boolean>("http://localhost:8080/game-room/" + roomId + "/game-started", this.httpOptions);
+  //zwracane GameId dla gracza
+  getGameStarted(roomId: number) : Observable<number>{
+    return this.http.get<number>("http://localhost:8080/game-room/" + roomId + "/game-started", this.httpOptions);
   }
 
   createGameRoom(mapId: number, playersLimit: number, roundTime: number, gameMasterId: number) : Observable<GameRoomResponse>{
@@ -77,15 +78,25 @@ export class GameRoomService {
   }
 
   addUser(gameRoomId : number, userId : number) : Observable<User>{
+    // ja nie wiem, jak to inaczej zeby dzialalo
+    const requestOptions: Object = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': "Bearer " + JSON.parse(localStorage.getItem("jwtResponse")).token,
+      }),
+      responseType: 'text',
+    };
+
     return this.http.post<User>(
       "http://localhost:8080/game-room/" + gameRoomId + "/users-list/" + userId,
       {},
-      this.httpOptions)
+      requestOptions)
       .pipe(
         catchError(this.handleError)
       )
   }
 
+  //zwracane gameId dla GameMastera
   startGame(gameRoomId : number) : Observable<number>{
     return this.http.get<number>(
       "http://localhost:8080/game-room/" + gameRoomId + "/game",
@@ -93,9 +104,10 @@ export class GameRoomService {
         catchError(this.handleError)
     )
   }
-  initGame(playersList: Array<Player>, gameRoomId: number){
+  initGame(playersList: Array<Player>, gameId: number){
+    console.log(gameId);
     return this.http.post<number>(
-      "http://localhost:8080/game/" + gameRoomId, playersList.map(player => new PlayerInitialCoord(player.playerId, player.position.x, player.position.y)),
+      "http://localhost:8080/game/" + gameId, playersList.map(player => new PlayerInitialCoord(player.playerId, player.position.x, player.position.y)),
       this.httpOptions).pipe(
       catchError(this.handleError)
     )

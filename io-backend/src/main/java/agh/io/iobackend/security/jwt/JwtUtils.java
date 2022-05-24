@@ -1,6 +1,6 @@
 package agh.io.iobackend.security.jwt;
 
-import agh.io.iobackend.model.UserDetailsImpl;
+import agh.io.iobackend.model.user.UserDetailsImpl;
 import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

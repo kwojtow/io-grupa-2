@@ -193,8 +193,8 @@ export class GameRoomComponent implements OnInit {
   }
 
   getGameStarted(roomId: number) {
-    this.gameRoomService.getGameStarted(roomId).subscribe((data: boolean) => {
-      if (!this.gameStarted && data == true) {
+    this.gameRoomService.getGameStarted(roomId).subscribe((data: number) => {
+      if (!this.gameStarted && data != -1) {
         console.log("Starting game")
         this.gameStarted = true;
         this.showModal();

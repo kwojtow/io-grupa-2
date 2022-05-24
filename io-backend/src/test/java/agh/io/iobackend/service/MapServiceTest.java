@@ -1,9 +1,9 @@
 package agh.io.iobackend.service;
 
-import agh.io.iobackend.model.User;
 import agh.io.iobackend.model.Vector;
 import agh.io.iobackend.model.map.GameMap;
 import agh.io.iobackend.model.map.MapStructure;
+import agh.io.iobackend.model.user.User;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,11 +32,12 @@ class MapServiceTest {
     private static Long map2Id;
 
     @BeforeAll
-    static void prepareData(@Autowired MapService mapService, @Autowired StatisticsService statisticsService,
-                            @Autowired UserService userService, @Autowired GameRoomService gameRoomService) {
+    static void prepareData(@Autowired MapService mapService, @Autowired StatisticsService statisticsService, @Autowired UserService userService,
+                            @Autowired GameRoomService gameRoomService, @Autowired GameService gameService) {
         statisticsService.clearMapHistory();
-        mapService.clearMapRatings();
         gameRoomService.clearGameRooms();
+        gameService.clearGames();
+        mapService.clearMapRatings();
         mapService.clearMaps();
 
         User user1 = User.builder().login("login1").email("email1").build();

@@ -1,7 +1,7 @@
 package agh.io.iobackend.controller.payload;
 
-import agh.io.iobackend.model.User;
 import agh.io.iobackend.model.map.GameMap;
+import agh.io.iobackend.model.user.User;
 import lombok.Data;
 
 import java.util.Map;

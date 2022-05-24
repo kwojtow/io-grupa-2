@@ -1,8 +1,9 @@
 package agh.io.iobackend.service;
 
-import agh.io.iobackend.controller.payload.UserRankResponse;
-import agh.io.iobackend.model.User;
+import agh.io.iobackend.controller.payload.stats.UserRankResponse;
+import agh.io.iobackend.model.user.User;
 import agh.io.iobackend.model.map.GameMap;
+import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,12 +30,16 @@ class StatisticsServiceTest {
     public static void prepareData(@Autowired UserService userService,
                                    @Autowired MapService mapService,
                                    @Autowired StatisticsService statisticsService,
-                                   @Autowired GameRoomService gameRoomService) {
+                                   @Autowired GameRoomService gameRoomService,
+                                   @Autowired GameService gameService) {
+
         statisticsService.clearMapHistory();
         mapService.clearMapRatings();
         gameRoomService.clearGameRooms();
+        gameService.clearGames();
         mapService.clearMaps();
         userService.clearUsers();
+
         user1 = User
                 .builder()
                 .email("user1@gmail.com")

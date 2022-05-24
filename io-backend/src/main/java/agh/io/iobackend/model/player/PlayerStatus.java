@@ -1,4 +1,4 @@
-package agh.io.iobackend.model;
+package agh.io.iobackend.model.player;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 

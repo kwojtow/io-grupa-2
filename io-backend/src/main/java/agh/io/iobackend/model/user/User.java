@@ -1,5 +1,6 @@
-package agh.io.iobackend.model;
+package agh.io.iobackend.model.user;
 
+import agh.io.iobackend.model.ImageToByte;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

@@ -1,7 +1,7 @@
 package agh.io.iobackend.service;
 
-import agh.io.iobackend.controller.payload.UserRankResponse;
-import agh.io.iobackend.model.User;
+import agh.io.iobackend.controller.payload.stats.UserRankResponse;
+import agh.io.iobackend.model.user.User;
 import agh.io.iobackend.model.map.GameMap;
 import agh.io.iobackend.model.map.GameMapHistory;
 import agh.io.iobackend.repository.GameMapHistoryRepository;
