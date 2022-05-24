@@ -12,6 +12,8 @@ import agh.io.iobackend.model.user.User;
 import agh.io.iobackend.repository.GameRepository;
 import agh.io.iobackend.repository.GameRoomRepository;
 import agh.io.iobackend.repository.PlayerRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +23,8 @@ import java.util.Optional;
 
 @Service
 public class GameService {
+
+    private static final Logger logger = LoggerFactory.getLogger(GameService.class);
 
     @Autowired
     private GameRepository gameRepository;
@@ -39,11 +43,13 @@ public class GameService {
 
 
     public Game createGame(Game game) {
+        logger.info("create game");
         return gameRepository.save(game);
     }
 
     public Game getGameFromRepo(Long id) throws NoGameFoundException {
         Optional<Game> game = gameRepository.findByGameId(id);
+        logger.info("start game");
         if (game.isPresent()){
             return game.get();
         }
@@ -62,11 +68,13 @@ public class GameService {
         game.setPlayerThatStarts();
     }
 
-    public ArrayList<PlayerStateResponse> getPlayerStatesList(Long gameId) throws NoGameFoundException {
+    public ArrayList<PlayerStateResponse> getPlayerStatesList(Long gameId){
+        logger.info("getPlayerStatesList");
         return getGameFromRepo(gameId).getPlayerStatesList();
     }
 
-    public void updateGameStateAfterMove(Game game, PlayerMoveRequest playerMove) {
+    public void updateGameStateAfterMove(GameState gameState, PlayerMoveRequest playerMove) {
+        logger.info("updateGameStateAfterMove");
         game.changeGameState(playerMove);
     }
 

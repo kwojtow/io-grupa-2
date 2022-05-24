@@ -29,7 +29,6 @@ export class GameRoomComponent implements OnInit {
   usersExtensions : UserExtension[] = new Array();
 
   gameRoomId : number;
-  gameId : number;
   gameStarted: boolean = false;
 
   timer: number = 3;
@@ -111,11 +110,13 @@ export class GameRoomComponent implements OnInit {
     }
   }
 
+  getAvatar(avatar: string){
+    return this.userService.convertImage(avatar);
+  }
+
   startGame(){
     this.gameStarted = true;
-    this.gameRoomService.startGame(this.gameRoomId).subscribe((data : number) => {
-      this.gameId = data
-    })
+    this.gameRoomService.startGame(this.gameRoomId).subscribe();
   }
 
   getGameRoomData() {
@@ -193,21 +194,25 @@ export class GameRoomComponent implements OnInit {
       if (!this.gameStarted && data != -1) {
         console.log("Starting game")
         this.gameStarted = true;
-        this.gameId = data;
         this.showModal();
       }
     });
   }
   initGame(){
     let players = new Array<Player>()
-    this.usersExtensions.map(userExtension => userExtension.user)
-      .forEach(user => {
-        players.push(new Player(user.userId, user.login, new Vector(0,0), 'green'))
-      })
-    this.gameRoomService.initGame(players, this.gameId).subscribe(response => {
-      console.log(this.gameId);
-      this.router.navigate(["/game/" + this.gameId]).then(() =>{
-      })
+    this.gameRoomService.getGameRoom(this.gameRoomId)
+    .subscribe((data: GameRoomResponse) => {
+        this.mapService.getMap(data.mapId).subscribe((data2: MapResponse) => {
+          this.usersExtensions.map(userExtension => userExtension.user)
+            .forEach(user => {
+              let player = new Player(user.userId, user.login, data2.mapStructure.startLine[players.length], 'green', user.avatar);
+              players.push(player);
+            })
+          this.gameRoomService.initGame(players, this.gameRoomId).subscribe(response => {
+            this.router.navigate(["/game/" + this.gameRoomId]).then(() =>{
+            })
+          })
+        })
     })
   }
 

@@ -30,6 +30,10 @@ public class User {
     @Column(name = "user_id")
     private Long userId;
 
+    @Lob
+    @Basic(fetch = FetchType.LAZY)
+    private byte[] avatar;
+
     @Column(unique = true)
     private String login;
 
@@ -38,8 +42,11 @@ public class User {
 
     private String password;
 
-    // TODO avatar
-
-
+    @PrePersist
+    void preInsert() {
+        if (this.avatar == null) {
+            this.avatar = ImageToByte.imageToByte("images/avatar_default.png");
+        }
+    }
 
 }
