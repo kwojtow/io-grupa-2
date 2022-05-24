@@ -191,13 +191,14 @@ img:hover{
 
 .show-ranking-btn{
   height: 40px;
-  border-radius: 20px;
-  background-color: #630c78;
-  font-size: 18px;
+  border-radius: 13px !important;
+  background-color: #4e2a6a;
+  font-size: 18px !important;
+  height: 40px !important;
   color: white;
   margin-bottom: 20px;
   margin-left: 20px;
-  padding: 5px 20px;
+  text-align: center;
 }
 
 
