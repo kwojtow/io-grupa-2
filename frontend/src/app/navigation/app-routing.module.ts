@@ -27,7 +27,7 @@ const routes: Routes = [
   { path: 'profile', component: ProfileComponent},
   { path: 'create-map', component: CreateMapComponent},
   { path: 'map/rank', component: MapsRankComponent},
-  { path: 'ranking', component: RankingComponent}
+  { path: 'ranking', component: RankingComponent},
   { path: 'create-map', component: CreateMapComponent},
   { path: 'rate-map', component: RateMapModalComponent}
 ];

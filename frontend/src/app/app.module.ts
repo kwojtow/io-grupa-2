@@ -36,8 +36,8 @@ import { NgbModule, NgbRating } from '@ng-bootstrap/ng-bootstrap';
     GameComponent,
     ProfileComponent,
     CreateMapComponent,
-    MapsRankComponent
-    RankingComponent
+    MapsRankComponent,
+    RankingComponent,
     CreateMapComponent,
     RateMapModalComponent,
   ],

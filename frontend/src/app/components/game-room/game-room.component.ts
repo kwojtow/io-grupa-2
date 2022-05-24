@@ -33,6 +33,8 @@ export class GameRoomComponent implements OnInit {
 
   timer: number = 3;
 
+  gameId : number;
+
   constructor(
     private mapService : MapService,
     private gameRoomService: GameRoomService,
