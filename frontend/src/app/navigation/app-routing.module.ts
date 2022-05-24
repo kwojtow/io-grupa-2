@@ -9,8 +9,10 @@ import {GameComponent} from "../components/game/game.component";
 import { CreateGameRoomComponent } from '../components/create-game-room/create-game-room.component';
 import { GameRoomComponent } from '../components/game-room/game-room.component';
 import {ProfileComponent} from "../components/profile/profile.component";
+import { RankingComponent } from '../components/ranking/ranking.component';
 import {CreateMapComponent} from "../components/create-map/create-map.component";
 import { MapsRankComponent } from '../components/maps-rank/maps-rank.component';
+import { RateMapModalComponent } from '../components/rate-map-modal/rate-map-modal.component';
 
 const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -25,6 +27,9 @@ const routes: Routes = [
   { path: 'profile', component: ProfileComponent},
   { path: 'create-map', component: CreateMapComponent},
   { path: 'map/rank', component: MapsRankComponent},
+  { path: 'ranking', component: RankingComponent}
+  { path: 'create-map', component: CreateMapComponent},
+  { path: 'rate-map', component: RateMapModalComponent}
 ];
 
 @NgModule({

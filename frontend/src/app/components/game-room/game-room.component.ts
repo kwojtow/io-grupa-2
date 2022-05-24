@@ -115,8 +115,9 @@ export class GameRoomComponent implements OnInit {
   }
 
   startGame(){
-    this.gameStarted = true;
-    this.gameRoomService.startGame(this.gameRoomId).subscribe();
+    this.gameRoomService.startGame(this.gameRoomId).subscribe((data : number) => {
+      this.gameId = data
+    })
   }
 
   getGameRoomData() {
@@ -214,7 +215,6 @@ export class GameRoomComponent implements OnInit {
           })
         })
     })
-
   }
 
   showModal() {
