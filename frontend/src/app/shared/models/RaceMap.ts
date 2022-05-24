@@ -3,14 +3,14 @@ import {Vector} from "./Vector";
 
 
 export class RaceMap{
-  constructor(private _mapId: number,
-              private _name: string,
+  constructor(private _name: string,
               private _userId: number,
               private readonly _mapWidth: number,
                private readonly _mapHeight: number,
-               private readonly _finishLine: Array<Vector>,
-               private readonly _startLine: Array<Vector>,
-               private readonly _obstacles: Array<Vector> ){
+               private _finishLine: Array<Vector>,
+               private _startLine: Array<Vector>,
+               private _obstacles: Array<Vector>,
+              private _mapId?: number){
     this._mapId = _mapId;
     this._name = _name;
     this._userId = _userId;
@@ -64,5 +64,17 @@ export class RaceMap{
 
   set userId(value: number) {
     this._userId = value;
+  }
+
+  set finishLine(value: Array<Vector>) {
+    this._finishLine = value;
+  }
+
+  set startLine(value: Array<Vector>) {
+    this._startLine = value;
+  }
+
+  set obstacles(value: Array<Vector>) {
+    this._obstacles = value;
   }
 }

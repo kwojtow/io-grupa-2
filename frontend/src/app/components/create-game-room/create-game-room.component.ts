@@ -54,6 +54,7 @@ export class CreateGameRoomComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.selectedMapSubscription?.unsubscribe();
+    this.mapService.clearMap();
   }
 
   private subscribeToMap() {
@@ -61,10 +62,14 @@ export class CreateGameRoomComponent implements OnInit, OnDestroy {
       'map'
     ].valueChanges.subscribe((value) => {
       this.selectedMapId = value;
-      console.log(value);
+      this.mapService.clearMap();
+      this.setMap();
     });
   }
+  private setMap(){
+    MapService.map.next(this.mapDatas[this.mapDatas.findIndex(map => map.raceMap.mapId == parseInt(this.selectedMapId.toString()))].raceMap)
 
+  }
   getMapData(mapId: number, i: number) {
     let mapDto: MapDto;
     this.mapService.getMap(mapId).subscribe((data: MapResponse) => {
@@ -74,24 +79,28 @@ export class CreateGameRoomComponent implements OnInit, OnDestroy {
         .subscribe((data2) => (mapDto.author = data2));
       mapDto = {
         raceMap: new RaceMap(
-          data.mapId,
+
           data.name,
           data.userId,
           data.width,
           data.height,
           data.mapStructure.finishLine,
           data.mapStructure.startLine,
-          data.mapStructure.obstacles
+          data.mapStructure.obstacles,
+          data.mapId
+
         ),
         // name: data.name,
         name: mapId.toString(),
-        gamesPlayed: 0,
-        rate: 0,
+        gamesPlayed: data.gamesPlayed,
+        rate: data.rating,
         author: mapAuthor,
       };
       this.mapDatas.push(mapDto);
       this.mapDtoMap.set(mapId.toString(), mapDto);
       this.selectedMapId = this.mapDatas[0].name;
+      this.setMap();
+
     });
   }
 

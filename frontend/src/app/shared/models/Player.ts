@@ -10,13 +10,15 @@ export class Player{
   constructor(private _playerId: number,
               private _name: string,
               private _position: Vector,
-               private _color: string) {
+               private _color: string,
+               private _avatar: string) {
       this._playerId = _playerId;
       this._name = _name;
       this._color = _color;
       this._position = _position;
       this._currentVector = new Vector(0, 0);
       this._playerStatus = 'WAITING';
+      this._avatar = _avatar
     }
   updateState(newState: PlayerState){
     console.log('ID: ' + newState.playerId + ';' + this._playerId)
@@ -76,6 +78,10 @@ export class Player{
   get name(): string {
     return this._name;
     }
+
+  get avatar(): string {
+    return this._avatar;
+  }
   get playerStatus(): string {
     return this._playerStatus;
     }

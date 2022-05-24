@@ -3,8 +3,8 @@ import {RaceMap} from "../../shared/models/RaceMap";
 import {Vector} from "../../shared/models/Vector";
 import {Player} from "../../shared/models/Player";
 import {Game} from "../../shared/models/Game";
-import {BehaviorSubject, map} from "rxjs";
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import {BehaviorSubject, catchError, map, throwError} from "rxjs";
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { MapResponse } from 'src/app/payload/MapResponse';
 import {PlayerState} from "../../shared/models/PlayerState";
@@ -14,13 +14,13 @@ import {PlayerState} from "../../shared/models/PlayerState";
 })
 export class MapService {
 
-  LINE_WIDTH = 5;
+  LINE_WIDTH = 1;
   FINISH_LINE_COLOR = 'black';
   START_LINE_COLOR = 'blue';
   OBSTACLE_COLOR = 'black';
 
   static game: Game;
-  private _map: BehaviorSubject<RaceMap>;
+  static map: BehaviorSubject<RaceMap>;
   private _canvas: HTMLCanvasElement;
   private _ctx: CanvasRenderingContext2D;
   httpOptions = {
@@ -30,7 +30,8 @@ export class MapService {
     })
   };
   constructor(private http : HttpClient) {
-    this._map = new BehaviorSubject<RaceMap>(undefined);
+    MapService.map = new BehaviorSubject<RaceMap>(undefined);
+
   }
 
   getMap(id: number) : Observable<MapResponse> {
@@ -60,8 +61,9 @@ export class MapService {
             mapResponse.width,
             mapResponse.height,
             mapResponse.userId,
-            {finishLine, startLine, obstacles}
-
+            {finishLine, startLine, obstacles},
+            mapResponse.rating,
+            mapResponse.gamesPlayed
             )
         }));
     }
@@ -70,8 +72,41 @@ export class MapService {
         return this.http.get<any>("http://localhost:8080/map/list", this.httpOptions);
     }
 
+    httpOptions2 : Object = {
+      headers: new HttpHeaders({
+        'Content-Type' : 'text/plain; charset=utf-8',
+        'Authorization': "Bearer " + JSON.parse(localStorage.getItem("jwtResponse")).token,
+      }),
+      responseType: 'text'
+    };
+    sendRate(mapId : number, rate : number){
+      return this.http.post<any>("http://localhost:8080/map/rating/" + mapId + "?rating=" + rate,
+       {}, 
+       this.httpOptions2)
+      .pipe(
+        catchError(this.handleError)
+      );
+
+    }
+
+
+
+  private handleError(error: HttpErrorResponse) {
+    if (error.status === 0) {
+      // A client-side or network error occurred. Handle it accordingly.
+      console.error('An error occurred:', error.error);
+    } else {
+      // The backend returned an unsuccessful response code.
+      // The response body may contain clues as to what went wrong.
+      console.error(
+        `Backend returned code ${error.status}, body was: `, error.error);
+    }
+    // Return an observable with a user-facing error message.
+    return throwError(() => new Error('Something bad happened; please try again later.'));
+  }
+
   deleteMap(mapId: number) {
-      this.http.delete("http://localhost:8080/map/" + mapId).subscribe();
+      this.http.delete("http://localhost:8080/map/" + mapId, this.httpOptions).subscribe();
   }
 
   static getCursorPosition(canvas: HTMLCanvasElement, event: MouseEvent): Vector {
@@ -80,7 +115,7 @@ export class MapService {
     const x = event.offsetX;
     const y = event.offsetY;
     // @ts-ignore
-    const raceMap = MapService.game.map;
+    const raceMap = MapService.map.getValue();
     if (ctx !== null) {
       const v = MapService.getIdxPosition(ctx,
         canvas,
@@ -245,6 +280,8 @@ export class MapService {
   private onObstacle(vector: Vector, map: RaceMap): boolean {
     const obstacles = map.obstacles;
     const players = MapService.game.players;
+    if(vector.x < 0 || vector.y < 0 
+      || vector.x > map.mapWidth || vector.y > map.mapHeight) return true;
     for(let obstacle of obstacles) {
       if(obstacle.equals(vector)) return true;
     }
@@ -252,6 +289,65 @@ export class MapService {
       if(player.position.equals(vector)) return true;
     }
     return false;
+  }
+
+  public isObstacleOnPathToPosition(playerPosition: Vector, vector: Vector, map: RaceMap): boolean {
+    const pos_x = (playerPosition.x - vector.x > 0) ? -1 : 1;
+    const pos_y = (playerPosition.y - vector.y > 0) ? -1 : 1;
+    const playerPos = new Vector(playerPosition.x + pos_x,playerPosition.y + pos_y);
+    if(this.onObstacle(vector, map)) return true;
+    if(playerPosition.x == vector.x) {
+      for(let i = Math.min(playerPos.y, vector.y); i <= Math.max(playerPos.y, vector.y); ++i) {
+        if(this.onObstacle(new Vector(vector.x, i), map)) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    else if(playerPosition.y == vector.y) {
+      for(let i = Math.min(playerPos.x, vector.x); i <= Math.max(playerPos.x, vector.x); ++i) {
+        if(this.onObstacle(new Vector(i, vector.y), map)) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    else {
+      const diff_x = Math.abs(playerPosition.x - vector.x);
+      const diff_y = Math.abs(playerPosition.y - vector.y);
+      if (diff_x == diff_y) {
+        for(let i = playerPosition.x, j  = playerPosition.y; i != vector.x +pos_x && j != vector.y+pos_y; i += pos_x, j += pos_y) {
+          if(this.onObstacle(new Vector(i, j), map) || ( this.onObstacle(new Vector(i - pos_x, j), map) && 
+          this.onObstacle(new Vector(i, j - pos_y), map))) {
+            if(!(this.onObstacle(new Vector(i, j), map) && playerPosition.equals(new Vector(i, j)))) return true;
+          }
+        }
+        return false;
+      }
+      else{
+        const diff_div = Math.min(diff_x, diff_y) / Math.max(diff_x, diff_y);
+        if(diff_x < diff_y){
+          for(let i = 0; i < diff_y-1; ++i) {
+            let vec = new Vector(playerPos.x + Math.ceil(diff_div * i * pos_x), playerPos.y + (i * pos_y))
+            if(this.onObstacle(vec, map)
+            || (this.onObstacle(new Vector(vec.x - pos_x, vec.y), map) 
+               && this.onObstacle(new Vector(vec.x, vec.y - pos_y), map))) return true;
+          }
+          return false;
+        }
+        else{
+          for(let i = 0; i < diff_x-1; ++i) {
+            let vec = new Vector(playerPos.x + (i * pos_x), playerPos.y + Math.ceil(diff_div * i * pos_y));
+            if(this.onObstacle(vec, map)
+            || (this.onObstacle(new Vector(vec.x - pos_x, vec.y), map) 
+               && this.onObstacle(new Vector(vec.x, vec.y - pos_y), map))) return true;
+          }
+          return false;
+        }
+      }
+    }
   }
 
   private createArrow(fromx: number, fromy: number,
@@ -279,53 +375,41 @@ export class MapService {
     return p1;
   }
 
-  private initArrows(fieldWidth: number, player: Player): Array<Path2D>{
+  private initArrow(fieldWidth: number, player: Player): Path2D{
     const currentVectorPositionPx = player.getCurrentVectorPositionPx(fieldWidth);
-    const arrows = new Array<Path2D> (new Path2D(), new Path2D(), new Path2D(),new Path2D(),
-                                      new Path2D(), new Path2D(), new Path2D(), new Path2D(), new Path2D());
-
-    const arrowPositions = new Array<Array<Vector>>(
-      [new Vector(fieldWidth*3/4, fieldWidth/2), new Vector(6*fieldWidth/4, fieldWidth/2)],
-      [new Vector(fieldWidth*6/8, fieldWidth*3/4), new Vector(fieldWidth*5/4, fieldWidth*5/4)],
-      [new Vector(fieldWidth/2, fieldWidth*3/4), new Vector(fieldWidth/2, fieldWidth*6/4)],
-
-      [new Vector(fieldWidth*2/8, fieldWidth*3/4), new Vector(-fieldWidth*1/4, fieldWidth*5/4)],
-      [new Vector(fieldWidth*1/4, fieldWidth/2), new Vector(-fieldWidth/2, fieldWidth/2)],
-      [new Vector(fieldWidth*2/8, fieldWidth/4), new Vector(-fieldWidth/4, -fieldWidth/4)],
-      [new Vector(fieldWidth/2, fieldWidth/4), new Vector(fieldWidth/2, -fieldWidth/2)],
-      [new Vector(fieldWidth*6/8, fieldWidth/4), new Vector(fieldWidth*5/4, -fieldWidth/4)],
-    );
-    const arrowWidth = 12;
+    const arrowWidth = 20;
     const arrowHeadLen = 10;
 
-    arrowPositions.forEach(arrowPosition => {
-      let i = arrowPositions.indexOf(arrowPosition);
-      arrows[i] =
-        this.createArrow(arrowPosition[0].x + currentVectorPositionPx.x,
-                         arrowPosition[0].y + currentVectorPositionPx.y,
-                         arrowPosition[1].x + currentVectorPositionPx.x,
-                         arrowPosition[1].y + currentVectorPositionPx.y,
-                         arrowWidth, arrowHeadLen
-                        );
-    });
-    arrows[arrows.length - 1].arc(currentVectorPositionPx.x + fieldWidth/2,
-    currentVectorPositionPx.y + fieldWidth/2,
-    fieldWidth/8, 0, Math.PI*2, true);
+    if(player.position.equals(player.getCurrentVectorPosition())) return new Path2D();
 
-    return arrows;
+    const xOffset = fieldWidth/2 + (fieldWidth/3 * Math.sign(player.getCurrentVectorPosition().x - player.position.x) );
+    const yOffset = fieldWidth/2 + (fieldWidth/3 * Math.sign(player.getCurrentVectorPosition().y - player.position.y) );
+
+    return this.createArrow( player.position.x*fieldWidth + xOffset,
+                             player.position.y*fieldWidth + yOffset,
+                             currentVectorPositionPx.x + fieldWidth/2,
+                             currentVectorPositionPx.y + fieldWidth/2,
+                             arrowWidth, arrowHeadLen);
+  }
+
+  private drawArrow(ctx: CanvasRenderingContext2D,arrow: Path2D): void{
+    ctx.lineWidth = 20;
+    ctx.fill(arrow);
+    ctx.stroke(arrow);
   }
 
   private highlightAvaliableVectors(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, map: RaceMap,
                                     player: Player, availableVectorsPaths: Array<Path2D>,
-                                    arrows: Array<Path2D>): void {
+                                    arrow: Path2D): void {
     const lineWidth = this.LINE_WIDTH;
     const fieldWidth = MapService.getFieldWidth(canvas, map);
     const availableVectors = player.getAvailableVectors();
-    let onObstacle = this.onObstacle;
+    const onObstacle = this.onObstacle;
+    const drawArrow = this.drawArrow;
 
     canvas.onmousemove = function(event) {
       let v = MapService.getCursorPosition(canvas, event);
-
+      let yellowArrow = false;
       for(let i = availableVectorsPaths.length-1; i >= 0; --i) {
           const path = availableVectorsPaths[i];
           const vector = availableVectors[i];
@@ -344,30 +428,34 @@ export class MapService {
             fieldWidth - 2 * lineWidth);
             ctx.fill(path);
           }
-          if(isPointInPath && !isOnObstacle){
-            ctx.fillStyle = "#ff9900";
-            ctx.strokeStyle = "#ff9900";
-            canvas.style.cursor = 'pointer';
-          }
-          else{
-            ctx.fillStyle = "#454545";
-            ctx.strokeStyle = "#454545";
-          }
+          if(isPointInPath && !isOnObstacle) yellowArrow = true;
 
-          if((!isCurrentVector || isPointInPath) && !isOnObstacle) ctx.fill(arrows[i]);
-          ctx.stroke(arrows[i]);
+
+
       }
+      if(yellowArrow){
+        canvas.style.cursor = 'pointer';
+        ctx.fillStyle = "#ff9900";
+        ctx.strokeStyle = "#ff9900";
+
+      }
+      else {
+        ctx.fillStyle = "#454545";
+        ctx.strokeStyle = "#454545";
+      }
+      drawArrow(ctx, arrow);
     }
   }
 
 
   private changePosition(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D, map: RaceMap,
                                     player: Player, availableVectorsPaths: Array<Path2D>,
-                                    arrows: Array<Path2D>): void {
+                                    arrow: Path2D): void {
     const lineWidth = this.LINE_WIDTH;
     const fieldWidth = MapService.getFieldWidth(canvas, map);
     const availableVectors = player.getAvailableVectors();
-    let onObstacle = this.onObstacle;
+    const onObstacle = this.onObstacle;
+    const drawArrow = this.drawArrow;
 
     canvas.onclick = function(event) {
       let v = MapService.getCursorPosition(canvas, event);
@@ -413,10 +501,7 @@ export class MapService {
             ctx.fillStyle = "#454545";
             ctx.strokeStyle = "#454545";
           }
-
-          if((!isCurrentVector || isPointInPath) && !isOnObstacle) ctx.fill(arrows[i]);
-          ctx.stroke(arrows[i]);
-
+          drawArrow(ctx, arrow);
       }
     }
   }
@@ -432,8 +517,8 @@ export class MapService {
           let p = new Path2D();
           availableVectorsPaths.push(p);
           ctx.fillStyle = (vector.equals(player.getCurrentVectorPosition())) ? "#0066ff77" : "#00ff6677";
-          if(!this.onObstacle(vector, map) || vector.equals(player.getCurrentVectorPosition())){
-            if(this.onObstacle(vector, map)) ctx.fillStyle = "#0066ff77";
+          if(!this.isObstacleOnPathToPosition(player.position, vector, map) ){
+            if(this.isObstacleOnPathToPosition(player.position, vector, map)) ctx.fillStyle = "#0066ff77";
             p.rect(fieldWidth * vector.x + this.LINE_WIDTH,
                    fieldWidth * vector.y + this.LINE_WIDTH,
                    fieldWidth - 2 * this.LINE_WIDTH,
@@ -444,27 +529,13 @@ export class MapService {
       }
 
       // arrows
-      const arrows = this.initArrows(fieldWidth, player);
-      arrows.forEach(arrow => {
-        ctx.lineWidth = 10;
-        ctx.fillStyle = '#454545';
-        ctx.strokeStyle = '#454545';
-        let i = arrows.indexOf(arrow);
-        if(i == arrows.length-1) {
-          ctx.stroke(arrows[i]);
-        }
-        else {
-          ctx.fill(arrows[i]);
-          ctx.stroke(arrows[i]);
-        }
+      const arrow = this.initArrow(fieldWidth, player);
+      ctx.fillStyle = '#454545';
+      ctx.strokeStyle = '#454545';
+      this.drawArrow(this.ctx, arrow);
 
-      })
-      this.highlightAvaliableVectors(canvas, ctx, map, player, availableVectorsPaths, arrows);
-      this.changePosition(canvas, ctx, map, player, availableVectorsPaths, arrows);
-  }
-
-  get map(): BehaviorSubject<RaceMap> {
-    return this._map;
+      this.highlightAvaliableVectors(canvas, ctx, map, player, availableVectorsPaths, arrow);
+      this.changePosition(canvas, ctx, map, player, availableVectorsPaths, arrow);
   }
 
   get canvas(): HTMLCanvasElement {
@@ -482,6 +553,7 @@ export class MapService {
   set ctx(value: CanvasRenderingContext2D) {
     this._ctx = value;
   }
-
-
+  clearMap(){
+    MapService.map.next(undefined);
+  }
 }

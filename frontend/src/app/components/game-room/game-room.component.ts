@@ -110,9 +110,14 @@ export class GameRoomComponent implements OnInit {
     }
   }
 
+  getAvatar(avatar: string){
+    return this.userService.convertImage(avatar);
+  }
+
   startGame(){
-    this.gameStarted = true;
-    this.gameRoomService.startGame(this.gameRoomId).subscribe();
+    this.gameRoomService.startGame(this.gameRoomId).subscribe((data : number) => {
+      this.gameId = data
+    })
   }
 
   getGameRoomData() {
@@ -125,22 +130,24 @@ export class GameRoomComponent implements OnInit {
           this.userService2.getUserData(data2.userId).subscribe(data3 => mapDto.author = data3)
           mapDto = {
             raceMap : new RaceMap(
-              data2.mapId,
+
               data2.name,
               data2.userId,
               data2.width,
               data2.height,
               data2.mapStructure.finishLine,
               data2.mapStructure.startLine,
-              data2.mapStructure.obstacles
+              data2.mapStructure.obstacles,
+              data2.mapId
             ),
             name: data2.name,
-            gamesPlayed: 0,
-            rate: 0,
+            gamesPlayed: data2.gamesPlayed,
+            rate: data2.rating,
             author: mapAuthor
           }
           this.gameRoomData.mapDto = mapDto;
-        }
+          MapService.map.next(<RaceMap>mapDto.raceMap);
+          }
         )
 
         this.userService2.getUserData(data.gameMasterId).subscribe(data => this.gameRoomData.owner = data);
@@ -194,13 +201,19 @@ export class GameRoomComponent implements OnInit {
   }
   initGame(){
     let players = new Array<Player>()
-    this.usersExtensions.map(userExtension => userExtension.user)
-      .forEach(user => {
-        players.push(new Player(user.userId, user.login, new Vector(0,0), 'green'))
-      })
-    this.gameRoomService.initGame(players, this.gameRoomId).subscribe(response => {
-      this.router.navigate(["/game/" + this.gameRoomId]).then(() =>{
-      })
+    this.gameRoomService.getGameRoom(this.gameRoomId)
+    .subscribe((data: GameRoomResponse) => {
+        this.mapService.getMap(data.mapId).subscribe((data2: MapResponse) => {
+          this.usersExtensions.map(userExtension => userExtension.user)
+            .forEach(user => {
+              let player = new Player(user.userId, user.login, data2.mapStructure.startLine[players.length], 'green', user.avatar);
+              players.push(player);
+            })
+          this.gameRoomService.initGame(players, this.gameRoomId).subscribe(response => {
+            this.router.navigate(["/game/" + this.gameRoomId]).then(() =>{
+            })
+          })
+        })
     })
   }
 

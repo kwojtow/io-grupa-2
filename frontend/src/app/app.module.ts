@@ -15,6 +15,9 @@ import { GameComponent } from './components/game/game.component';
 import { JoinGameRoomComponent } from './components/start-page/join-game-room/join-game-room.component';
 import {ProfileComponent} from "./components/profile/profile.component";
 import { RankingComponent } from './components/ranking/ranking.component';
+import {CreateMapComponent} from "./components/create-map/create-map.component";
+import { RateMapModalComponent } from './components/rate-map-modal/rate-map-modal.component';
+import { NgbModule, NgbRating } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [
@@ -32,7 +35,8 @@ import { RankingComponent } from './components/ranking/ranking.component';
     GameComponent,
     ProfileComponent,
     RankingComponent
-
+    CreateMapComponent,
+    RateMapModalComponent,
   ],
   imports: [
     BrowserModule,
@@ -41,7 +45,8 @@ import { RankingComponent } from './components/ranking/ranking.component';
     HttpClientModule,
     ReactiveFormsModule,
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
+    NgbModule
   ],
   providers: [],
   bootstrap: [AppComponent]

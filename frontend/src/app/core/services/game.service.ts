@@ -23,7 +23,8 @@ export class GameService {
   private _player: Player;                        // authorized user
   authorizedPlayer: Player;                          // currently playing user
   private _game: Game;
-
+  timerValue = new BehaviorSubject<number>(0);
+  moveDone: boolean = false;
   gameLoaded = new BehaviorSubject<boolean>(false);
 
   constructor(private mockDataProvider: MockDataProviderService,
@@ -34,11 +35,16 @@ export class GameService {
               private _gameRoomService: GameRoomService) {
 
   }
+  clearGame(){
+    this._game = undefined;
+    this.gameLoaded.next(false);
+    this._mapService.clearMap();
+  }
   setGameInfo(authorizedPlayer: Player, game: Game){
     this._player = authorizedPlayer;
     this._game =   game;
     MapService.game = game;
-    this._mapService.map.next(game.map);
+    MapService.map.next(game.map);
     this.gameLoaded.next(true);
   }
 
@@ -49,21 +55,22 @@ export class GameService {
         let player;
         users
           .forEach(user => {
-            players.push(new Player(user.userId, user.login, new Vector(0,0), 'green'))
+            players.push(new Player(user.userId, user.login, new Vector(0,0), 'green', user.avatar))
           })
         this._gameRoomService.getGameRoom(gameId).subscribe(gameResponse => {
           this._mapService.getMap(gameResponse.mapId).subscribe(mapResponse => {
             player = players.find(player => player.playerId === user.userId)
             this.setGameInfo(player, new Game(gameId,
               new RaceMap(
-              mapResponse.mapId,
+
               mapResponse.name,
               mapResponse.userId,
               mapResponse.width,
               mapResponse.height,
               mapResponse.mapStructure.finishLine,
               mapResponse.mapStructure.startLine,
-              mapResponse.mapStructure.obstacles
+              mapResponse.mapStructure.obstacles,
+                mapResponse.mapId
               ),
               // MockDataProviderService.getExampleMap(),
               players, new GameSettings(gameResponse.roundTime)))
@@ -91,6 +98,8 @@ export class GameService {
   }
   postPlayerNewPosition(player: Player) {
     player.getChangedPosition().subscribe(() => {
+      this.moveDone = true;
+      this.timerValue.next(0);
       const playerPositionInfo = {
         playerId: player.playerId,
         xcoordinate: player.position.x,
@@ -110,7 +119,7 @@ export class GameService {
         return this._httpClient.post<any>(this.API_URL + '/game/' + this._game.gameId + '/state',
                                           playerPositionInfo,
                                           requestOptions
-                                          ).subscribe(res => console.log(res));
+                                          ).subscribe(res => {console.log(res)});
       }
     })
   }
@@ -119,12 +128,13 @@ export class GameService {
     return this.authorizedPlayer;
   }
   updatePlayersStates(playersStates: Array<PlayerState>){
+    console.log(this._game);
     playersStates.forEach(playerState => {
       let player = this._game.players.find(player => player.playerId === playerState.playerId);
       if(player){
         for(let finish of this._game.map.finishLine){
-          if(finish.equals(playerState.currentPosition) && !finish.equals(player.position) 
-           ) 
+          if(finish.equals(playerState.currentPosition) && !finish.equals(player.position)
+           )
             setTimeout(function() { alert('Gracz ' + player.name + ' wygrał'); }, 1);
         }
         player.updateState(playerState);
@@ -132,10 +142,46 @@ export class GameService {
     })
     return this._game.players;
   }
+  updateTimer(value: number) {
+    if(!this.moveDone){
+      this.timerValue.next(value);
+      if(value > 0){
+        setTimeout(() => {
+          if(!this.moveDone){
+            this.updateTimer(value-1)
+          }
+          else{
+            this.moveDone = false;
+          }
+        }, 1000);
+      }
+      else {
+        const newVector = new Vector(this.player.position.x + this.player.currentVector.x, 
+          this.player.position.y + this.player.currentVector.y)
+        if(!this._mapService.isObstacleOnPathToPosition(this.player.position,
+          newVector, this.game.map)) {
+            this.player.setNewVector(this.player.currentVector);
+          }
+        
+        this.moveDone = false;
+      }
+    }
+    else {
+      this.moveDone = false;
+    }
+  }
+
+  getTimerValue(): Observable<number>{
+    return this.timerValue.asObservable();
+  }
   isMyTurn(): boolean{
     return this.authorizedPlayer?.playerId === this.player?.playerId;
   }
   updateMap(playersList: Array<Player>){
+    if(this.isMyTurn() && this.timerValue.value == 0 && !this.moveDone) {
+      this.moveDone = false;
+      this.updateTimer(this.game.settings.roundTime);
+    }
     this._mapService.initMap(this.game.map, playersList, this.isMyTurn(), this.player);
   }
   get game(): Game {

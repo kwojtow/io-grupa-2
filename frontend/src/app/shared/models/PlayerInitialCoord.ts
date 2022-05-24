@@ -1,11 +1,11 @@
 export class PlayerInitialCoord{
   userId: number;
-  xCoord: number;
-  yCoord: number;
+  xcoord: number;
+  ycoord: number;
 
   constructor(userId: number, xCoord: number, yCoord: number) {
     this.userId = userId;
-    this.xCoord = xCoord;
-    this.yCoord = yCoord;
+    this.xcoord = xCoord;
+    this.ycoord = yCoord;
   }
 }

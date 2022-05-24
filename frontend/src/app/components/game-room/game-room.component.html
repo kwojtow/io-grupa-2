@@ -16,7 +16,7 @@
                     <span (click)="kick(userExtension.user)" class="kick badge rounded-pill bg-danger" *ngIf="userExtension.extended">Wyrzuć
                         gracza</span>
                 </div>
-                <img class="avatar my-2" src="{{ userExtension.user.avatar ? 'userExtension.user.avatar' : '../../../../assets/resources/images/riFill-taxi-fill.svg'}}" alt="avatar" />
+                <img class="avatar my-2" [src]="getAvatar(userExtension.user.avatar)" alt="avatar" />
                 <span>{{ userExtension.user.login }}</span>
             </div>
         </div>

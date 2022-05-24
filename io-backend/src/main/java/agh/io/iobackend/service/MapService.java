@@ -5,6 +5,8 @@ import agh.io.iobackend.model.map.GameMap;
 import agh.io.iobackend.model.map.MapRating;
 import agh.io.iobackend.repository.GameMapRatingsRepository;
 import agh.io.iobackend.repository.MapRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,17 +18,23 @@ import static java.util.stream.Collectors.toMap;
 @Service
 public class MapService {
 
+    private static final Logger logger = LoggerFactory.getLogger(MapService.class);
+
     @Autowired
     private MapRepository mapRepository;
 
     @Autowired
     private GameMapRatingsRepository gameMapRatingsRepository;
 
+    @Autowired
+    private StatisticsService statisticsService;
+
     public GameMap saveMap(GameMap gameMap) {
         return mapRepository.save(gameMap);
     }
 
     public GameMap updateMap(Long mapId, GameMap gameMap) {
+        logger.info("updateMap");
         GameMap oldGameMap = mapRepository.findById(mapId).get();
         oldGameMap.setMapStructure(gameMap.getMapStructure());
         oldGameMap.setHeight(gameMap.getHeight());
@@ -36,9 +44,11 @@ public class MapService {
     }
 
     public List<GameMap> getAllMaps() {
+        logger.info("getAllMaps");
         List<GameMap> gameMaps = mapRepository.findAll();
         for (GameMap gameMap : gameMaps) {
             gameMap.setRating(getAverageRating(gameMap));
+            gameMap.setGamesPlayed(statisticsService.getMapGamesPlayed(gameMap.getMapId()));
         }
         return gameMaps;
     }
@@ -51,15 +61,22 @@ public class MapService {
         gameMapRatingsRepository.deleteAll();
     }
 
-    public Optional<GameMap> getMapById(Long mapId) {
-        return mapRepository.findById(mapId);
+    public GameMap getMapById(Long mapId) {
+        logger.info("getMapById");
+        Optional<GameMap> map = mapRepository.findById(mapId);
+        if (map.isEmpty()) return null;
+        else {
+            GameMap gameMap = map.get();
+            gameMap.setRating(getAverageRating(gameMap));
+            gameMap.setGamesPlayed(statisticsService.getMapGamesPlayed(gameMap.getMapId()));
+            return gameMap;
+        }
     }
 
     public void removeMapById(Long mapId) {
-        Optional<GameMap> gameMap = getMapById(mapId);
-        if (gameMap.isPresent()) {
-            mapRepository.delete(getMapById(mapId).get());
-        }
+        logger.info("removeMapById");
+        Optional<GameMap> gameMap = mapRepository.findById(mapId);
+        gameMap.ifPresent(map -> mapRepository.delete(map));
     }
 
     public List<GameMap> getMapsCreatedByUser(Long userId) {

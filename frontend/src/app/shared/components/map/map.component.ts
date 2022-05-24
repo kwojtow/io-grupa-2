@@ -27,9 +27,11 @@ export class MapComponent implements AfterViewInit {
         MapService.getCursorPosition(canvas, e);
       });
     }
-    this._mapService.map.subscribe(map => {
+    MapService.map.subscribe(map => {
       if(map !== undefined)
         this._mapService.initMap(map, [], false);
+      else
+        this.ctx.clearRect(0,0,canvas.width,canvas.height)
     })
 
   }

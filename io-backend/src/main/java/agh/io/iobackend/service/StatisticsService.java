@@ -5,6 +5,8 @@ import agh.io.iobackend.model.User;
 import agh.io.iobackend.model.map.GameMap;
 import agh.io.iobackend.model.map.GameMapHistory;
 import agh.io.iobackend.repository.GameMapHistoryRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,8 @@ import static java.util.stream.Collectors.toMap;
 @Service
 public class StatisticsService {
 
+    private static final Logger logger = LoggerFactory.getLogger(StatisticsService.class);
+
     @Autowired
     private GameMapHistoryRepository gameMapHistoryRepository;
 
@@ -25,6 +29,7 @@ public class StatisticsService {
     private UserService userService;
 
     public void saveHistoryEntry(GameMap map, User user, boolean win, int points) {
+        logger.info("saveHistoryEntry");
         GameMapHistory gameMapHistory = GameMapHistory
                 .builder()
                 .map(map)
@@ -40,14 +45,22 @@ public class StatisticsService {
     }
 
     public long getUserWinsNumber(Long userId) {
+        logger.info("getUserWinsNumber");
         return gameMapHistoryRepository.findAll().stream().filter(result -> result.getUser().getUserId().equals(userId) && result.isWin()).count();
     }
 
     public long getUserGamesNumber(Long userId) {
+        logger.info("getUserGamesNumber");
         return gameMapHistoryRepository.findAll().stream().filter(result -> result.getUser().getUserId().equals(userId)).count();
     }
 
+    public long getMapGamesPlayed(Long mapId) {
+        logger.info("getMapGamesPlayed");
+        return gameMapHistoryRepository.findAll().stream().filter(result -> result.getMap().getMapId().equals(mapId)).count();
+    }
+
     public LinkedHashMap<User, Integer> getUsersRanking() {
+        logger.info("getUsersRanking");
         List<GameMapHistory> gameMapHistories = gameMapHistoryRepository.findAll();
         Map<User, Integer> points = new HashMap<>();
         for (GameMapHistory gameMapHistory : gameMapHistories) {

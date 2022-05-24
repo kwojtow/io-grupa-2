@@ -1,8 +1,11 @@
 package agh.io.iobackend.service;
 
+import agh.io.iobackend.controller.GameController;
 import agh.io.iobackend.model.User;
 import agh.io.iobackend.model.UserDetailsImpl;
 import agh.io.iobackend.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,10 +21,18 @@ import java.util.Optional;
 @Service
 public class UserService implements UserDetailsService {
 
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+
     @Autowired
     private UserRepository userRepository;
 
     public User addUser(User user) {
+        return userRepository.save(user);
+    }
+
+    public User saveAvatar(Long userId, byte[] avatarBytes) {
+        User user = userRepository.findById(userId).get();
+        user.setAvatar(avatarBytes);
         return userRepository.save(user);
     }
 
@@ -38,11 +49,13 @@ public class UserService implements UserDetailsService {
     }
 
     public List<User> getAllUsers() {
+        logger.info("get all users");
         return userRepository.findAll();
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        logger.info("loadUserByUsername");
         Optional<User> user = userRepository.findByLogin(username);
         user.orElseThrow(() -> new UsernameNotFoundException("Not found: " + username));
         return user.map(UserDetailsImpl::new).get();
@@ -61,6 +74,7 @@ public class UserService implements UserDetailsService {
     }
 
     public Long getCurrentUserId() {
+        logger.info("getCurrentUserId");
         Long userId = null;
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
