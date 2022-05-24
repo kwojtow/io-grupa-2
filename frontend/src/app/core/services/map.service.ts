@@ -247,6 +247,8 @@ export class MapService {
   private onObstacle(vector: Vector, map: RaceMap): boolean {
     const obstacles = map.obstacles;
     const players = MapService.game.players;
+    if(vector.x < 0 || vector.y < 0 
+      || vector.x > map.mapWidth || vector.y > map.mapHeight) return true;
     for(let obstacle of obstacles) {
       if(obstacle.equals(vector)) return true;
     }
@@ -260,9 +262,9 @@ export class MapService {
     const pos_x = (playerPosition.x - vector.x > 0) ? -1 : 1;
     const pos_y = (playerPosition.y - vector.y > 0) ? -1 : 1;
     const playerPos = new Vector(playerPosition.x + pos_x,playerPosition.y + pos_y);
+    if(this.onObstacle(vector, map)) return true;
     if(playerPosition.x == vector.x) {
       for(let i = Math.min(playerPos.y, vector.y); i <= Math.max(playerPos.y, vector.y); ++i) {
-        console.log(i);
         if(this.onObstacle(new Vector(vector.x, i), map)) {
           return true;
         }
