@@ -189,6 +189,18 @@ img:hover{
   padding-left: 50px;
 }
 
+.show-ranking-btn{
+  height: 40px;
+  border-radius: 13px !important;
+  background-color: #4e2a6a;
+  font-size: 18px !important;
+  height: 40px !important;
+  color: white;
+  margin-bottom: 20px;
+  margin-left: 20px;
+  text-align: center;
+}
+
 
 @media(max-width: 1200px){
   .map-section {

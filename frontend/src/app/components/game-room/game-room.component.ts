@@ -33,6 +33,8 @@ export class GameRoomComponent implements OnInit {
 
   timer: number = 3;
 
+  gameId : number;
+
   constructor(
     private mapService : MapService,
     private gameRoomService: GameRoomService,
@@ -115,8 +117,9 @@ export class GameRoomComponent implements OnInit {
   }
 
   startGame(){
-    this.gameStarted = true;
-    this.gameRoomService.startGame(this.gameRoomId).subscribe();
+    this.gameRoomService.startGame(this.gameRoomId).subscribe((data : number) => {
+      this.gameId = data
+    })
   }
 
   getGameRoomData() {

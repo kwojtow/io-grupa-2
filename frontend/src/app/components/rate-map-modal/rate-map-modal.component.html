@@ -1,0 +1,13 @@
+<div class="modal-box">
+    <div class="modal-content">
+        Oceń mapę
+        <br>
+        <span>
+            <ngb-rating [(rate)]="currentRate" (rateChange)="send()">
+                <ng-template let-fill="fill" let-index="index">
+                  <span class="star" [class.filled]="fill === 100">&#9733;</span>
+                </ng-template>
+              </ngb-rating>
+        </span>
+    </div>
+</div>
