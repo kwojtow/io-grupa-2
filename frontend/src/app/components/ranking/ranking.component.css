@@ -1,0 +1,49 @@
+#top-bar{
+    background-color: rgba(78, 42, 106, 100);;
+    height: 100px;
+}
+
+.btn{
+    height: 55px;
+    border-radius: 20px;
+    font-size: larger;
+}
+
+.btn-outline-primary{
+    background-color: rgba(78, 42, 106, 100);
+    color: rgba(255, 255, 255, 100);
+    border: 1px solid rgba(255, 255, 255, 100);
+}
+
+.h1{
+    color: white;
+}
+
+.container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.header{
+    padding: 50px;
+}
+
+.current{
+    background-color: #d6ffe4;
+}
+
+table {
+    width: fit-content;
+}
+
+td, th {
+    padding: 20px 100px;
+    text-align: center;
+}
+
+.pos{
+    width: 50px;
+    padding: 20px 10px;
+}
