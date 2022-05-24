@@ -16,6 +16,7 @@ import { JoinGameRoomComponent } from './components/start-page/join-game-room/jo
 import {ProfileComponent} from "./components/profile/profile.component";
 import { RankingComponent } from './components/ranking/ranking.component';
 import {CreateMapComponent} from "./components/create-map/create-map.component";
+import { MapsRankComponent } from './components/maps-rank/maps-rank.component';
 import { RateMapModalComponent } from './components/rate-map-modal/rate-map-modal.component';
 import { NgbModule, NgbRating } from '@ng-bootstrap/ng-bootstrap';
 
@@ -34,6 +35,8 @@ import { NgbModule, NgbRating } from '@ng-bootstrap/ng-bootstrap';
     CreateGameRoomComponent,
     GameComponent,
     ProfileComponent,
+    CreateMapComponent,
+    MapsRankComponent
     RankingComponent
     CreateMapComponent,
     RateMapModalComponent,
