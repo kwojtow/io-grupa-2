@@ -1,5 +1,6 @@
 package agh.io.iobackend.controller;
 
+import agh.io.iobackend.controller.payload.MapRankEntry;
 import agh.io.iobackend.controller.payload.MapResponse;
 import agh.io.iobackend.model.map.GameMap;
 import agh.io.iobackend.service.MapService;
@@ -98,7 +99,13 @@ public class MapController {
     }
 
     @GetMapping("/ranking")
-    public ResponseEntity<LinkedHashMap<GameMap, Double>> getMapRanking() {
-        return ResponseEntity.ok().body(mapService.getMapsRanking());
+    public ResponseEntity<List<MapRankEntry>> getMapRanking() {
+        return ResponseEntity.ok(
+                mapService
+                        .getMapsRanking()
+                        .entrySet()
+                        .stream()
+                        .map(MapRankEntry::new)
+                        .collect(Collectors.toList()));
     }
 }

@@ -61,6 +61,7 @@
     <div class="my-map-label">
       <div (click)="changeMapCategory(cat)"class="d-inline-block" [ngClass]="{'maps-category': chosenCategory!==cat, 'chosen-category': chosenCategory===cat}" *ngFor="let cat of mapListsCategories">{{cat}}
       </div>
+             <div [routerLink]="'/map/rank'" class="d-inline-block maps-category chosen-category">Pokaż ranking map</div>
     </div>
     <div class="avatar">
       <div style="font-weight: bold;">Awatar</div>
@@ -76,6 +77,7 @@
       <div >Punkty: {{this.user?.ranks?.points}}</div>
       <div style="font-weight: bold; ">Rozegrane/wygrane gry</div>
       <div > {{user?.statistics?.userWins}}/{{user?.statistics?.userGames}} </div>
+      <a href="/ranking"><button class="btn show-ranking-btn">Pokaż ranking</button></a>
     </div>
     <div class="name">
       <div style="font-weight: bold;">Nazwa użytkownika</div>

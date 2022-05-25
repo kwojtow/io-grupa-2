@@ -3,10 +3,11 @@ import {RaceMap} from "../../shared/models/RaceMap";
 import {Vector} from "../../shared/models/Vector";
 import {Player} from "../../shared/models/Player";
 import {Game} from "../../shared/models/Game";
-import {BehaviorSubject, map} from "rxjs";
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import {BehaviorSubject, catchError, map, throwError} from "rxjs";
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { MapResponse } from 'src/app/payload/MapResponse';
+import { MapRankEntry } from 'src/app/payload/MapRankEntry';
 import {PlayerState} from "../../shared/models/PlayerState";
 
 @Injectable({
@@ -72,8 +73,45 @@ export class MapService {
         return this.http.get<any>("http://localhost:8080/map/list", this.httpOptions);
     }
 
+    httpOptions2 : Object = {
+      headers: new HttpHeaders({
+        'Content-Type' : 'text/plain; charset=utf-8',
+        'Authorization': "Bearer " + JSON.parse(localStorage.getItem("jwtResponse")).token,
+      }),
+      responseType: 'text'
+    };
+    sendRate(mapId : number, rate : number){
+      return this.http.post<any>("http://localhost:8080/map/rating/" + mapId + "?rating=" + rate,
+       {}, 
+       this.httpOptions2)
+      .pipe(
+        catchError(this.handleError)
+      );
+
+    }
+
+
+
+  private handleError(error: HttpErrorResponse) {
+    if (error.status === 0) {
+      // A client-side or network error occurred. Handle it accordingly.
+      console.error('An error occurred:', error.error);
+    } else {
+      // The backend returned an unsuccessful response code.
+      // The response body may contain clues as to what went wrong.
+      console.error(
+        `Backend returned code ${error.status}, body was: `, error.error);
+    }
+    // Return an observable with a user-facing error message.
+    return throwError(() => new Error('Something bad happened; please try again later.'));
+  }
+
   deleteMap(mapId: number) {
       this.http.delete("http://localhost:8080/map/" + mapId, this.httpOptions).subscribe();
+  }
+
+  getRank() {
+    return this.http.get<MapRankEntry[]>("http://localhost:8080/map/ranking", this.httpOptions);
   }
 
   static getCursorPosition(canvas: HTMLCanvasElement, event: MouseEvent): Vector {
