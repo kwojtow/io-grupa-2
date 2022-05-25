@@ -109,8 +109,10 @@ export class CreateGameRoomComponent implements OnInit, OnDestroy {
     let numberOfMaps = this.mapDatas.length;
     let randomIndex = Math.floor(Math.random() * numberOfMaps);
     this.selectedMapId = this.mapDatas[randomIndex].name;
-    this.mapOptionsForm.value.map = this.selectedMapId
-    this.setMap()
+    this.mapOptionsForm.controls[
+      'map'
+      ].setValue(this.selectedMapId)
+    this.subscribeToMap()
   }
 
   createRoom() {
