@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 @NoArgsConstructor
 @Entity(name = "Game")
@@ -48,7 +49,7 @@ public class Game {
     private List<Long> playersQueue;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private final Map<Long, Player> players =new HashMap<>();
+    private final Map<Long, Player> players = new HashMap<>();
 
     private int currentPlayerIndex;
 
@@ -89,17 +90,25 @@ public class Game {
     }
 
     private void nextPlayerTurn() {
+        int oldIndex = currentPlayerIndex;
         currentPlayerIndex = (currentPlayerIndex + 1) % playersQueue.size();
         logger.info("playersQueue: " + playersQueue);
 
-        long activePlayers = playersQueue.stream().filter(id -> players.get(id).getPlayerStatus() == PlayerStatus.WAITING).count();
+        Stream<Long> activePlayers = playersQueue.stream().filter(id -> players.get(id).getPlayerStatus() == PlayerStatus.WAITING);
+        long activePlayersCount = activePlayers.count();
+        if (activePlayersCount == 1){
+            logger.info("end of game");
+            players.get(activePlayers.findFirst().get()).setPlayerStatus(PlayerStatus.WON);
+        }
 
-        while (activePlayers > 0 && players.get(getCurrentPlayerId()).getPlayerStatus() != PlayerStatus.WAITING) {
+        while (activePlayersCount > 0 && players.get(getCurrentPlayerId()).getPlayerStatus() != PlayerStatus.WAITING) {
             logger.info("while in game state");
             currentPlayerIndex = (currentPlayerIndex + 1) % playersQueue.size();
         }
-        players.entrySet().stream().forEach(e -> e.getValue().setPlayerStatus(PlayerStatus.WAITING)); // todo what about playerStatus.LOST ?
-        System.out.println("on turn: "+ getCurrentPlayerId());
+
+        players.get(playersQueue.get(oldIndex)).setPlayerStatus(PlayerStatus.WAITING);
+//        players.entrySet().stream().forEach(e -> e.getValue().setPlayerStatus(PlayerStatus.WAITING));
+        System.out.println("on turn: " + getCurrentPlayerId());
         players.get(getCurrentPlayerId()).setPlayerStatus(PlayerStatus.PLAYING);
     }
     public void changeGameState(PlayerMoveRequest playerMove) {
@@ -135,7 +144,7 @@ public class Game {
         this.players.remove(playerId);
     }
 
-    public int getNumOfPlayers(){
+    public int getNumOfPlayers() {
         return players.size();
     }
 }
