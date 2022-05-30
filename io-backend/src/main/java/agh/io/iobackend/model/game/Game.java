@@ -7,6 +7,8 @@ import agh.io.iobackend.model.map.GameMap;
 import agh.io.iobackend.model.player.Player;
 import agh.io.iobackend.model.player.PlayerStatus;
 import lombok.NoArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -17,6 +19,8 @@ import java.util.Map;
 @NoArgsConstructor
 @Entity(name = "Game")
 public class Game {
+
+    private static final Logger logger = LoggerFactory.getLogger(Game.class);
 
     @Id
     @SequenceGenerator(
@@ -86,13 +90,18 @@ public class Game {
 
     private void nextPlayerTurn() {
         currentPlayerIndex = (currentPlayerIndex + 1) % playersQueue.size();
+        logger.info("playersQueue: " + playersQueue);
 
-        while (players.get(getCurrentPlayerId()).getPlayerStatus() != PlayerStatus.WAITING) {
+        long activePlayers = playersQueue.stream().filter(id -> players.get(id).getPlayerStatus() == PlayerStatus.WAITING).count();
+
+        while (activePlayers > 0 && players.get(getCurrentPlayerId()).getPlayerStatus() != PlayerStatus.WAITING) {
+            logger.info("while in game state");
             currentPlayerIndex = (currentPlayerIndex + 1) % playersQueue.size();
         }
+        players.entrySet().stream().forEach(e -> e.getValue().setPlayerStatus(PlayerStatus.WAITING)); // todo what about playerStatus.LOST ?
+        System.out.println("on turn: "+ getCurrentPlayerId());
         players.get(getCurrentPlayerId()).setPlayerStatus(PlayerStatus.PLAYING);
     }
-
     public void changeGameState(PlayerMoveRequest playerMove) {
         players.get(playerMove.getPlayerId())
                 .updatePlayerAfterMove(playerMove.getXCoordinate(), playerMove.getYCoordinate(), playerMove.getVector().getX(), playerMove.getVector().getY(),
