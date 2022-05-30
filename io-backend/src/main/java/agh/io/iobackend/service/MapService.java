@@ -129,4 +129,11 @@ public class MapService {
                 .collect(
                         toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2, LinkedHashMap::new));
     }
+
+    public GameMap getRandomMap() {
+        List<GameMap> gameMapList = mapRepository.findAll();
+        int randIdx = new Random().nextInt(gameMapList.size());
+        return gameMapList.get(randIdx);
+    }
+
 }

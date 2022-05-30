@@ -9,10 +9,7 @@ import agh.io.iobackend.exceptions.NoGameFoundException;
 import agh.io.iobackend.model.game.Game;
 import agh.io.iobackend.model.game.GameRoom;
 import agh.io.iobackend.model.user.User;
-import agh.io.iobackend.service.GameRoomService;
-import agh.io.iobackend.service.GameService;
-import agh.io.iobackend.service.MapService;
-import agh.io.iobackend.service.UserService;
+import agh.io.iobackend.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 @RestController
@@ -30,8 +26,8 @@ import java.util.stream.Collectors;
 @CrossOrigin
 @Transactional // for tests, because of "org.hibernate.LazyInitializationException"
 public class GameRoomController {
-    private static final Logger logger = LoggerFactory.getLogger(GameController.class);
 
+    private static final Logger logger = LoggerFactory.getLogger(GameRoomController.class);
 
     @Autowired
     private GameRoomService gameRoomService;
@@ -44,6 +40,9 @@ public class GameRoomController {
 
     @Autowired
     private MapService mapService;
+
+    @Autowired
+    private RandomGameService randomGameService;
 
 
     //TODO gdy GameMaster wychodzi powinno chyba zamykac pokoj, bo gracz i tak nie moze rozpoczac
@@ -68,6 +67,15 @@ public class GameRoomController {
 
         return ResponseEntity.ok(gameRoomResponse);
     }
+
+
+    @CrossOrigin
+    @PostMapping("/random")
+    public ResponseEntity<Long> joinRandomRoom(){ // zwraca game room id
+        logger.info("Joining Random Room");
+        return ResponseEntity.ok().body(randomGameService.joinRandomRoom(userService.getCurrentUser().getUserId()));
+    }
+
 
     @CrossOrigin
     @GetMapping("/{id}") // room id
