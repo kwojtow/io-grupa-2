@@ -69,6 +69,7 @@ public class RandomGameService {
         }
 
         GameRoom newGameRoom = new GameRoom(mapService.getRandomMap(), 5, 10, userId);
+        newGameRoom.addPlayer(userService.getUserById(userId).get());
         rooms.put(category, newGameRoom);
         return gameRoomRepository.save(newGameRoom).getGameRoomID();
     }
