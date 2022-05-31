@@ -1,8 +1,8 @@
 package agh.io.iobackend.controller;
 
-import agh.io.iobackend.controller.payload.JwtResponse;
-import agh.io.iobackend.controller.payload.SigninRequest;
-import agh.io.iobackend.controller.payload.SignupRequest;
+import agh.io.iobackend.controller.payload.auth.JwtResponse;
+import agh.io.iobackend.controller.payload.auth.SigninRequest;
+import agh.io.iobackend.controller.payload.auth.SignupRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

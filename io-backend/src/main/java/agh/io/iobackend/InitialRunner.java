@@ -1,11 +1,12 @@
 package agh.io.iobackend;
 
-import agh.io.iobackend.model.Game;
-import agh.io.iobackend.model.GameRoom;
-import agh.io.iobackend.model.User;
+
 import agh.io.iobackend.model.Vector;
+import agh.io.iobackend.model.game.Game;
+import agh.io.iobackend.model.game.GameRoom;
 import agh.io.iobackend.model.map.GameMap;
 import agh.io.iobackend.model.map.MapStructure;
+import agh.io.iobackend.model.user.User;
 import agh.io.iobackend.service.GameRoomService;
 import agh.io.iobackend.service.GameService;
 import agh.io.iobackend.service.MapService;
@@ -16,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class InitialRunner implements CommandLineRunner {
@@ -83,9 +85,9 @@ public class InitialRunner implements CommandLineRunner {
 
         gameRoomService.createGameRoom(gameRoom);
 
-        Game game = new Game(gameRoom.getGameRoomID(), gameMap.getMapId(), user2.getUserId());
+        Game game = new Game(gameRoom.getGameRoomID(), gameMap.getMapId());
 
-        gameService.createGame(gameRoom);
+        gameService.createGame(game);
 
         System.out.println("User id: " + user.getUserId());
         System.out.println(user);
