@@ -60,8 +60,10 @@ public class GameController {
         }
     }
 
+    // TODO Add here parameter, with winning player id
     @DeleteMapping("/{id}/state")
     public ResponseEntity<String> endGame(@PathVariable Long id) {
+        System.out.println("[Info] ++++++++++++++ GAME ENDED +++++++++++");
         try {
             gameService.endGame(id);
         } catch (NoGameFoundException e) {

@@ -77,6 +77,15 @@ public class GameService {
         game.changeGameState(playerMove);
     }
 
+    // TODO Calculate reward here, and update winners ranking points
+    //
+    // Can calculate ranking points with a function:
+    //
+    //      ranking_fun(z) = 100 * (1 - softmax_pow(z / max(z), 0.5))
+    //
+    // where softmax_pow is a softmax with exp() substituted by power(x, 0.5)
+    // this ranking_fun() calculates rewards for each player in case of his win,
+    // but in our use case, we should only update the winners ranking points
     public void endGame(Long gameId) throws NoGameFoundException, GameRoomNotFoundException {
         Game game = getGameFromRepo(gameId);
         Long gameRoomId = game.getGameRoomId();
