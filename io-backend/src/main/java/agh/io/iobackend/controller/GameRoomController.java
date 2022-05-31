@@ -167,7 +167,7 @@ public class GameRoomController {
         try {
             GameRoom gameRoom = gameRoomService.getGameRoom(id);
             if (userService.getUserById(user).isPresent()) {
-                if (gameRoom.getLimitOfPlayers() > gameRoom.getUserList().size()) {
+                if (gameRoom.getLimitOfPlayers() > gameRoom.getUserList().size() && !gameRoom.getGameStarted()) {
                     gameRoom.addPlayer(userService.getUserById(user).get());
                     return ResponseEntity.ok("User added");
                 }
@@ -180,7 +180,7 @@ public class GameRoomController {
         } catch (GameRoomNotFoundException e) {
             return ResponseEntity.badRequest().body("No room");
         }
-        return ResponseEntity.badRequest().body("Cannot add user - too many players");
+        return ResponseEntity.badRequest().body("Cannot add user :(");
     }
 
     @CrossOrigin
