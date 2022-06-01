@@ -82,7 +82,7 @@ export class MapService {
     };
     sendRate(mapId : number, rate : number){
       return this.http.post<any>("http://localhost:8080/map/rating/" + mapId + "?rating=" + rate,
-       {}, 
+       {},
        this.httpOptions2)
       .pipe(
         catchError(this.handleError)
@@ -153,8 +153,6 @@ export class MapService {
         this.canvas.removeAllListeners('mousemove');
         this.canvas.removeAllListeners('click');
         let currentPlayer = players.find(p => p.playerId === player.playerId);
-        console.log(players)
-        console.log(currentPlayer)
         if(isMyTurn && currentPlayer !== null)
           this.drawPlayerVectors(this._canvas, this._ctx, map, currentPlayer);
       }
@@ -285,7 +283,7 @@ export class MapService {
   private onObstacle(vector: Vector, map: RaceMap): boolean {
     const obstacles = map.obstacles;
     const players = MapService.game.players;
-    if(vector.x < 0 || vector.y < 0 
+    if(vector.x < 0 || vector.y < 0
       || vector.x > map.mapWidth || vector.y > map.mapHeight) return true;
     for(let obstacle of obstacles) {
       if(obstacle.equals(vector)) return true;
@@ -324,7 +322,7 @@ export class MapService {
       const diff_y = Math.abs(playerPosition.y - vector.y);
       if (diff_x == diff_y) {
         for(let i = playerPosition.x, j  = playerPosition.y; i != vector.x +pos_x && j != vector.y+pos_y; i += pos_x, j += pos_y) {
-          if(this.onObstacle(new Vector(i, j), map) || ( this.onObstacle(new Vector(i - pos_x, j), map) && 
+          if(this.onObstacle(new Vector(i, j), map) || ( this.onObstacle(new Vector(i - pos_x, j), map) &&
           this.onObstacle(new Vector(i, j - pos_y), map))) {
             if(!(this.onObstacle(new Vector(i, j), map) && playerPosition.equals(new Vector(i, j)))) return true;
           }
@@ -337,7 +335,7 @@ export class MapService {
           for(let i = 0; i < diff_y-1; ++i) {
             let vec = new Vector(playerPos.x + Math.ceil(diff_div * i * pos_x), playerPos.y + (i * pos_y))
             if(this.onObstacle(vec, map)
-            || (this.onObstacle(new Vector(vec.x - pos_x, vec.y), map) 
+            || (this.onObstacle(new Vector(vec.x - pos_x, vec.y), map)
                && this.onObstacle(new Vector(vec.x, vec.y - pos_y), map))) return true;
           }
           return false;
@@ -346,7 +344,7 @@ export class MapService {
           for(let i = 0; i < diff_x-1; ++i) {
             let vec = new Vector(playerPos.x + (i * pos_x), playerPos.y + Math.ceil(diff_div * i * pos_y));
             if(this.onObstacle(vec, map)
-            || (this.onObstacle(new Vector(vec.x - pos_x, vec.y), map) 
+            || (this.onObstacle(new Vector(vec.x - pos_x, vec.y), map)
                && this.onObstacle(new Vector(vec.x, vec.y - pos_y), map))) return true;
           }
           return false;

@@ -49,8 +49,6 @@ export class GameComponent implements OnInit, OnDestroy {
     this.gameSubscription = timer(0, this._gameService.REFRESH_TIME) // GET game state in every 0.5s
       .pipe(mergeMap(() => this._gameService.getGameState(this.gameId))) // to test: getMockGameState()
       .subscribe(playersStates => {
-          console.log('update')
-
           this.playersList = this._gameService.updatePlayersStates(playersStates);
         this.currentPlayer = this._gameService.updateCurrentPlaying(this.playersList);
         this._gameService.updateMap(this.playersList);

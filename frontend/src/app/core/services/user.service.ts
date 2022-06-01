@@ -49,7 +49,6 @@ export class UserService {
   }
 
   public convertImage(image: string){
-    console.log(image);
     return this.sanitizer.bypassSecurityTrustResourceUrl('data:image/jpg;base64,'+ image);
   }
 
