@@ -47,6 +47,8 @@ public class GameController {
             playersList = gameService.getPlayerStatesList(id);
         } catch (NoGameFoundException e) {
             return ResponseEntity.badRequest().body(null);
+        } catch (GameRoomNotFoundException e) {
+            e.printStackTrace();
         }
         return ResponseEntity.ok(playersList);
     }

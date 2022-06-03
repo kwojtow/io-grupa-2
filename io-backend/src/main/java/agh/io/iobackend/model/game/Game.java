@@ -90,27 +90,35 @@ public class Game {
     }
 
     private void nextPlayerTurn() {
+        // the player that was playing now
         int oldIndex = currentPlayerIndex;
-        currentPlayerIndex = (currentPlayerIndex + 1) % playersQueue.size();
-        logger.info("playersQueue: " + playersQueue);
 
-        Stream<Long> activePlayers = playersQueue.stream().filter(id -> players.get(id).getPlayerStatus() == PlayerStatus.WAITING);
-        long activePlayersCount = activePlayers.count();
-        if (activePlayersCount == 1){
-            logger.info("end of game");
-            players.get(activePlayers.findFirst().get()).setPlayerStatus(PlayerStatus.WON);
+        // next player that should play
+        currentPlayerIndex = (currentPlayerIndex + 1) % playersQueue.size();
+
+        // WON from frontend --- if someone got the end or all the other players lost
+        if (playersQueue.stream().anyMatch(id -> players.get(id).getPlayerStatus() == PlayerStatus.WON)) {
+            long winner = playersQueue.stream().filter(id -> players.get(id).getPlayerStatus() == PlayerStatus.WON).findAny().get();
+
+            //set all other players status to LOST (some of them can have this status already)
+            players.entrySet().stream().filter(id -> id.getKey() != winner).forEach(e -> e.getValue().setPlayerStatus(PlayerStatus.LOST));
         }
 
-        while (activePlayersCount > 0 && players.get(getCurrentPlayerId()).getPlayerStatus() != PlayerStatus.WAITING) {
+        // all the players that are waiting
+        Stream<Long> activePlayers = playersQueue.stream().filter(id -> players.get(id).getPlayerStatus() == PlayerStatus.WAITING);
+
+        long activePlayersCount = activePlayers.count();
+
+        while (activePlayersCount > 0 && players.get(getCurrentPlayerId()).getPlayerStatus() != PlayerStatus.WAITING) { //waits for the first waiting
             logger.info("while in game state");
             currentPlayerIndex = (currentPlayerIndex + 1) % playersQueue.size();
         }
 
         players.get(playersQueue.get(oldIndex)).setPlayerStatus(PlayerStatus.WAITING);
-//        players.entrySet().stream().forEach(e -> e.getValue().setPlayerStatus(PlayerStatus.WAITING));
         System.out.println("on turn: " + getCurrentPlayerId());
         players.get(getCurrentPlayerId()).setPlayerStatus(PlayerStatus.PLAYING);
     }
+
     public void changeGameState(PlayerMoveRequest playerMove) {
         players.get(playerMove.getPlayerId())
                 .updatePlayerAfterMove(playerMove.getXCoordinate(), playerMove.getYCoordinate(), playerMove.getVector().getX(), playerMove.getVector().getY(),
