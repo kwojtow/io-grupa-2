@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
+//@Component
 public class InitialRunner implements CommandLineRunner {
     @Autowired
     private PasswordEncoder encoder;
