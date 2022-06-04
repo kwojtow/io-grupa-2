@@ -3,8 +3,7 @@ package agh.io.iobackend.service;
 import agh.io.iobackend.model.map.GameMap;
 import agh.io.iobackend.model.map.MapRating;
 import agh.io.iobackend.model.user.User;
-import agh.io.iobackend.repository.GameMapRatingsRepository;
-import agh.io.iobackend.repository.MapRepository;
+import agh.io.iobackend.repository.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +24,15 @@ public class MapService {
 
     @Autowired
     private GameMapRatingsRepository gameMapRatingsRepository;
+
+    @Autowired
+    private GameMapHistoryRepository gameMapHistoryRepository;
+
+    @Autowired
+    private GameRoomRepository gameRoomRepository;
+
+    @Autowired
+    private GameRepository gameRepository;
 
     @Autowired
     private StatisticsService statisticsService;
@@ -73,10 +81,18 @@ public class MapService {
         }
     }
 
-    public void removeMapById(Long mapId) {
+    public boolean removeMapById(Long mapId) {
         logger.info("removeMapById");
         Optional<GameMap> gameMap = mapRepository.findById(mapId);
-        gameMap.ifPresent(map -> mapRepository.delete(map));
+        if (gameMap.isPresent()) {
+            GameMap map = gameMap.get();
+            if (!gameMapHistoryRepository.existsByMap(map) && !gameMapRatingsRepository.existsByMap(map)
+                    && !gameRepository.existsByGameMap(map) && !gameRoomRepository.existsByGameMap(map)) {
+                mapRepository.delete(gameMap.get());
+                return true;
+            }
+        }
+        return false;
     }
 
     public List<GameMap> getMapsCreatedByUser(Long userId) {
