@@ -25,8 +25,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
   );
   chosenCategory = this.mapListsCategories[0];
   chosenMap: MapWithStats;
-  allGames = 5;// TODO: map stats
-  mapRate = '9.5/10';
+  allGames: number
+  mapRate: number
   avatar: SafeResourceUrl;
   file: File = null;
 
@@ -56,6 +56,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
           this.mapList = mapList
           if(this.mapList.length > 0) MapService.map.next(this.mapList[0].raceMap);
           this.chosenMap = mapList.filter(map => map.raceMap.mapId === MapService.map.getValue().mapId).shift();
+          this.setMapStats(this.chosenMap.raceMap.mapId);
+
           // for(let i = 0 ; i < 10; i ++){
           //   this.mapList.push(new MapWithStats(new RaceMap(i+10, 'map' + i, 1, 60, 30, [], [], []), 10))
           // }
@@ -90,9 +92,14 @@ export class ProfileComponent implements OnInit, OnDestroy {
   changeMap(selectRef: number) {
     MapService.map.next(this.mapList[this.mapList.findIndex(map => map.raceMap.mapId === selectRef)].raceMap);
     this.chosenMap = this.mapList.filter(map => map.raceMap.mapId === MapService.map.getValue().mapId).shift();
-
+    this.setMapStats(this.chosenMap.raceMap.mapId);
   }
-
+  setMapStats(mapId: number){
+    this._mapService.getMap(mapId).subscribe(mapResponse => {
+      this.mapRate = mapResponse.rating;
+      this.allGames = mapResponse.gamesPlayed;
+    })
+  }
   changeMapCategory(selectRef: string) {
 
     this.chosenCategory = selectRef;

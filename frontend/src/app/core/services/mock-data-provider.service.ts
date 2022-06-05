@@ -78,7 +78,7 @@ export class MockDataProviderService {
   }
   static mapPlayersToPlayersStates(players: Array<Player>): Array<PlayerState>{
     return players.map(player => {
-      return new PlayerState(player.playerId, player.playerStatus, player.position.x, player.position.y);
+      return new PlayerState(player.playerId, player.playerStatus, player.position.x, player.position.y, new Vector(1,1));
     });
   }
   constructor() {
