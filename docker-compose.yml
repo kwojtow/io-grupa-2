@@ -5,26 +5,8 @@ services:
     image: 'race-game.jar'
     ports:
       - "8080:8080"
-    depends_on:
-      - PostgreSQL
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://PostgreSQL:5432/postgres
-      - SPRING_DATASOURCE_USERNAME=test
-      - SPRING_DATASOURCE_PASSWORD=test
-      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
-
-  PostgreSQL:
-    image: postgres
-    ports:
-      - "5432:5432"
-    environment:
-      - POSTGRES_PASSWORD=test
-      - POSTGRES_USER=test
-      - POSTGRES_DB=postgres
 
   frontend:
     build: frontend
     ports:
       - "4200:80"
-    depends_on:
-      - backend

@@ -19,7 +19,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-//@Component
+@Component
 public class InitialRunner implements CommandLineRunner {
     @Autowired
     private PasswordEncoder encoder;
@@ -89,11 +89,11 @@ public class InitialRunner implements CommandLineRunner {
 
         gameService.createGame(game);
 
-        System.out.println("User id: " + user.getUserId());
-        System.out.println(user);
-        System.out.println("User id: " + user2.getUserId());
-        System.out.println(user2);
-        System.out.println("Map id: " + gameMap.getMapId());
-        System.out.println("Game Room id: " + gameRoom.getGameRoomID());
+//        System.out.println("User id: " + user.getUserId());
+//        System.out.println(user);
+//        System.out.println("User id: " + user2.getUserId());
+//        System.out.println(user2);
+//        System.out.println("Map id: " + gameMap.getMapId());
+//        System.out.println("Game Room id: " + gameRoom.getGameRoomID());
     }
 }
