@@ -153,7 +153,8 @@ public class GameRoomController {
         }
         if (gameRoom.getUserList().size() == 0 || Objects.equals(gameRoom.getGameMasterID(), user)){
             try {
-                gameService.endGame(gameRoom.getGame().getGameId());
+                if(gameRoom.getGameStarted())
+                    gameService.endGame(id);
                 gameRoomService.deleteGameRoom(id);
             } catch (GameRoomNotFoundException e){
                 logger.error("No room");
