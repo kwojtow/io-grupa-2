@@ -18,6 +18,12 @@ public class GameRoomService {
     @Autowired
     private GameRoomRepository gameRoomRepository;
 
+    @Autowired
+    private RandomGameService randomGameService;
+
+    @Autowired
+    private UserService userService;
+
     public GameRoom createGameRoom(GameRoom gameRoom) {
         return gameRoomRepository.save(gameRoom);
     }
@@ -47,9 +53,15 @@ public class GameRoomService {
     }
 
     public GameRoom getGameRoom(Long id) throws GameRoomNotFoundException {
-        logger.info("get game room");
+//        logger.info("get game room");
         Optional<GameRoom> gameRoom = gameRoomRepository.findByGameRoomID(id);
         if (gameRoom.isPresent()) {
+            if(gameRoom.get().getRandom()){
+                GameRoom newGameRoom = randomGameService.joinAfterTimeout(userService.getCurrentUser());
+                if (newGameRoom != null){
+                    return newGameRoom;
+                }
+            }
             return gameRoom.get();
         } else {
             throw new GameRoomNotFoundException(

@@ -1,12 +1,17 @@
 package agh.io.iobackend.service;
 
 import agh.io.iobackend.model.game.GameRoom;
+import agh.io.iobackend.model.user.User;
 import agh.io.iobackend.repository.GameRoomRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class RandomGameService {
@@ -21,6 +26,8 @@ public class RandomGameService {
     2500    1001 - 2500
     5000    2501 - 5000
     5000+   for users with more than 5000 points
+
+    -1      for users that don't want to wait for others in their category
      */
 
 
@@ -36,9 +43,15 @@ public class RandomGameService {
     @Autowired
     private UserService userService;
 
+    private static final Logger logger = LoggerFactory.getLogger(RandomGameService.class);
 
-    private final Map<Long, GameRoom> rooms = new HashMap<>();
+    private final Map<Long, Long> rooms = new HashMap<>(); // category -> roomId
 
+    private final Map<Long, Long> joiningTimes = new HashMap<>(); // userId -> time; to store time when user joined random game
+
+    private final Long defaultRoomCategory = -1L;
+
+    private Long timeoutMilliseconds = 1000L * 30; // 30 seconds todo
 
     private Long getCategory(int points) {
         if (points == 0) return 0L;
@@ -51,26 +64,100 @@ public class RandomGameService {
         return 1000000L;
     }
 
+    public void setTimeoutMilliseconds(Long milliseconds){
+        this.timeoutMilliseconds = milliseconds;
+    }
 
     public Long joinRandomRoom(Long userId) {
+
+        joiningTimes.put(userId, new Date().getTime());
 
         int points = statisticsService.getUserRanks(userId).getPoints();
         Long category = getCategory(points);
 
-        GameRoom gameRoom = rooms.get(category);
-        boolean gameRoomAvailable = false;
-        if (gameRoom != null) {
-            gameRoomAvailable = !gameRoom.getGameStarted() && gameRoom.getUserList().size() < gameRoom.getLimitOfPlayers();
-        }
+        Long gameRoomId = rooms.get(category);
 
-        if (gameRoomAvailable) {
-            rooms.get(category).addPlayer(userService.getUserById(userId).get());
+        if (isGameRoomAvailable(gameRoomId)) {
+            GameRoom gameRoom = gameRoomRepository.findByGameRoomID(gameRoomId).get();
+            gameRoom.addPlayer(userService.getUserById(userId).get());
+            gameRoomRepository.save(gameRoom);
             return gameRoom.getGameRoomID();
         }
 
+        Long newGameRoomId = getNewGameRoom(userId);
+        rooms.put(category, newGameRoomId);
+        return newGameRoomId;
+    }
+
+    private boolean isGameRoomAvailable(Long gameRoomId) {
+        Optional<GameRoom> gameRoomOpt = gameRoomRepository.findByGameRoomID(gameRoomId);
+        if (gameRoomOpt.isPresent()) {
+            GameRoom gameRoom = gameRoomOpt.get();
+            return !gameRoom.getGameStarted() && gameRoom.getUserList().size() < gameRoom.getLimitOfPlayers();
+        }
+        return false;
+    }
+
+    private Long getNewGameRoom(Long userId) {
+        // todo get random map for 5+ users
         GameRoom newGameRoom = new GameRoom(mapService.getRandomMap(), 5, 10, userId);
         newGameRoom.addPlayer(userService.getUserById(userId).get());
-        rooms.put(category, newGameRoom);
+        newGameRoom.setRandom(true);
         return gameRoomRepository.save(newGameRoom).getGameRoomID();
     }
+
+    public GameRoom joinAfterTimeout(User user) {
+
+        if (joiningTimes.get(user.getUserId()) == null) {
+            return null;
+        }
+
+        if (joiningTimes.get(user.getUserId()) + timeoutMilliseconds > new Date().getTime()) {
+            return null;
+        }
+
+        Long defaultGameRoomId = rooms.get(defaultRoomCategory);
+        if (defaultGameRoomId != null) {
+            Optional<GameRoom> defaultGameRoom = gameRoomRepository.findByGameRoomID(defaultGameRoomId);
+            if (defaultGameRoom.isPresent() && defaultGameRoom.get().getUserList().contains(user)) {
+                return null;
+            }
+        }
+
+        for (Long gameRoomId : rooms.values()) {
+            GameRoom gameRoom = gameRoomRepository.findByGameRoomID(gameRoomId).get();
+            if (gameRoom.getGameMasterID().equals(user.getUserId())) {
+                return null;
+            }
+            if (gameRoom.getUserList().contains(user)) {
+                gameRoom.removePlayer(user);
+                gameRoomRepository.save(gameRoom);
+                logger.info("User " + user.getUserId() + " is being deleted from game room with id: " + gameRoomId);
+                break;
+            }
+        }
+
+        Optional<GameRoom> defaultGameRoom = gameRoomRepository.findByGameRoomID(defaultGameRoomId);
+        if (isGameRoomAvailable(defaultGameRoomId)) {
+            defaultGameRoom.get().addPlayer(user);
+            gameRoomRepository.save(defaultGameRoom.get());
+            return defaultGameRoom.get();
+        }
+
+        Long newGameRoomId = getNewGameRoom(user.getUserId());
+        logger.info("User " + user.getUserId() + " is joining default game room with id: " + newGameRoomId);
+        rooms.put(defaultRoomCategory, newGameRoomId);
+        return gameRoomRepository.getById(newGameRoomId);
+    }
+
+    public Long getRandomGameRoomId(User user) {
+        Optional<GameRoom> gameRoomOpt = gameRoomRepository.findByGameRoomID(rooms.get(defaultRoomCategory));
+        if (gameRoomOpt.isPresent()) {
+            if (gameRoomOpt.get().getUserList().contains(user)) {
+                return gameRoomOpt.get().getGameRoomID();
+            }
+        }
+        return -1L;
+    }
+
 }

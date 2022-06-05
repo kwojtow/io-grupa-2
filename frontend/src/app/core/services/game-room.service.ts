@@ -46,6 +46,11 @@ export class GameRoomService {
     return this.http.get<number>("http://localhost:8080/game-room/" + roomId + "/game-started", this.httpOptions);
   }
 
+  getRandomGameRoomId() : Observable<number> {
+    console.log("get random game room id")
+    return this.http.get<number>("http://localhost:8080/game-room/random", this.httpOptions);
+  }
+
   createGameRoom(mapId: number, playersLimit: number, roundTime: number, gameMasterId: number) : Observable<GameRoomResponse>{
 
 

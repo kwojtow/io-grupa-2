@@ -187,7 +187,14 @@ export class GameRoomComponent implements OnInit {
         }
       }
       if(!data.map(user => user.userId).includes(this.userService.getCurrentLoggedUserId())){
-        this.router.navigate(["/start"])
+        this.gameRoomService.getRandomGameRoomId().subscribe( (id: number) => {
+          if (id != -1) {
+            this.router.navigate(['game-room', id]);
+            this.gameRoomId = id;
+            this.ngOnInit();
+          }
+          else this.router.navigate(["/start"]);
+        })
       }
     });
   }

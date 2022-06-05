@@ -76,6 +76,13 @@ public class GameRoomController {
         return ResponseEntity.ok().body(randomGameService.joinRandomRoom(userService.getCurrentUser().getUserId()));
     }
 
+    @CrossOrigin
+    @GetMapping("/random")
+    public ResponseEntity<Long> getRandomRoom(){ // zwraca game room id, ale w przypadku przekierowania do innego pokoju
+        logger.info("Get Random Room");
+        return ResponseEntity.ok().body(randomGameService.getRandomGameRoomId(userService.getCurrentUser()));
+    }
+
 
     @CrossOrigin
     @GetMapping("/{id}") // room id
@@ -88,7 +95,7 @@ public class GameRoomController {
         }
 
         GameRoomResponse gameRoomResponse = new GameRoomResponse();
-        gameRoomResponse.setRoomId(id);
+        gameRoomResponse.setRoomId(id); // todo tu mogę zmienić mu id pokoju tylko wtedy na froncie trzeba przeładować to
         gameRoomResponse.setGameMasterId(gameRoom.getGameMasterID());
         gameRoomResponse.setRoundTime(gameRoom.getRoundTime());
         gameRoomResponse.setPlayersLimit(gameRoom.getLimitOfPlayers());
@@ -141,6 +148,7 @@ public class GameRoomController {
         } catch (GameRoomNotFoundException e) {
             return ResponseEntity.badRequest().body(null);
         }
+        logger.info("Game room id: " + id + " users size: " + gameRoom.getUserList().size());
         return ResponseEntity.ok(new ArrayList<>(gameRoom.getUserList()));
     }
 
@@ -170,6 +178,7 @@ public class GameRoomController {
     @CrossOrigin
     @PostMapping("/{id}/users-list/{user}") // room id
     public ResponseEntity<String> joinGameRoom(@PathVariable Long id, @PathVariable Long user) {
+        logger.info("Joining game room " + id + " user: " + user);
         try {
             GameRoom gameRoom = gameRoomService.getGameRoom(id);
             if (userService.getUserById(user).isPresent()) {
