@@ -15,7 +15,7 @@ Run following in the `io-backend` directory:
 mvn install -DskipTests
 ```
 #### III Use docker-compose to build application
-Run in the `io-project` directory:
+`cd ..` to the project root directory (`io-grupa-a`) and run:
 ```
 docker-compose up
 ```
