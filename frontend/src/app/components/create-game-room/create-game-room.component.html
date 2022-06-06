@@ -52,7 +52,7 @@
               class="form-select form-select-sm"
               formControlName="map"
             >
-              <option *ngFor="let map of this.mapDatas">{{ map.name }}</option>
+              <option #filteredMaps *ngFor="let map of (this.mapDatas | minPlayers: mapOptionsForm.value.maxGamersNumber)">{{ map.name }}</option>
             </select>
           </div>
           <app-map class="w-100"></app-map>
