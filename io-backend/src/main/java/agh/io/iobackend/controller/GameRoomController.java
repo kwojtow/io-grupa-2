@@ -94,7 +94,7 @@ public class GameRoomController {
         }
 
         GameRoomResponse gameRoomResponse = new GameRoomResponse();
-        gameRoomResponse.setRoomId(id); // todo tu mogę zmienić mu id pokoju tylko wtedy na froncie trzeba przeładować to
+        gameRoomResponse.setRoomId(id);
         gameRoomResponse.setGameMasterId(gameRoom.getGameMasterID());
         gameRoomResponse.setRoundTime(gameRoom.getRoundTime());
         gameRoomResponse.setPlayersLimit(gameRoom.getLimitOfPlayers());
@@ -141,7 +141,6 @@ public class GameRoomController {
     @CrossOrigin
     @GetMapping("/{id}/users-list/{userId}") // room id
     public ResponseEntity<List<User>> getUserListInRoom(@PathVariable Long id, @PathVariable Long userId) {
-        logger.info("getUserListInRoom");
         GameRoom gameRoom = null;
         try {
             gameRoom = gameRoomService.getGameRoom(id);
@@ -184,7 +183,6 @@ public class GameRoomController {
     @CrossOrigin
     @PostMapping("/{id}/users-list/{user}") // room id
     public ResponseEntity<String> joinGameRoom(@PathVariable Long id, @PathVariable Long user) {
-        logger.info("Joining game room " + id + " user: " + user);
         try {
             GameRoom gameRoom = gameRoomService.getGameRoom(id);
             if (userService.getUserById(user).isPresent()) {

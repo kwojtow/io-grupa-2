@@ -30,7 +30,6 @@ public class RandomGameService {
     -1      for users that don't want to wait for others in their category
      */
 
-    // todo przekierowanie po timeout raczej na pewno nie działa jak drugi raz chcemy zagrać na tych samych użytkownikach, bo ta gra dalej zawiera gracza chyab
 
     @Autowired
     private StatisticsService statisticsService;
