@@ -40,8 +40,8 @@ class RandomGameServiceTest {
         mapService.clearMapRatings();
         mapService.clearMaps();
 
-        User user1 = User.builder().login("login1").email("email1").build();
-        User user2 = User.builder().login("login2").email("email2").build();
+        User user1 = User.builder().login("user-login1").email("user1@email1").build();
+        User user2 = User.builder().login("user-login2").email("user2@email2").build();
 
         user1Id = userService.addUser(user1).getUserId();
         user2Id = userService.addUser(user2).getUserId();
@@ -49,6 +49,8 @@ class RandomGameServiceTest {
 
         ArrayList<Vector> finishLine = new ArrayList<>();
         ArrayList<Vector> startLine = new ArrayList<>();
+        startLine.add(new Vector(2,2));
+        startLine.add(new Vector(1,1));
         ArrayList<Vector> obstacles = new ArrayList<>();
 
         MapStructure mapStructure = new MapStructure(finishLine, startLine, obstacles);
@@ -74,6 +76,8 @@ class RandomGameServiceTest {
 
     @Test
     void joinRandomGame() {
+        randomGameService.setPlayersLimit(2);
+
         Long roomId = randomGameService.joinRandomRoom(user1Id);
         assertEquals(1, gameRoomRepository.findByGameRoomID(roomId).get().getUserList().size());
         roomId = randomGameService.joinRandomRoom(user2Id);

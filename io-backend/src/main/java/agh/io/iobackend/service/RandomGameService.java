@@ -53,7 +53,7 @@ public class RandomGameService {
 
     private Long timeoutMilliseconds = 1000L * 30; // 30 seconds
 
-    private final int playersLimit = 3;
+    private int playersLimit = 3;
 
     private Long getCategory(int points) {
         if (points == 0) return 0L;
@@ -68,6 +68,10 @@ public class RandomGameService {
 
     public void setTimeoutMilliseconds(Long milliseconds) {
         this.timeoutMilliseconds = milliseconds;
+    }
+
+    public void setPlayersLimit(int playersLimit) {
+        this.playersLimit = playersLimit;
     }
 
     public Long joinRandomRoom(Long userId) {
@@ -127,7 +131,7 @@ public class RandomGameService {
 
         for (Long gameRoomId : rooms.values()) {
             GameRoom gameRoom = gameRoomRepository.findByGameRoomID(gameRoomId).get();
-            if (gameRoom.getGameStarted()){
+            if (gameRoom.getGameStarted()) {
                 continue;
             }
             if (gameRoom.getGameMasterID().equals(user.getUserId())) {
