@@ -28,7 +28,8 @@ export class StartPageComponent implements OnInit {
         'Authorization': "Bearer " + JSON.parse(localStorage.getItem("jwtResponse")).token,
       })
     };
-    this.http.post<number>("http://localhost:8080/game-room/random", {}, httpOptions).subscribe(roomId =>
+    let userId = JSON.parse(localStorage.getItem("jwtResponse")).id;
+    this.http.post<number>("http://localhost:8080/game-room/random/" + userId, {}, httpOptions).subscribe(roomId =>
       this.router.navigate(['game-room', roomId])
     );
   }

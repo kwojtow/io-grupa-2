@@ -146,8 +146,15 @@ public class MapService {
                         toMap(Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e2, LinkedHashMap::new));
     }
 
-    public GameMap getRandomMap() {
-        List<GameMap> gameMapList = mapRepository.findAll();
+    public GameMap getRandomMap(int minPlayers) {
+        List<GameMap> gameMapList = mapRepository
+                .findAll()
+                .stream()
+                .filter(gameMap -> gameMap.getMapStructure().getStartLine().size() >= minPlayers)
+                .collect(Collectors.toList());
+
+        if (gameMapList.size() == 1) return gameMapList.get(0);
+
         int randIdx = new Random().nextInt(gameMapList.size());
         return gameMapList.get(randIdx);
     }

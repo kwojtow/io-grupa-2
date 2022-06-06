@@ -24,6 +24,7 @@ export class GameRoomService {
     })
   };
 
+  userId = JSON.parse(localStorage.getItem("jwtResponse")).id;
   idCounter = 0;
   changes: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
@@ -38,7 +39,7 @@ export class GameRoomService {
   }
 
   getPlayers(roomId: number) : Observable<User[]> {
-    return this.http.get<User[]>("http://localhost:8080/game-room/" + roomId + "/users-list", this.httpOptions);
+    return this.http.get<User[]>("http://localhost:8080/game-room/" + roomId + "/users-list/" + this.userId, this.httpOptions);
   }
 
   //zwracane GameId dla gracza
@@ -47,8 +48,7 @@ export class GameRoomService {
   }
 
   getRandomGameRoomId() : Observable<number> {
-    console.log("get random game room id")
-    return this.http.get<number>("http://localhost:8080/game-room/random", this.httpOptions);
+    return this.http.get<number>("http://localhost:8080/game-room/random/" + this.userId, this.httpOptions);
   }
 
   createGameRoom(mapId: number, playersLimit: number, roundTime: number, gameMasterId: number) : Observable<GameRoomResponse>{

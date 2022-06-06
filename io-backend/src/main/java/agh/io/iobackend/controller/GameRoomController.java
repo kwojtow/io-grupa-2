@@ -4,7 +4,6 @@ package agh.io.iobackend.controller;
 import agh.io.iobackend.controller.payload.room.GameRoomRequest;
 import agh.io.iobackend.controller.payload.room.GameRoomResponse;
 import agh.io.iobackend.exceptions.GameRoomNotFoundException;
-
 import agh.io.iobackend.exceptions.NoGameFoundException;
 import agh.io.iobackend.model.game.Game;
 import agh.io.iobackend.model.game.GameRoom;
@@ -70,17 +69,17 @@ public class GameRoomController {
 
 
     @CrossOrigin
-    @PostMapping("/random")
-    public ResponseEntity<Long> joinRandomRoom(){ // zwraca game room id
+    @PostMapping("/random/{userId}")
+    public ResponseEntity<Long> joinRandomRoom(@PathVariable Long userId) { // zwraca game room id
         logger.info("Joining Random Room");
-        return ResponseEntity.ok().body(randomGameService.joinRandomRoom(userService.getCurrentUser().getUserId()));
+        return ResponseEntity.ok().body(randomGameService.joinRandomRoom(userId));
     }
 
     @CrossOrigin
-    @GetMapping("/random")
-    public ResponseEntity<Long> getRandomRoom(){ // zwraca game room id, ale w przypadku przekierowania do innego pokoju
+    @GetMapping("/random/{userId}")
+    public ResponseEntity<Long> getRandomRoom(@PathVariable Long userId) { // zwraca game room id, ale w przypadku przekierowania do innego pokoju
         logger.info("Get Random Room");
-        return ResponseEntity.ok().body(randomGameService.getRandomGameRoomId(userService.getCurrentUser()));
+        return ResponseEntity.ok().body(randomGameService.getRandomGameRoomId(userService.getUserById(userId).get()));
     }
 
 
@@ -140,15 +139,22 @@ public class GameRoomController {
     }
 
     @CrossOrigin
-    @GetMapping("/{id}/users-list") // room id
-    public ResponseEntity<List<User>> getUserListInRoom(@PathVariable Long id) {
+    @GetMapping("/{id}/users-list/{userId}") // room id
+    public ResponseEntity<List<User>> getUserListInRoom(@PathVariable Long id, @PathVariable Long userId) {
+        logger.info("getUserListInRoom");
         GameRoom gameRoom = null;
         try {
             gameRoom = gameRoomService.getGameRoom(id);
+            if (gameRoom.getRandom() && !gameRoom.getGameStarted()) {
+                GameRoom newGameRoom = randomGameService.joinAfterTimeout(userService.getUserById(userId).get());
+                if (newGameRoom != null) {
+                    gameRoom = newGameRoom;
+                }
+            }
         } catch (GameRoomNotFoundException e) {
             return ResponseEntity.badRequest().body(null);
         }
-        logger.info("Game room id: " + id + " users size: " + gameRoom.getUserList().size());
+//        logger.info("Game room id: " + id + " users size: " + gameRoom.getUserList().size() + " requested by: " + userService.getCurrentUser().getUserId());
         return ResponseEntity.ok(new ArrayList<>(gameRoom.getUserList()));
     }
 

@@ -30,6 +30,7 @@ public class RandomGameService {
     -1      for users that don't want to wait for others in their category
      */
 
+    // todo przekierowanie po timeout raczej na pewno nie działa jak drugi raz chcemy zagrać na tych samych użytkownikach, bo ta gra dalej zawiera gracza chyab
 
     @Autowired
     private StatisticsService statisticsService;
@@ -51,7 +52,9 @@ public class RandomGameService {
 
     private final Long defaultRoomCategory = -1L;
 
-    private Long timeoutMilliseconds = 1000L * 30; // 30 seconds todo
+    private Long timeoutMilliseconds = 1000L * 30; // 30 seconds
+
+    private final int playersLimit = 3;
 
     private Long getCategory(int points) {
         if (points == 0) return 0L;
@@ -64,7 +67,7 @@ public class RandomGameService {
         return 1000000L;
     }
 
-    public void setTimeoutMilliseconds(Long milliseconds){
+    public void setTimeoutMilliseconds(Long milliseconds) {
         this.timeoutMilliseconds = milliseconds;
     }
 
@@ -99,8 +102,7 @@ public class RandomGameService {
     }
 
     private Long getNewGameRoom(Long userId) {
-        // todo get random map for 5+ users
-        GameRoom newGameRoom = new GameRoom(mapService.getRandomMap(), 5, 10, userId);
+        GameRoom newGameRoom = new GameRoom(mapService.getRandomMap(playersLimit), playersLimit, 7, userId);
         newGameRoom.addPlayer(userService.getUserById(userId).get());
         newGameRoom.setRandom(true);
         return gameRoomRepository.save(newGameRoom).getGameRoomID();
@@ -119,13 +121,16 @@ public class RandomGameService {
         Long defaultGameRoomId = rooms.get(defaultRoomCategory);
         if (defaultGameRoomId != null) {
             Optional<GameRoom> defaultGameRoom = gameRoomRepository.findByGameRoomID(defaultGameRoomId);
-            if (defaultGameRoom.isPresent() && defaultGameRoom.get().getUserList().contains(user)) {
+            if (defaultGameRoom.isPresent() && defaultGameRoom.get().getUserList().contains(user) && !defaultGameRoom.get().getGameStarted()) {
                 return null;
             }
         }
 
         for (Long gameRoomId : rooms.values()) {
             GameRoom gameRoom = gameRoomRepository.findByGameRoomID(gameRoomId).get();
+            if (gameRoom.getGameStarted()){
+                continue;
+            }
             if (gameRoom.getGameMasterID().equals(user.getUserId())) {
                 return null;
             }
