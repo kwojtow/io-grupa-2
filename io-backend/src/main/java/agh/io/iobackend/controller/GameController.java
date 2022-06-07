@@ -30,7 +30,6 @@ public class GameController {
     public ResponseEntity<String> changePosition(@RequestBody PlayerMoveRequest playerMove, @PathVariable Long id) {
         int xCoordinate = playerMove.getXCoordinate();
         int yCoordinate = playerMove.getYCoordinate();
-
         try {
             gameService.updateGameStateAfterMove(gameService.getGameFromRepo(id), playerMove);
             logger.info("new position:" + xCoordinate + " " + yCoordinate);

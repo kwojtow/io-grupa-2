@@ -118,11 +118,11 @@ public class Game {
             currentPlayerIndex = (currentPlayerIndex + 1) % playersQueue.size();
         }
 
-        if(players.get(playersQueue.get(oldIndex)).getPlayerStatus() == PlayerStatus.PLAYING
-        )
+        if(players.get(playersQueue.get(oldIndex)).getPlayerStatus() == PlayerStatus.PLAYING)
             players.get(playersQueue.get(oldIndex)).setPlayerStatus(PlayerStatus.WAITING);
         System.out.println("on turn: " + getCurrentPlayerId());
-        players.get(getCurrentPlayerId()).setPlayerStatus(PlayerStatus.PLAYING);
+        if(playersQueue.size() > 1)
+            players.get(getCurrentPlayerId()).setPlayerStatus(PlayerStatus.PLAYING);
     }
 
     public void changeGameState(PlayerMoveRequest playerMove) {
