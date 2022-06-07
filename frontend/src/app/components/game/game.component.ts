@@ -70,6 +70,7 @@ export class GameComponent implements OnInit, OnDestroy {
             this.authorizedPlayer.setNewVector(new Vector(0,0));
           }
 
+
           this.playersList = this._gameService.updatePlayersStates(playersStates);
         this.currentPlayer = this._gameService.updateCurrentPlaying(this.playersList);
         this._gameService.updateMap(this.playersList);

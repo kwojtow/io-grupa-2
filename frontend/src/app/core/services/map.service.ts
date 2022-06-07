@@ -82,7 +82,7 @@ export class MapService {
     };
     sendRate(mapId : number, rate : number){
       return this.http.post<any>("http://localhost:8080/map/rating/" + mapId + "?rating=" + rate,
-       {}, 
+       {},
        this.httpOptions2)
       .pipe(
         catchError(this.handleError)
@@ -107,7 +107,13 @@ export class MapService {
   }
 
   deleteMap(mapId: number) {
-      this.http.delete("http://localhost:8080/map/" + mapId, this.httpOptions).subscribe();
+      this.http.delete("http://localhost:8080/map/" + mapId, this.httpOptions).subscribe(
+        _ => _, error => {
+          if (error.status == 400) {
+            alert("Mapa należy do istniejącej rozgrywki - nie może zostać usunięta");
+          }
+        }
+      );
   }
 
   getRank() {
@@ -283,7 +289,7 @@ export class MapService {
   private onObstacle(vector: Vector, map: RaceMap): boolean {
     const obstacles = map.obstacles;
     const players = MapService.game.players;
-    if(vector.x < 0 || vector.y < 0 
+    if(vector.x < 0 || vector.y < 0
       || vector.x > map.mapWidth || vector.y > map.mapHeight) return true;
     for(let obstacle of obstacles) {
       if(obstacle.equals(vector)) return true;

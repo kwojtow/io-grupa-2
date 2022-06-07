@@ -21,9 +21,12 @@ export class Player{
       this._avatar = _avatar
     }
   updateState(newState: PlayerState){
+
+    
     if(newState.playerId === this._playerId){
       this._playerStatus = newState.playerStatus;
       this.position = newState.currentPosition;
+      this.currentVector = newState.currentVector
       }
     }
 

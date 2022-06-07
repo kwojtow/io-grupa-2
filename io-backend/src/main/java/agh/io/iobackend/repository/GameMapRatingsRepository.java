@@ -10,4 +10,5 @@ import java.util.List;
 @Repository
 public interface GameMapRatingsRepository extends JpaRepository<MapRating, Long> {
     List<MapRating> findAllByMap(GameMap map);
+    Boolean existsByMap(GameMap gameMap);
 }
