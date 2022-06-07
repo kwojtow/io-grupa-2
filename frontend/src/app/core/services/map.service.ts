@@ -294,14 +294,14 @@ export class MapService {
     return false;
   }
 
-  public isObstacleOnPathToPosition(playerPosition: Vector, vector: Vector, map: RaceMap): boolean {
+  public isObstacleOnPathToPosition(playerPosition: Vector, vector: Vector, map: RaceMap, onObstacle: CallableFunction = this.onObstacle): boolean {
     const pos_x = (playerPosition.x - vector.x > 0) ? -1 : 1;
     const pos_y = (playerPosition.y - vector.y > 0) ? -1 : 1;
     const playerPos = new Vector(playerPosition.x + pos_x,playerPosition.y + pos_y);
-    if(this.onObstacle(vector, map)) return true;
+    if(onObstacle(vector, map)) return true;
     if(playerPosition.x == vector.x) {
       for(let i = Math.min(playerPos.y, vector.y); i <= Math.max(playerPos.y, vector.y); ++i) {
-        if(this.onObstacle(new Vector(vector.x, i), map)) {
+        if(onObstacle(new Vector(vector.x, i), map)) {
           return true;
         }
       }
@@ -310,7 +310,7 @@ export class MapService {
 
     else if(playerPosition.y == vector.y) {
       for(let i = Math.min(playerPos.x, vector.x); i <= Math.max(playerPos.x, vector.x); ++i) {
-        if(this.onObstacle(new Vector(i, vector.y), map)) {
+        if(onObstacle(new Vector(i, vector.y), map)) {
           return true;
         }
       }
@@ -322,9 +322,9 @@ export class MapService {
       const diff_y = Math.abs(playerPosition.y - vector.y);
       if (diff_x == diff_y) {
         for(let i = playerPosition.x, j  = playerPosition.y; i != vector.x +pos_x && j != vector.y+pos_y; i += pos_x, j += pos_y) {
-          if(this.onObstacle(new Vector(i, j), map) || ( this.onObstacle(new Vector(i - pos_x, j), map) && 
-          this.onObstacle(new Vector(i, j - pos_y), map))) {
-            if(!(this.onObstacle(new Vector(i, j), map) && playerPosition.equals(new Vector(i, j)))) return true;
+          if(onObstacle(new Vector(i, j), map) || ( onObstacle(new Vector(i - pos_x, j), map) && 
+          onObstacle(new Vector(i, j - pos_y), map))) {
+            if(!(onObstacle(new Vector(i, j), map) && playerPosition.equals(new Vector(i, j)))) return true;
           }
         }
         return false;
@@ -334,18 +334,18 @@ export class MapService {
         if(diff_x < diff_y){
           for(let i = 0; i < diff_y-1; ++i) {
             let vec = new Vector(playerPos.x + Math.ceil(diff_div * i * pos_x), playerPos.y + (i * pos_y))
-            if(this.onObstacle(vec, map)
-            || (this.onObstacle(new Vector(vec.x - pos_x, vec.y), map) 
-               && this.onObstacle(new Vector(vec.x, vec.y - pos_y), map))) return true;
+            if(onObstacle(vec, map)
+            || (onObstacle(new Vector(vec.x - pos_x, vec.y), map) 
+               && onObstacle(new Vector(vec.x, vec.y - pos_y), map))) return true;
           }
           return false;
         }
         else{
           for(let i = 0; i < diff_x-1; ++i) {
             let vec = new Vector(playerPos.x + (i * pos_x), playerPos.y + Math.ceil(diff_div * i * pos_y));
-            if(this.onObstacle(vec, map)
-            || (this.onObstacle(new Vector(vec.x - pos_x, vec.y), map) 
-               && this.onObstacle(new Vector(vec.x, vec.y - pos_y), map))) return true;
+            if(onObstacle(vec, map)
+            || (onObstacle(new Vector(vec.x - pos_x, vec.y), map) 
+               && onObstacle(new Vector(vec.x, vec.y - pos_y), map))) return true;
           }
           return false;
         }
@@ -458,6 +458,7 @@ export class MapService {
     const fieldWidth = MapService.getFieldWidth(canvas, map);
     const availableVectors = player.getAvailableVectors();
     const onObstacle = this.onObstacle;
+    const isObstacleOnPath = this.isObstacleOnPathToPosition;
     const drawArrow = this.drawArrow;
 
     canvas.onclick = function(event) {
@@ -496,7 +497,7 @@ export class MapService {
             let isAvailableVector = false;
             for(let vector of player.getAvailableVectorsFromVector(new Vector(availableVectors[i].x - player.position.x,
               availableVectors[i].y - player.position.y))) {
-              if(!onObstacle(vector, map) && vector.x >= 0 && vector.x < map.mapWidth &&
+              if(!isObstacleOnPath(new Vector(availableVectors[i].x, availableVectors[i].y), vector, map, onObstacle) && vector.x >= 0 && vector.x < map.mapWidth &&
                 vector.y >= 0 && vector.y < map.mapHeight ) isAvailableVector = true;
             }
             if(!isAvailableVector) {
