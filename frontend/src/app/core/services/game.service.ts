@@ -133,11 +133,6 @@ export class GameService {
     playersStates.forEach(playerState => {
       let player = this._game.players.find(player => player.playerId === playerState.playerId);
       if(player){
-        for(let finish of this._game.map.finishLine){
-          if(finish.equals(playerState.currentPosition) && !finish.equals(player.position)
-           )
-            setTimeout(function() { alert('Gracz ' + player.name + ' wygrał'); }, 1);
-        }
         player.updateState(playerState);
       }
     })

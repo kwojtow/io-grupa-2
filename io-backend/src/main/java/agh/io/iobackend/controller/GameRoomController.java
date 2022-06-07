@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 
@@ -150,8 +151,10 @@ public class GameRoomController {
         if (gameRoom.getGameStarted()){
             gameService.removeFromGame(id, user);
         }
-        if (gameRoom.getUserList().size() == 0) {
+        if (gameRoom.getUserList().size() == 0 || Objects.equals(gameRoom.getGameMasterID(), user)){
             try {
+                if(gameRoom.getGameStarted())
+                    gameService.endGame(id);
                 gameRoomService.deleteGameRoom(id);
             } catch (GameRoomNotFoundException e){
                 logger.error("No room");
@@ -165,7 +168,7 @@ public class GameRoomController {
         try {
             GameRoom gameRoom = gameRoomService.getGameRoom(id);
             if (userService.getUserById(user).isPresent()) {
-                if (gameRoom.getLimitOfPlayers() > gameRoom.getUserList().size()) {
+                if (gameRoom.getLimitOfPlayers() > gameRoom.getUserList().size() && !gameRoom.getGameStarted()) {
                     gameRoom.addPlayer(userService.getUserById(user).get());
                     return ResponseEntity.ok("User added");
                 }
@@ -178,7 +181,7 @@ public class GameRoomController {
         } catch (GameRoomNotFoundException e) {
             return ResponseEntity.badRequest().body("No room");
         }
-        return ResponseEntity.badRequest().body("Cannot add user - too many players");
+        return ResponseEntity.badRequest().body("Cannot add user :(");
     }
 
     @CrossOrigin
