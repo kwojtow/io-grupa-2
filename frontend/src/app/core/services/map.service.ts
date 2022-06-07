@@ -153,8 +153,6 @@ export class MapService {
         this.canvas.removeAllListeners('mousemove');
         this.canvas.removeAllListeners('click');
         let currentPlayer = players.find(p => p.playerId === player.playerId);
-        console.log(players)
-        console.log(currentPlayer)
         if(isMyTurn && currentPlayer !== null)
           this.drawPlayerVectors(this._canvas, this._ctx, map, currentPlayer);
       }
@@ -489,18 +487,27 @@ export class MapService {
             ctx.strokeStyle = "#ff9900";
             canvas.style.cursor = 'grabbing';
 
-            player.setNewVector(new Vector(availableVectors[i].x - player.position.x,
-                                           availableVectors[i].y - player.position.y));
             for(let finish of map.finishLine){
-              if(finish.equals(player.position)) setTimeout(function() { alert('Wygrałeś'); }, 1);
+              if(finish.equals(new Vector(availableVectors[i].x - player.position.x + player.position.x,
+                availableVectors[i].y - player.position.y + player.position.y))) {
+                player.playerStatus = 'WON'; 
+              }
             }
-
             let isAvailableVector = false;
-            for(let vector of player.getAvailableVectors()) {
+            for(let vector of player.getAvailableVectorsFromVector(new Vector(availableVectors[i].x - player.position.x,
+              availableVectors[i].y - player.position.y))) {
               if(!onObstacle(vector, map) && vector.x >= 0 && vector.x < map.mapWidth &&
                 vector.y >= 0 && vector.y < map.mapHeight ) isAvailableVector = true;
             }
-            if(!isAvailableVector) setTimeout(function() { alert('Przegrałeś'); }, 1);
+            if(!isAvailableVector) {
+              player.playerStatus = 'LOST';
+              setTimeout(function() { alert('Przegrałeś'); }, 1);
+            }
+            player.setNewVector(new Vector(availableVectors[i].x - player.position.x,
+                                           availableVectors[i].y - player.position.y));
+
+
+
           }
           else{
             ctx.fillStyle = "#454545";

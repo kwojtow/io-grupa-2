@@ -42,6 +42,8 @@ public class GameService {
     @Autowired
     private PlayerRepository playerRepository;
 
+    private int notifiedPlayers = 0;
+
 
     public Game createGame(Game game) {
         logger.info("create game");
@@ -75,7 +77,11 @@ public class GameService {
         // nie wiem, czy tak to zrobic i czy tutaj, bo moze to za szybko i cos sie zepsuc (ewentualnie jest do tego endpoint, ktory front moze
         // w odpowiednim czasie zawolac)
         if (response.stream().anyMatch(playerState -> playerState.getPlayerStatus() == PlayerStatus.WON)){
-            endGame(gameId);
+            Game game = getGameFromRepo(gameId);
+            game.getNumOfPlayers();
+            notifiedPlayers++;
+            if(notifiedPlayers == game.getNumOfPlayers())
+                endGame(gameId);
         }
 
         return response;

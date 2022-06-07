@@ -50,7 +50,13 @@ export class GameComponent implements OnInit, OnDestroy {
       .pipe(mergeMap(() => this._gameService.getGameState(this.gameId))) // to test: getMockGameState()
       .subscribe(playersStates => {
           console.log('update')
-
+          for(let state of playersStates) {
+            if(state.playerStatus == 'WON'){
+              let player = this._gameService.game.players.find(player => player.playerId === state.playerId);
+              console.log('GRACZ ' + player.name + ' WYGRAŁ');
+              this.gameEnd = true;
+            }
+          }
           this.playersList = this._gameService.updatePlayersStates(playersStates);
         this.currentPlayer = this._gameService.updateCurrentPlaying(this.playersList);
         this._gameService.updateMap(this.playersList);

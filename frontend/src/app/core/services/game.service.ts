@@ -111,7 +111,7 @@ export class GameService {
       if(jwt !== null){
         const jwtJson = JSON.parse(jwt);
         const token = jwtJson['type'] + ' ' + jwtJson['token'];
-        console.log(token);
+        // console.log(token);
         const requestOptions: Object = {
           headers: new HttpHeaders().set('Content-Type', 'application/json')
                                     .set('Authorization', token)
@@ -132,11 +132,6 @@ export class GameService {
     playersStates.forEach(playerState => {
       let player = this._game.players.find(player => player.playerId === playerState.playerId);
       if(player){
-        for(let finish of this._game.map.finishLine){
-          if(finish.equals(playerState.currentPosition) && !finish.equals(player.position)
-           )
-            setTimeout(function() { alert('Gracz ' + player.name + ' wygrał'); }, 1);
-        }
         player.updateState(playerState);
       }
     })

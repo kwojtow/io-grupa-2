@@ -96,6 +96,10 @@ public class Game {
         // next player that should play
         currentPlayerIndex = (currentPlayerIndex + 1) % playersQueue.size();
 
+//        while(players.get(getCurrentPlayerId()).getPlayerStatus() == PlayerStatus.LOST)
+//            currentPlayerIndex = (currentPlayerIndex + 1) % playersQueue.size();
+
+
         // WON from frontend --- if someone got the end or all the other players lost
         if (playersQueue.stream().anyMatch(id -> players.get(id).getPlayerStatus() == PlayerStatus.WON)) {
             long winner = playersQueue.stream().filter(id -> players.get(id).getPlayerStatus() == PlayerStatus.WON).findAny().get();
@@ -114,7 +118,9 @@ public class Game {
             currentPlayerIndex = (currentPlayerIndex + 1) % playersQueue.size();
         }
 
-        players.get(playersQueue.get(oldIndex)).setPlayerStatus(PlayerStatus.WAITING);
+        if(players.get(playersQueue.get(oldIndex)).getPlayerStatus() == PlayerStatus.PLAYING
+        )
+            players.get(playersQueue.get(oldIndex)).setPlayerStatus(PlayerStatus.WAITING);
         System.out.println("on turn: " + getCurrentPlayerId());
         players.get(getCurrentPlayerId()).setPlayerStatus(PlayerStatus.PLAYING);
     }
