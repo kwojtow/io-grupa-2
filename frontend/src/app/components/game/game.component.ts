@@ -8,6 +8,7 @@ import {Game} from "../../shared/models/Game";
 import {MockDataProviderService} from "../../core/services/mock-data-provider.service";
 import {GameSettings} from "../../shared/models/GameSettings";
 import {UserService} from "../../core/services/user.service";
+import { Vector } from 'src/app/shared/models/Vector';
 
 @Component({
   selector: 'app-game',
@@ -57,6 +58,18 @@ export class GameComponent implements OnInit, OnDestroy {
               this.gameEnd = true;
             }
           }
+
+          let isWinner = true;
+          for(let state of playersStates) {
+            if(state.playerStatus != 'LOST' && state.playerId != this.authorizedPlayer.playerId){
+              isWinner = false;
+            }
+          }
+          if(isWinner) {
+            this.authorizedPlayer.playerStatus = 'WON';
+            this.authorizedPlayer.setNewVector(new Vector(0,0));
+          }
+
           this.playersList = this._gameService.updatePlayersStates(playersStates);
         this.currentPlayer = this._gameService.updateCurrentPlaying(this.playersList);
         this._gameService.updateMap(this.playersList);
