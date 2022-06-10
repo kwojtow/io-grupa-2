@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 @NoArgsConstructor
 @Entity(name = "Game")
@@ -48,7 +49,7 @@ public class Game {
     private List<Long> playersQueue;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private final Map<Long, Player> players =new HashMap<>();
+    private final Map<Long, Player> players = new HashMap<>();
 
     private int currentPlayerIndex;
 
@@ -89,19 +90,41 @@ public class Game {
     }
 
     private void nextPlayerTurn() {
+        // the player that was playing now
+        int oldIndex = currentPlayerIndex;
+
+        // next player that should play
         currentPlayerIndex = (currentPlayerIndex + 1) % playersQueue.size();
-        logger.info("playersQueue: " + playersQueue);
 
-        long activePlayers = playersQueue.stream().filter(id -> players.get(id).getPlayerStatus() == PlayerStatus.WAITING).count();
+//        while(players.get(getCurrentPlayerId()).getPlayerStatus() == PlayerStatus.LOST)
+//            currentPlayerIndex = (currentPlayerIndex + 1) % playersQueue.size();
 
-        while (activePlayers > 0 && players.get(getCurrentPlayerId()).getPlayerStatus() != PlayerStatus.WAITING) {
+
+        // WON from frontend --- if someone got the end or all the other players lost
+        if (playersQueue.stream().anyMatch(id -> players.get(id).getPlayerStatus() == PlayerStatus.WON)) {
+            long winner = playersQueue.stream().filter(id -> players.get(id).getPlayerStatus() == PlayerStatus.WON).findAny().get();
+
+            //set all other players status to LOST (some of them can have this status already)
+            players.entrySet().stream().filter(id -> id.getKey() != winner).forEach(e -> e.getValue().setPlayerStatus(PlayerStatus.LOST));
+        }
+
+        // all the players that are waiting
+        Stream<Long> activePlayers = playersQueue.stream().filter(id -> players.get(id).getPlayerStatus() == PlayerStatus.WAITING);
+
+        long activePlayersCount = activePlayers.count();
+
+        while (activePlayersCount > 0 && players.get(getCurrentPlayerId()).getPlayerStatus() != PlayerStatus.WAITING) { //waits for the first waiting
             logger.info("while in game state");
             currentPlayerIndex = (currentPlayerIndex + 1) % playersQueue.size();
         }
-        players.entrySet().stream().forEach(e -> e.getValue().setPlayerStatus(PlayerStatus.WAITING)); // todo what about playerStatus.LOST ?
-        System.out.println("on turn: "+ getCurrentPlayerId());
-        players.get(getCurrentPlayerId()).setPlayerStatus(PlayerStatus.PLAYING);
+
+        if(players.get(playersQueue.get(oldIndex)).getPlayerStatus() == PlayerStatus.PLAYING)
+            players.get(playersQueue.get(oldIndex)).setPlayerStatus(PlayerStatus.WAITING);
+        System.out.println("on turn: " + getCurrentPlayerId());
+        if(playersQueue.size() > 1)
+            players.get(getCurrentPlayerId()).setPlayerStatus(PlayerStatus.PLAYING);
     }
+
     public void changeGameState(PlayerMoveRequest playerMove) {
         players.get(playerMove.getPlayerId())
                 .updatePlayerAfterMove(playerMove.getXCoordinate(), playerMove.getYCoordinate(), playerMove.getVector().getX(), playerMove.getVector().getY(),
@@ -135,7 +158,7 @@ public class Game {
         this.players.remove(playerId);
     }
 
-    public int getNumOfPlayers(){
+    public int getNumOfPlayers() {
         return players.size();
     }
 }

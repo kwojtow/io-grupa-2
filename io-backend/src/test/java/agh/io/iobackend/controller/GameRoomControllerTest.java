@@ -160,11 +160,11 @@ public class GameRoomControllerTest {
 
         gameRoomController.joinGameRoom(roomId, user1Id);
         usersListInRoom = gameRoomController.getUserListInRoom(roomId, null);
-        assertEquals(1, Objects.requireNonNull(usersListInRoom.getBody()).size());
+        assertEquals(0, Objects.requireNonNull(usersListInRoom.getBody()).size());
 
         gameRoomController.joinGameRoom(roomId, user1Id);
         usersListInRoom = gameRoomController.getUserListInRoom(roomId, null);
-        assertEquals(1, Objects.requireNonNull(usersListInRoom.getBody()).size());
+        assertEquals(0, Objects.requireNonNull(usersListInRoom.getBody()).size());
 
         gameRoomController.leaveGameRoom(roomId, user1Id);
     }

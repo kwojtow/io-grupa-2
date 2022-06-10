@@ -49,11 +49,12 @@
           <div class="mb-5">
             <select
               id="map-select"
-              class="form-select form-select-sm"
+              class="form-select form-select-sm d-inline"
               formControlName="map"
             >
-              <option *ngFor="let map of this.mapDatas">{{ map.name }}</option>
+              <option #filteredMaps *ngFor="let map of (this.mapDatas | minPlayers: mapOptionsForm.value.maxGamersNumber)">{{ map.name }}</option>
             </select>
+            <button class="d-inline button random-map" (click)="getRandomMap()"> Losuj mapę</button>
           </div>
           <app-map class="w-100"></app-map>
         </div>

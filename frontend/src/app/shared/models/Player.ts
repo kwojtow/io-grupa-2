@@ -22,6 +22,7 @@ export class Player{
     }
   updateState(newState: PlayerState){
 
+    
     if(newState.playerId === this._playerId){
       this._playerStatus = newState.playerStatus;
       this.position = newState.currentPosition;
@@ -76,6 +77,16 @@ export class Player{
       new Vector(xpos, ypos - 1), new Vector(xpos + 1, ypos - 1),
       new Vector(xpos, ypos)];
     }
+
+  public getAvailableVectorsFromVector(vector: Vector): Array<Vector> {
+      let xpos = 2*vector.x + this.position.x;
+      let ypos = 2*vector.y + this.position.y;
+      return [new Vector(xpos + 1, ypos), new Vector(xpos + 1, ypos + 1),
+        new Vector(xpos, ypos + 1), new Vector(xpos - 1, ypos + 1),
+        new Vector(xpos - 1, ypos), new Vector(xpos - 1, ypos - 1),
+        new Vector(xpos, ypos - 1), new Vector(xpos + 1, ypos - 1),
+        new Vector(xpos, ypos)];
+      }
   get name(): string {
     return this._name;
     }
