@@ -83,6 +83,7 @@ public class RandomGameService {
 
         Long gameRoomId = rooms.get(category);
 
+        // try to join existing room in a given category
         if (isGameRoomAvailable(gameRoomId)) {
             GameRoom gameRoom = gameRoomRepository.findByGameRoomID(gameRoomId).get();
             gameRoom.addPlayer(userService.getUserById(userId).get());
@@ -90,6 +91,7 @@ public class RandomGameService {
             return gameRoom.getGameRoomID();
         }
 
+        // crate new game room
         Long newGameRoomId = getNewGameRoom(userId);
         rooms.put(category, newGameRoomId);
         return newGameRoomId;
@@ -113,14 +115,17 @@ public class RandomGameService {
 
     public GameRoom joinAfterTimeout(User user) {
 
+        // user did not join random game
         if (joiningTimes.get(user.getUserId()) == null) {
             return null;
         }
 
+        // user is not waiting long enough
         if (joiningTimes.get(user.getUserId()) + timeoutMilliseconds > new Date().getTime()) {
             return null;
         }
 
+        // check if user is not already in this room
         Long defaultGameRoomId = rooms.get(defaultRoomCategory);
         if (defaultGameRoomId != null) {
             Optional<GameRoom> defaultGameRoom = gameRoomRepository.findByGameRoomID(defaultGameRoomId);
@@ -129,11 +134,13 @@ public class RandomGameService {
             }
         }
 
+        // find where user is
         for (Long gameRoomId : rooms.values()) {
             GameRoom gameRoom = gameRoomRepository.findByGameRoomID(gameRoomId).get();
             if (gameRoom.getGameStarted()) {
                 continue;
             }
+            // gameMaster can not be transferred into default room
             if (gameRoom.getGameMasterID().equals(user.getUserId())) {
                 return null;
             }
@@ -145,6 +152,7 @@ public class RandomGameService {
             }
         }
 
+        // add user to the existing default room
         Optional<GameRoom> defaultGameRoom = gameRoomRepository.findByGameRoomID(defaultGameRoomId);
         if (isGameRoomAvailable(defaultGameRoomId)) {
             defaultGameRoom.get().addPlayer(user);
@@ -152,6 +160,7 @@ public class RandomGameService {
             return defaultGameRoom.get();
         }
 
+        // create new game room
         Long newGameRoomId = getNewGameRoom(user.getUserId());
         logger.info("User " + user.getUserId() + " is joining default game room with id: " + newGameRoomId);
         rooms.put(defaultRoomCategory, newGameRoomId);
