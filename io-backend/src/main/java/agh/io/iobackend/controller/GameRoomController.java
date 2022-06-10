@@ -146,6 +146,12 @@ public class GameRoomController {
         GameRoom gameRoom = null;
         try {
             gameRoom = gameRoomService.getGameRoom(id);
+            if (gameRoom.getRandom() && !gameRoom.getGameStarted()) {
+                GameRoom newGameRoom = randomGameService.joinAfterTimeout(userService.getUserById(userId).get());
+                if (newGameRoom != null) {
+                    gameRoom = newGameRoom;
+                }
+            }
         } catch (GameRoomNotFoundException e) {
             return ResponseEntity.badRequest().body(null);
         }
