@@ -1,0 +1,63 @@
+#top-bar{
+    background-color: rgba(78, 42, 106, 100);
+    height: 100px;
+}
+
+#header{
+    color: rgba(78, 42, 106, 100);
+    padding: 1%;
+    position: center;
+    text-align: center;
+}
+.btn {
+    border-radius: 20px;
+    font-size: larger;
+    height: 55px;  
+}
+
+.btn-primary{
+    background-color: rgba(255, 255, 255, 100);
+    color: rgba(78, 42, 106, 100);
+    border: 1px solid rgba(255, 255, 255, 100);
+}
+
+h1{
+    font-size: 4em;
+}
+
+.col-md-6{
+    border: 5px solid rgba(78, 42, 106, 100);
+    border-radius: 40px;
+    padding: 3em;
+    margin: 2em;
+}
+
+.col-md-10{
+    border: 5px solid rgba(78, 42, 106, 100);
+    border-radius: 40px;
+    padding: 3em;
+    margin: 2em;
+}
+
+.smaller-header{
+    text-align: center;
+    color: rgba(78, 42, 106, 100);
+}
+
+li{
+    margin: 1em;
+    font-size: 2em;
+    cursor: pointer;
+}
+
+p{
+    font-size: 2em;
+}
+
+h2{
+    margin-bottom: 1em;
+}
+
+span{
+    line-height: 60px;
+}

@@ -13,6 +13,7 @@ import { RankingComponent } from '../components/ranking/ranking.component';
 import {CreateMapComponent} from "../components/create-map/create-map.component";
 import { MapsRankComponent } from '../components/maps-rank/maps-rank.component';
 import { RateMapModalComponent } from '../components/rate-map-modal/rate-map-modal.component';
+import { InstructionComponent } from '../components/instruction/instruction.component';
 
 const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -29,11 +30,12 @@ const routes: Routes = [
   { path: 'map/rank', component: MapsRankComponent},
   { path: 'ranking', component: RankingComponent},
   { path: 'create-map', component: CreateMapComponent},
-  { path: 'rate-map', component: RateMapModalComponent}
+  { path: 'rate-map', component: RateMapModalComponent},
+  { path: 'instruction', component: InstructionComponent}
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes, {anchorScrolling: 'enabled'})],
   exports: [RouterModule],
 })
 export class AppRoutingModule {}

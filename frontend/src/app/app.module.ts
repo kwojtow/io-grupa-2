@@ -19,6 +19,7 @@ import {CreateMapComponent} from "./components/create-map/create-map.component";
 import { MapsRankComponent } from './components/maps-rank/maps-rank.component';
 import { RateMapModalComponent } from './components/rate-map-modal/rate-map-modal.component';
 import { NgbModule, NgbRating } from '@ng-bootstrap/ng-bootstrap';
+import { InstructionComponent } from './components/instruction/instruction.component';
 
 @NgModule({
   declarations: [
@@ -40,6 +41,7 @@ import { NgbModule, NgbRating } from '@ng-bootstrap/ng-bootstrap';
     RankingComponent,
     CreateMapComponent,
     RateMapModalComponent,
+    InstructionComponent,
   ],
   imports: [
     BrowserModule,
