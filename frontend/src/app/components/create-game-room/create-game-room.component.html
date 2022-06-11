@@ -61,15 +61,15 @@
         <div class="ml-6 d-flex flex-column justify-content-around m-5">
           <h6 clas="h6">Liczba rozegranych gier:</h6>
           <span class="mb-4">{{
-            this.mapDtoMap.get(selectedMapId)?.gamesPlayed
+            this.mapDtoMap.get(selectedMapName)?.gamesPlayed
           }}</span>
           <h6 clas="h6">Ocena:</h6>
           <span class="mb-4">{{
-            this.mapDtoMap.get(selectedMapId)?.rate
+            this.mapDtoMap.get(selectedMapName)?.rate
           }}</span>
           <h6 clas="h6">Autor:</h6>
           <span class="mb-4">{{
-            this.mapDtoMap.get(selectedMapId)?.author?.login
+            this.mapDtoMap.get(selectedMapName)?.author?.login
           }}</span>
         </div>
       </div>
