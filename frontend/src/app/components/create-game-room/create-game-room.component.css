@@ -58,6 +58,16 @@ label {
 
 }
 
+.random-map{
+  margin-top: 10%;
+  margin-bottom: 5%;
+  margin-left: 5%;
+  background-color: rgba(78, 42, 106, 100);
+  color: rgba(255, 255, 255, 100);
+  font-size: 13px;
+  border: none;
+}
+
 #button-box {
     margin-left: 1%;
 }

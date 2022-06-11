@@ -4,6 +4,7 @@ import {RaceMap} from "../../shared/models/RaceMap";
 import {Vector} from "../../shared/models/Vector";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {MapResponse} from "../../payload/MapResponse";
+import {Router} from "@angular/router";
 
 enum ObjectType{
   NONE, START, FINISH, OBSTACLE
@@ -26,7 +27,8 @@ export class CreateMapComponent implements OnInit {
   chosenSizeIdx = 0;
 
   constructor(private _mapService: MapService,
-              private _http: HttpClient) {
+              private _http: HttpClient,
+              private router: Router) {
     this.resetMap();
   }
 
@@ -97,6 +99,8 @@ export class CreateMapComponent implements OnInit {
       return this._http.post<any>("http://localhost:8080/map", mapResponse, httpOptions)
         .subscribe(id => {
           this.map.mapId = id;
+          this.router.navigate(['/profile'])
+
         });
     }
   }

@@ -49,7 +49,6 @@ export class UserService {
   }
 
   public convertImage(image: string){
-    console.log(image);
     return this.sanitizer.bypassSecurityTrustResourceUrl('data:image/jpg;base64,'+ image);
   }
 
@@ -109,7 +108,6 @@ export class UserService {
   public getMapsWithMostWins(): Observable<Array<MapWithStats>> {
     return this.http.get<any>(this.API_URL + '/map/user-wins', this.getAuthorizationHeaders())
       .pipe(map(mapList => {
-        console.log(mapList)
         return this.convertMapListResponse(mapList)
       }))
   }

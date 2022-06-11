@@ -88,11 +88,14 @@ export class GameService {
       this._userService.getAuthorizationHeaders())
       .pipe(
         map(playersList => {
-          return playersList.map(playerState =>
-            new PlayerState(playerState.playerId,
-              playerState.playerStatus,
-              playerState.xcoordinate,
-              playerState.ycoordinate))
+          return playersList.map(playerState =>{
+            let result = new PlayerState(playerState.playerId,
+            playerState.playerStatus,
+            playerState.xcoordinate,
+            playerState.ycoordinate,
+            new Vector(playerState.vector.x, playerState.vector.y))
+            return result;
+          })
         })
       );
   }
@@ -111,7 +114,6 @@ export class GameService {
       if(jwt !== null){
         const jwtJson = JSON.parse(jwt);
         const token = jwtJson['type'] + ' ' + jwtJson['token'];
-        console.log(token);
         const requestOptions: Object = {
           headers: new HttpHeaders().set('Content-Type', 'application/json')
                                     .set('Authorization', token)
@@ -128,15 +130,9 @@ export class GameService {
     return this.authorizedPlayer;
   }
   updatePlayersStates(playersStates: Array<PlayerState>){
-    console.log(this._game);
     playersStates.forEach(playerState => {
       let player = this._game.players.find(player => player.playerId === playerState.playerId);
       if(player){
-        for(let finish of this._game.map.finishLine){
-          if(finish.equals(playerState.currentPosition) && !finish.equals(player.position)
-           )
-            setTimeout(function() { alert('Gracz ' + player.name + ' wygrał'); }, 1);
-        }
         player.updateState(playerState);
       }
     })
@@ -156,13 +152,13 @@ export class GameService {
         }, 1000);
       }
       else {
-        const newVector = new Vector(this.player.position.x + this.player.currentVector.x, 
+        const newVector = new Vector(this.player.position.x + this.player.currentVector.x,
           this.player.position.y + this.player.currentVector.y)
         if(!this._mapService.isObstacleOnPathToPosition(this.player.position,
           newVector, this.game.map)) {
             this.player.setNewVector(this.player.currentVector);
           }
-        
+
         this.moveDone = false;
       }
     }

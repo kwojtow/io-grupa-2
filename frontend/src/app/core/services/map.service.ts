@@ -82,7 +82,7 @@ export class MapService {
     };
     sendRate(mapId : number, rate : number){
       return this.http.post<any>("http://localhost:8080/map/rating/" + mapId + "?rating=" + rate,
-       {}, 
+       {},
        this.httpOptions2)
       .pipe(
         catchError(this.handleError)
@@ -107,7 +107,13 @@ export class MapService {
   }
 
   deleteMap(mapId: number) {
-      this.http.delete("http://localhost:8080/map/" + mapId, this.httpOptions).subscribe();
+      this.http.delete("http://localhost:8080/map/" + mapId, this.httpOptions).subscribe(
+        _ => _, error => {
+          if (error.status == 400) {
+            alert("Mapa należy do istniejącej rozgrywki - nie może zostać usunięta");
+          }
+        }
+      );
   }
 
   getRank() {
@@ -153,8 +159,6 @@ export class MapService {
         this.canvas.removeAllListeners('mousemove');
         this.canvas.removeAllListeners('click');
         let currentPlayer = players.find(p => p.playerId === player.playerId);
-        console.log(players)
-        console.log(currentPlayer)
         if(isMyTurn && currentPlayer !== null)
           this.drawPlayerVectors(this._canvas, this._ctx, map, currentPlayer);
       }
@@ -285,7 +289,7 @@ export class MapService {
   private onObstacle(vector: Vector, map: RaceMap): boolean {
     const obstacles = map.obstacles;
     const players = MapService.game.players;
-    if(vector.x < 0 || vector.y < 0 
+    if(vector.x < 0 || vector.y < 0
       || vector.x > map.mapWidth || vector.y > map.mapHeight) return true;
     for(let obstacle of obstacles) {
       if(obstacle.equals(vector)) return true;
@@ -296,14 +300,14 @@ export class MapService {
     return false;
   }
 
-  public isObstacleOnPathToPosition(playerPosition: Vector, vector: Vector, map: RaceMap): boolean {
+  public isObstacleOnPathToPosition(playerPosition: Vector, vector: Vector, map: RaceMap, onObstacle: CallableFunction = this.onObstacle): boolean {
     const pos_x = (playerPosition.x - vector.x > 0) ? -1 : 1;
     const pos_y = (playerPosition.y - vector.y > 0) ? -1 : 1;
     const playerPos = new Vector(playerPosition.x + pos_x,playerPosition.y + pos_y);
-    if(this.onObstacle(vector, map)) return true;
+    if(onObstacle(vector, map)) return true;
     if(playerPosition.x == vector.x) {
       for(let i = Math.min(playerPos.y, vector.y); i <= Math.max(playerPos.y, vector.y); ++i) {
-        if(this.onObstacle(new Vector(vector.x, i), map)) {
+        if(onObstacle(new Vector(vector.x, i), map)) {
           return true;
         }
       }
@@ -312,7 +316,7 @@ export class MapService {
 
     else if(playerPosition.y == vector.y) {
       for(let i = Math.min(playerPos.x, vector.x); i <= Math.max(playerPos.x, vector.x); ++i) {
-        if(this.onObstacle(new Vector(i, vector.y), map)) {
+        if(onObstacle(new Vector(i, vector.y), map)) {
           return true;
         }
       }
@@ -324,9 +328,9 @@ export class MapService {
       const diff_y = Math.abs(playerPosition.y - vector.y);
       if (diff_x == diff_y) {
         for(let i = playerPosition.x, j  = playerPosition.y; i != vector.x +pos_x && j != vector.y+pos_y; i += pos_x, j += pos_y) {
-          if(this.onObstacle(new Vector(i, j), map) || ( this.onObstacle(new Vector(i - pos_x, j), map) && 
-          this.onObstacle(new Vector(i, j - pos_y), map))) {
-            if(!(this.onObstacle(new Vector(i, j), map) && playerPosition.equals(new Vector(i, j)))) return true;
+          if(onObstacle(new Vector(i, j), map) || ( onObstacle(new Vector(i - pos_x, j), map) && 
+          onObstacle(new Vector(i, j - pos_y), map))) {
+            if(!(onObstacle(new Vector(i, j), map) && playerPosition.equals(new Vector(i, j)))) return true;
           }
         }
         return false;
@@ -336,18 +340,18 @@ export class MapService {
         if(diff_x < diff_y){
           for(let i = 0; i < diff_y-1; ++i) {
             let vec = new Vector(playerPos.x + Math.ceil(diff_div * i * pos_x), playerPos.y + (i * pos_y))
-            if(this.onObstacle(vec, map)
-            || (this.onObstacle(new Vector(vec.x - pos_x, vec.y), map) 
-               && this.onObstacle(new Vector(vec.x, vec.y - pos_y), map))) return true;
+            if(onObstacle(vec, map)
+            || (onObstacle(new Vector(vec.x - pos_x, vec.y), map) 
+               && onObstacle(new Vector(vec.x, vec.y - pos_y), map))) return true;
           }
           return false;
         }
         else{
           for(let i = 0; i < diff_x-1; ++i) {
             let vec = new Vector(playerPos.x + (i * pos_x), playerPos.y + Math.ceil(diff_div * i * pos_y));
-            if(this.onObstacle(vec, map)
-            || (this.onObstacle(new Vector(vec.x - pos_x, vec.y), map) 
-               && this.onObstacle(new Vector(vec.x, vec.y - pos_y), map))) return true;
+            if(onObstacle(vec, map)
+            || (onObstacle(new Vector(vec.x - pos_x, vec.y), map) 
+               && onObstacle(new Vector(vec.x, vec.y - pos_y), map))) return true;
           }
           return false;
         }
@@ -460,6 +464,7 @@ export class MapService {
     const fieldWidth = MapService.getFieldWidth(canvas, map);
     const availableVectors = player.getAvailableVectors();
     const onObstacle = this.onObstacle;
+    const isObstacleOnPath = this.isObstacleOnPathToPosition;
     const drawArrow = this.drawArrow;
 
     canvas.onclick = function(event) {
@@ -489,18 +494,27 @@ export class MapService {
             ctx.strokeStyle = "#ff9900";
             canvas.style.cursor = 'grabbing';
 
-            player.setNewVector(new Vector(availableVectors[i].x - player.position.x,
-                                           availableVectors[i].y - player.position.y));
             for(let finish of map.finishLine){
-              if(finish.equals(player.position)) setTimeout(function() { alert('Wygrałeś'); }, 1);
+              if(finish.equals(new Vector(availableVectors[i].x - player.position.x + player.position.x,
+                availableVectors[i].y - player.position.y + player.position.y))) {
+                player.playerStatus = 'WON'; 
+              }
             }
-
             let isAvailableVector = false;
-            for(let vector of player.getAvailableVectors()) {
-              if(!onObstacle(vector, map) && vector.x >= 0 && vector.x < map.mapWidth &&
+            for(let vector of player.getAvailableVectorsFromVector(new Vector(availableVectors[i].x - player.position.x,
+              availableVectors[i].y - player.position.y))) {
+              if(!isObstacleOnPath(new Vector(availableVectors[i].x, availableVectors[i].y), vector, map, onObstacle) && vector.x >= 0 && vector.x < map.mapWidth &&
                 vector.y >= 0 && vector.y < map.mapHeight ) isAvailableVector = true;
             }
-            if(!isAvailableVector) setTimeout(function() { alert('Przegrałeś'); }, 1);
+            if(!isAvailableVector) {
+              player.playerStatus = 'LOST';
+              setTimeout(function() { alert('Przegrałeś'); }, 1);
+            }
+            player.setNewVector(new Vector(availableVectors[i].x - player.position.x,
+                                           availableVectors[i].y - player.position.y));
+
+
+
           }
           else{
             ctx.fillStyle = "#454545";

@@ -10,9 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -64,8 +62,11 @@ public class MapController {
     @CrossOrigin
     @DeleteMapping("/{mapId}")
     public ResponseEntity<String> removeMapById(@PathVariable Long mapId) {
-        mapService.removeMapById(mapId);
-        return ResponseEntity.ok().body("Map deleted");
+        if (mapService.removeMapById(mapId)) {
+            return ResponseEntity.ok().body("Map deleted");
+        } else {
+            return ResponseEntity.badRequest().body("Map cannot be deleted");
+        }
     }
 
     @GetMapping("/user-wins")
