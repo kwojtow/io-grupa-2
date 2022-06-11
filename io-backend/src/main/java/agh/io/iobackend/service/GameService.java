@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.math.*;
+import java.util.stream.Collectors;
 
 @Service
 public class GameService {
@@ -114,7 +115,10 @@ public class GameService {
         List<User> users = gameRoom.getUserList();
 
         // Calculate components of the ranking_fun()
-        LinkedHashMap<User, Integer> ranking = new LinkedHashMap<User, Integer>(statisticsService.getUsersRanking());
+        LinkedHashMap<User, Integer> ranking = new LinkedHashMap<>();
+        for (User user : statisticsService.getUsersRanking().keySet()) {
+            ranking.put(user, Math.max(statisticsService.getUsersRanking().get(user), 1));
+        }   // Guaranties that ranking is at least 1, otherwise the function does not have sense
         ranking.keySet().retainAll(users);
         int max_ranked = ranking.values().stream().mapToInt(Integer::intValue).sum();
         double sum_ranking = ranking.values().stream().mapToDouble(Integer::doubleValue)
