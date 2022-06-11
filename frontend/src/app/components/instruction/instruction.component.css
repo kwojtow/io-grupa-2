@@ -143,3 +143,14 @@ span{
     color: white;
     font-size: 23px;
   }
+
+
+  .back{
+    cursor: pointer;
+  }
+  
+  .btn-outline-primary{
+    background-color: rgba(78, 42, 106, 100);
+    color: rgba(255, 255, 255, 100);
+    border: 1px solid rgba(255, 255, 255, 100);
+  }
