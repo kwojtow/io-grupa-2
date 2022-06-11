@@ -56,7 +56,6 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        logger.info("loadUserByUsername");
         Optional<User> user = userRepository.findByLogin(username);
         user.orElseThrow(() -> new UsernameNotFoundException("Not found: " + username));
         return user.map(UserDetailsImpl::new).get();
@@ -75,7 +74,6 @@ public class UserService implements UserDetailsService {
     }
 
     public Long getCurrentUserId() {
-        logger.info("getCurrentUserId");
         Long userId = null;
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
