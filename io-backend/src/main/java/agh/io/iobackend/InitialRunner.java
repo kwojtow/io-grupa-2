@@ -53,6 +53,13 @@ public class InitialRunner implements CommandLineRunner {
                 .build();
         userService.addUser(user2);
 
+        User user3 = User.builder()
+                .email("test3@test3.pl")
+                .password(encoder.encode("testtest"))
+                .login("test3")
+                .build();
+        userService.addUser(user3);
+
         MapStructure mapStructure = new MapStructure();
         ArrayList<Vector> startLine = new ArrayList<>();
         ArrayList<Vector> finishLine = new ArrayList<>();
@@ -60,6 +67,8 @@ public class InitialRunner implements CommandLineRunner {
 
         startLine.add(new Vector(1, 2));
         startLine.add(new Vector(2, 2));
+        startLine.add(new Vector(2, 3));
+        startLine.add(new Vector(2, 4));
 
         finishLine.add(new Vector(10, 2));
         finishLine.add(new Vector(20, 2));

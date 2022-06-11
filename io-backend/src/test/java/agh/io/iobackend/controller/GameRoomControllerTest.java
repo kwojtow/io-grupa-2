@@ -151,20 +151,20 @@ public class GameRoomControllerTest {
     @Test
     @Order(2)
     void usersListTests() throws GameRoomNotFoundException, NoGameFoundException {
-        ResponseEntity<List<User>> usersListInRoom = gameRoomController.getUserListInRoom(roomId);
+        ResponseEntity<List<User>> usersListInRoom = gameRoomController.getUserListInRoom(roomId, null);
         assertEquals(0, Objects.requireNonNull(usersListInRoom.getBody()).size());
 
         gameRoomController.joinGameRoom(roomId, 6000L);
-        usersListInRoom = gameRoomController.getUserListInRoom(roomId);
+        usersListInRoom = gameRoomController.getUserListInRoom(roomId, null);
         assertEquals(0, Objects.requireNonNull(usersListInRoom.getBody()).size());
 
         gameRoomController.joinGameRoom(roomId, user1Id);
-        usersListInRoom = gameRoomController.getUserListInRoom(roomId);
-        assertEquals(1, Objects.requireNonNull(usersListInRoom.getBody()).size());
+        usersListInRoom = gameRoomController.getUserListInRoom(roomId, null);
+        assertEquals(0, Objects.requireNonNull(usersListInRoom.getBody()).size());
 
         gameRoomController.joinGameRoom(roomId, user1Id);
-        usersListInRoom = gameRoomController.getUserListInRoom(roomId);
-        assertEquals(1, Objects.requireNonNull(usersListInRoom.getBody()).size());
+        usersListInRoom = gameRoomController.getUserListInRoom(roomId, null);
+        assertEquals(0, Objects.requireNonNull(usersListInRoom.getBody()).size());
 
         gameRoomController.leaveGameRoom(roomId, user1Id);
     }

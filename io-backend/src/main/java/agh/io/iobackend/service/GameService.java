@@ -8,6 +8,7 @@ import agh.io.iobackend.exceptions.NoGameFoundException;
 import agh.io.iobackend.model.game.Game;
 import agh.io.iobackend.model.game.GameRoom;
 import agh.io.iobackend.model.player.Player;
+import agh.io.iobackend.model.player.PlayerStatus;
 import agh.io.iobackend.model.user.User;
 import agh.io.iobackend.repository.GameRepository;
 import agh.io.iobackend.repository.GameRoomRepository;
@@ -41,6 +42,8 @@ public class GameService {
     @Autowired
     private PlayerRepository playerRepository;
 
+    private int notifiedPlayers = 0;
+
 
     public Game createGame(Game game) {
         logger.info("create game");
@@ -68,9 +71,20 @@ public class GameService {
         game.setPlayerThatStarts();
     }
 
-    public ArrayList<PlayerStateResponse> getPlayerStatesList(Long gameId) throws NoGameFoundException {
-        logger.info("getPlayerStatesList");
-        return getGameFromRepo(gameId).getPlayerStatesList();
+    public ArrayList<PlayerStateResponse> getPlayerStatesList(Long gameId) throws NoGameFoundException, GameRoomNotFoundException {
+        ArrayList<PlayerStateResponse> response = getGameFromRepo(gameId).getPlayerStatesList();
+
+        // nie wiem, czy tak to zrobic i czy tutaj, bo moze to za szybko i cos sie zepsuc (ewentualnie jest do tego endpoint, ktory front moze
+        // w odpowiednim czasie zawolac)
+        if (response.stream().anyMatch(playerState -> playerState.getPlayerStatus() == PlayerStatus.WON)){
+            Game game = getGameFromRepo(gameId);
+            game.getNumOfPlayers();
+            notifiedPlayers++;
+            if(notifiedPlayers == game.getNumOfPlayers())
+                endGame(gameId);
+        }
+
+        return response;
     }
 
     public void updateGameStateAfterMove(Game game, PlayerMoveRequest playerMove) {
@@ -102,5 +116,3 @@ public class GameService {
         game.removePlayer(PlayerId);
     }
 }
-
-//TODO jesli ktos przegra jako ostatni - to nie powinien dostac wiecej pukntow niz ten ktory przegral jako pierwszy?

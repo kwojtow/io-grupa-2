@@ -4,15 +4,11 @@ package agh.io.iobackend.controller;
 import agh.io.iobackend.controller.payload.room.GameRoomRequest;
 import agh.io.iobackend.controller.payload.room.GameRoomResponse;
 import agh.io.iobackend.exceptions.GameRoomNotFoundException;
-
 import agh.io.iobackend.exceptions.NoGameFoundException;
 import agh.io.iobackend.model.game.Game;
 import agh.io.iobackend.model.game.GameRoom;
 import agh.io.iobackend.model.user.User;
-import agh.io.iobackend.service.GameRoomService;
-import agh.io.iobackend.service.GameService;
-import agh.io.iobackend.service.MapService;
-import agh.io.iobackend.service.UserService;
+import agh.io.iobackend.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 
@@ -30,8 +27,8 @@ import java.util.stream.Collectors;
 @CrossOrigin
 @Transactional // for tests, because of "org.hibernate.LazyInitializationException"
 public class GameRoomController {
-    private static final Logger logger = LoggerFactory.getLogger(GameController.class);
 
+    private static final Logger logger = LoggerFactory.getLogger(GameRoomController.class);
 
     @Autowired
     private GameRoomService gameRoomService;
@@ -44,6 +41,9 @@ public class GameRoomController {
 
     @Autowired
     private MapService mapService;
+
+    @Autowired
+    private RandomGameService randomGameService;
 
 
     //TODO gdy GameMaster wychodzi powinno chyba zamykac pokoj, bo gracz i tak nie moze rozpoczac
@@ -68,6 +68,22 @@ public class GameRoomController {
 
         return ResponseEntity.ok(gameRoomResponse);
     }
+
+
+    @CrossOrigin
+    @PostMapping("/random/{userId}")
+    public ResponseEntity<Long> joinRandomRoom(@PathVariable Long userId) { // zwraca game room id
+        logger.info("Joining Random Room");
+        return ResponseEntity.ok().body(randomGameService.joinRandomRoom(userId));
+    }
+
+    @CrossOrigin
+    @GetMapping("/random/{userId}")
+    public ResponseEntity<Long> getRandomRoom(@PathVariable Long userId) { // zwraca game room id, ale w przypadku przekierowania do innego pokoju
+        logger.info("Get Random Room");
+        return ResponseEntity.ok().body(randomGameService.getRandomGameRoomId(userService.getUserById(userId).get()));
+    }
+
 
     @CrossOrigin
     @GetMapping("/{id}") // room id
@@ -125,11 +141,17 @@ public class GameRoomController {
     }
 
     @CrossOrigin
-    @GetMapping("/{id}/users-list") // room id
-    public ResponseEntity<List<User>> getUserListInRoom(@PathVariable Long id) {
+    @GetMapping("/{id}/users-list/{userId}") // room id
+    public ResponseEntity<List<User>> getUserListInRoom(@PathVariable Long id, @PathVariable Long userId) {
         GameRoom gameRoom = null;
         try {
             gameRoom = gameRoomService.getGameRoom(id);
+            if (gameRoom.getRandom() && !gameRoom.getGameStarted()) {
+                GameRoom newGameRoom = randomGameService.joinAfterTimeout(userService.getUserById(userId).get());
+                if (newGameRoom != null) {
+                    gameRoom = newGameRoom;
+                }
+            }
         } catch (GameRoomNotFoundException e) {
             return ResponseEntity.badRequest().body(null);
         }
@@ -150,8 +172,10 @@ public class GameRoomController {
         if (gameRoom.getGameStarted()){
             gameService.removeFromGame(id, user);
         }
-        if (gameRoom.getUserList().size() == 0) {
+        if (gameRoom.getUserList().size() == 0 || Objects.equals(gameRoom.getGameMasterID(), user)){
             try {
+                if(gameRoom.getGameStarted())
+                    gameService.endGame(id);
                 gameRoomService.deleteGameRoom(id);
             } catch (GameRoomNotFoundException e){
                 logger.error("No room");
@@ -165,7 +189,7 @@ public class GameRoomController {
         try {
             GameRoom gameRoom = gameRoomService.getGameRoom(id);
             if (userService.getUserById(user).isPresent()) {
-                if (gameRoom.getLimitOfPlayers() > gameRoom.getUserList().size()) {
+                if (gameRoom.getLimitOfPlayers() > gameRoom.getUserList().size() && !gameRoom.getGameStarted()) {
                     gameRoom.addPlayer(userService.getUserById(user).get());
                     return ResponseEntity.ok("User added");
                 }
@@ -178,7 +202,7 @@ public class GameRoomController {
         } catch (GameRoomNotFoundException e) {
             return ResponseEntity.badRequest().body("No room");
         }
-        return ResponseEntity.badRequest().body("Cannot add user - too many players");
+        return ResponseEntity.badRequest().body("Cannot add user :(");
     }
 
     @CrossOrigin

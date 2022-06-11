@@ -20,6 +20,7 @@ import { MapsRankComponent } from './components/maps-rank/maps-rank.component';
 import { RateMapModalComponent } from './components/rate-map-modal/rate-map-modal.component';
 import { NgbModule, NgbRating } from '@ng-bootstrap/ng-bootstrap';
 import { InstructionComponent } from './components/instruction/instruction.component';
+import { MinPlayersPipe } from './shared/pipes/min-players.pipe';
 
 @NgModule({
   declarations: [
@@ -42,6 +43,7 @@ import { InstructionComponent } from './components/instruction/instruction.compo
     CreateMapComponent,
     RateMapModalComponent,
     InstructionComponent,
+    MinPlayersPipe,
   ],
   imports: [
     BrowserModule,
