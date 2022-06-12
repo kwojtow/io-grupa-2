@@ -238,6 +238,7 @@ export class MapService {
 
   public drawPlayer(player: Player, ctx: CanvasRenderingContext2D, fieldWidth: number, lineWidth: number): void{
     const miniFieldWidth = (fieldWidth - lineWidth * 2)/5;
+    console.log(miniFieldWidth)
 
     if(player.playerStatus == "PLAYING") {
       ctx.fillStyle = "#ffaa0088";
@@ -248,32 +249,35 @@ export class MapService {
     ctx.fillStyle = player.color;
     let leftUpperX: number =  fieldWidth * player.position.x + lineWidth;
     let leftUpperY: number = fieldWidth * player.position.y + lineWidth;
-    car.moveTo(leftUpperX + miniFieldWidth+10, leftUpperY + miniFieldWidth*1.5);
-    car.lineTo(leftUpperX + miniFieldWidth*4-10, leftUpperY + miniFieldWidth*1.5);
 
-    car.quadraticCurveTo(leftUpperX + miniFieldWidth*4-10, leftUpperY + miniFieldWidth*1.5,
-                         leftUpperX + miniFieldWidth*4, leftUpperY + miniFieldWidth*1.5+10);
-    car.lineTo(leftUpperX + miniFieldWidth*4, leftUpperY + miniFieldWidth*3.5 - 10);
-    car.quadraticCurveTo(leftUpperX + miniFieldWidth*4, leftUpperY + miniFieldWidth*3,
-                         leftUpperX + miniFieldWidth*4-10, leftUpperY + miniFieldWidth*3.5);
-    car.lineTo(leftUpperX + miniFieldWidth+10, leftUpperY + miniFieldWidth*3.5);
-    car.quadraticCurveTo(leftUpperX + miniFieldWidth+10, leftUpperY + miniFieldWidth*3.5,
-                         leftUpperX + miniFieldWidth, leftUpperY + miniFieldWidth*3.5-10);
-    car.lineTo(leftUpperX + miniFieldWidth, leftUpperY + miniFieldWidth*1.5+10);
-    car.quadraticCurveTo(leftUpperX + miniFieldWidth, leftUpperY + miniFieldWidth*1.5+10,
-                         leftUpperX + miniFieldWidth+10, leftUpperY + miniFieldWidth*1.5);
+    car.rect(leftUpperX + miniFieldWidth/2, leftUpperY + miniFieldWidth,miniFieldWidth*4, miniFieldWidth*3 )
 
     ctx.fill(car);
     ctx.stroke(car);
 
+    let window = new Path2D();
+    ctx.fillStyle = '#8bc0fa'
+    window.rect(leftUpperX + (miniFieldWidth*3.2), leftUpperY + (miniFieldWidth*1.7),miniFieldWidth*1, miniFieldWidth*1.7 );
 
+    ctx.fill(window);
+    ctx.stroke(window);
+
+    ctx.fillStyle = 'yellow'
+    let lights = Array<Path2D> (new Path2D(), new Path2D(), new Path2D(), new Path2D());
+    lights[0].arc(leftUpperX + (miniFieldWidth*4.5), leftUpperY + (miniFieldWidth*1.7), miniFieldWidth/3, 0, 2*Math.PI);
+    lights[1].arc(leftUpperX + (miniFieldWidth*4.5), leftUpperY + (miniFieldWidth*3.4), miniFieldWidth/3, 0, 2*Math.PI);
+    lights.forEach(light => {
+      ctx.fill(light);
+      ctx.stroke(light)
+    });
+
+    
     ctx.fillStyle = 'black'
     let wheels = Array<Path2D> (new Path2D(), new Path2D(), new Path2D(), new Path2D());
-    wheels[0].rect(leftUpperX + miniFieldWidth+15, leftUpperY + miniFieldWidth*1.5-lineWidth-5, 15 , 10);
-    wheels[1].rect(leftUpperX + miniFieldWidth*4-30, leftUpperY + miniFieldWidth*1.5-lineWidth-5, 15 , 10);
-    wheels[2].rect(leftUpperX + miniFieldWidth+15, leftUpperY + miniFieldWidth*3.5, 15 , 10);
-    wheels[3].rect(leftUpperX + miniFieldWidth*4-30, leftUpperY + miniFieldWidth*3.5, 15 , 10);
-    car.addPath(wheels[0]);
+    wheels[0].rect(leftUpperX + (miniFieldWidth*3), leftUpperY + (miniFieldWidth*0.7), miniFieldWidth , miniFieldWidth/2);
+    wheels[1].rect(leftUpperX + (miniFieldWidth*1), leftUpperY + (miniFieldWidth*0.7), miniFieldWidth , miniFieldWidth/2);
+    wheels[2].rect(leftUpperX + (miniFieldWidth*3), leftUpperY + (miniFieldWidth*3.8), miniFieldWidth , miniFieldWidth/2);
+    wheels[3].rect(leftUpperX + (miniFieldWidth*1), leftUpperY + (miniFieldWidth*3.8), miniFieldWidth , miniFieldWidth/2);
     wheels.forEach(wheel => ctx.fill(wheel));
 }
 
