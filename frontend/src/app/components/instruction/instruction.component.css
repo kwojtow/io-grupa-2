@@ -1,0 +1,156 @@
+#top-bar{
+    background-color: rgba(78, 42, 106, 100);
+    height: 100px;
+}
+
+#header{
+    color: rgba(255, 255, 255, 100);
+    padding: 1%; 
+}
+.btn {
+    border-radius: 20px;
+    font-size: larger;
+    height: 55px;  
+}
+
+
+
+.btn-primary{
+    background-color: rgba(255, 255, 255, 100);
+    color: rgba(78, 42, 106, 100);
+    border: 1px solid rgba(78, 42, 106, 100);
+}
+
+
+
+
+.col-md-6{
+    border: 5px solid rgba(78, 42, 106, 100);
+    border-radius: 40px;
+    padding: 3em;
+    margin: 2em;
+}
+
+.col-md-10{
+    border: 5px solid rgba(78, 42, 106, 100);
+    border-radius: 40px;
+    padding: 3em;
+    margin: 2em;
+}
+
+.smaller-header{
+    text-align: center;
+    color: rgba(78, 42, 106, 100);
+}
+
+li{
+    margin: 1em;
+    font-size: 2em;
+    cursor: pointer;
+}
+
+p{
+    font-size: 2em;
+}
+
+h2{
+    margin-bottom: 1em;
+}
+
+span{
+    line-height: 65px;
+}
+
+.button {
+    padding-left: 10px;
+    padding-right: 10px; 
+    border-radius: 12px;
+}
+
+.random-map{
+    background-color: rgba(78, 42, 106, 100);
+    color: rgba(255, 255, 255, 100);
+    font-size: 25px;
+    border: none;
+  }
+
+  .to-login {
+    background-color: rgba(78, 42, 106, 100);
+    color: rgba(255, 255, 255, 100);
+    font-size: 25px;
+    border: none;
+
+}
+
+.bg-danger{
+    border: none;
+    cursor: auto;
+    background-color: rgba(255, 0, 0, 100) !important; 
+}
+
+.btn-danger{
+    background-color: rgba(255, 0, 0, 100);
+    padding-bottom: 65px;
+}
+
+.btn-success{
+    background-color: rgba(12, 151, 2, 100);
+    padding-bottom: 65px;
+}
+
+.button-join {
+    text-align: center;
+    color: rgba(255, 255, 255, 100);
+    background-color: rgba(14, 136, 6, 100);
+    border-radius: 20px;
+    padding-left: 25px;
+    padding-right: 25px;
+    border: none;
+    font-size: 2vw;
+
+}
+
+
+.button-cancel {
+    text-align: center;
+    color: rgba(255, 255, 255, 100);
+    background-color: rgba(255, 1, 1, 100);
+    border-radius: 20px;
+    padding-left: 25px;
+    padding-right: 25px;
+    border: none;
+    font-size: 2vw;
+
+}
+
+#leave-game-btn{
+    color: white;
+    background-color: red;
+    height: 50px;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-bottom: 60px;
+    border-radius: 20px;
+    border:  none;
+    font-size: 21px;
+  }
+
+  button{
+    cursor: auto;
+  }
+
+  .draw-buttons{
+    color: white;
+    font-size: 23px;
+  }
+
+
+  .back{
+    cursor: pointer;
+  }
+  
+  .btn-outline-primary{
+    background-color: rgba(78, 42, 106, 100);
+    color: rgba(255, 255, 255, 100);
+    border: 1px solid rgba(255, 255, 255, 100);
+  }
