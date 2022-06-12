@@ -4,7 +4,7 @@
     <div id="iconButtons">
       <div id="help" class="material-symbols-outlined px-5 mx-3" [routerLink]="'/instruction'"> help </div>
       <button class="btn btn-outline-primary px-5 mx-3" [routerLink]="'/profile'">Mój profil</button>
-      <button class="btn btn-primary px-5 mx-3" [routerLink]="'/signin'">Wyloguj</button>
+      <button class="btn btn-primary px-5 mx-3" (click)=logout()>Wyloguj</button>
     </div>
   </div>
   <div id="content" class="container-fluid">

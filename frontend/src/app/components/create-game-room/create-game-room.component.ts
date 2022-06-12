@@ -34,7 +34,7 @@ export class CreateGameRoomComponent implements OnInit, OnDestroy, AfterViewInit
   mapDtoMap = new Map<String, MapDto>();
 
   selectedMapSubscription: Subscription;
-  selectedMapId: String;
+  selectedMapName: String;
 
   @ViewChildren('filteredMaps') maps: QueryList<any>;
 
@@ -72,7 +72,7 @@ export class CreateGameRoomComponent implements OnInit, OnDestroy, AfterViewInit
         this.mapService.clearMap()
       else {
         this.mapOptionsForm.controls['map'].setValue(maps.first.nativeElement.value)
-        this.selectedMapId = maps.first.nativeElement.value
+        this.selectedMapName = maps.first.nativeElement.value
         this.setMap()
         this.cdRef.detectChanges()
       }
@@ -88,13 +88,13 @@ export class CreateGameRoomComponent implements OnInit, OnDestroy, AfterViewInit
     this.selectedMapSubscription = this.mapOptionsForm.controls[
       'map'
     ].valueChanges.subscribe((value) => {
-      this.selectedMapId = value;
+      this.selectedMapName = value;
       this.mapService.clearMap();
       this.setMap();
     });
   }
   private setMap(){
-    MapService.map.next(this.mapDatas[this.mapDatas.findIndex(map => map.raceMap.mapId == parseInt(this.selectedMapId.toString()))].raceMap)
+    MapService.map.next(this.mapDatas[this.mapDatas.findIndex(map => map.name == this.selectedMapName)].raceMap)
 
   }
   getMapData(mapId: number, i: number) {
@@ -104,6 +104,7 @@ export class CreateGameRoomComponent implements OnInit, OnDestroy, AfterViewInit
       this.userService
         .getUserData(data.userId)
         .subscribe((data2) => (mapDto.author = data2));
+        if(data.name == null) data.name = mapId.toString()
       mapDto = {
         raceMap: new RaceMap(
 
@@ -118,14 +119,14 @@ export class CreateGameRoomComponent implements OnInit, OnDestroy, AfterViewInit
 
         ),
         // name: data.name,
-        name: mapId.toString(),
+        name: data.name,
         gamesPlayed: data.gamesPlayed,
         rate: data.rating,
         author: mapAuthor,
       };
       this.mapDatas.push(mapDto);
       this.mapDtoMap.set(mapId.toString(), mapDto);
-      this.selectedMapId = this.mapDatas[0].name;
+      this.selectedMapName = this.mapDatas[0].name;
       this.setMap();
 
     });
@@ -135,17 +136,18 @@ export class CreateGameRoomComponent implements OnInit, OnDestroy, AfterViewInit
   getRandomMap(){
     let numberOfMaps = this.mapDatas.length;
     let randomIndex = Math.floor(Math.random() * numberOfMaps);
-    this.selectedMapId = this.mapDatas[randomIndex].name;
+    this.selectedMapName = this.mapDatas[randomIndex].name;
     this.mapOptionsForm.controls[
       'map'
-      ].setValue(this.selectedMapId)
+      ].setValue(this.selectedMapName)
     this.subscribeToMap()
   }
 
   createRoom() {
     if (this.mapOptionsForm.valid) {
+      let findId = this.mapDatas[this.mapDatas.findIndex(map => map.name == this.mapOptionsForm.value.map)].raceMap.mapId;
       let id: number;
-      let mapId: number = parseInt(this.mapOptionsForm.value.map);
+      let mapId: number = findId;
       let playersLimit: number = parseInt(
         this.mapOptionsForm.value.maxGamersNumber
       );
