@@ -1,4 +1,13 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import {
+  AfterViewInit, ChangeDetectorRef,
+  Component, OnChanges,
+  OnDestroy,
+  OnInit,
+  QueryList,
+  TemplateRef,
+  ViewChild,
+  ViewChildren
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -9,13 +18,14 @@ import { MapResponse } from 'src/app/payload/MapResponse';
 import { MapDto } from 'src/app/shared/models/MapDto';
 import { RaceMap } from 'src/app/shared/models/RaceMap';
 import { User } from 'src/app/shared/models/User';
+import {MinPlayersPipe} from "../../shared/pipes/min-players.pipe";
 
 @Component({
   selector: 'app-create-room',
   templateUrl: './create-game-room.component.html',
   styleUrls: ['./create-game-room.component.css'],
 })
-export class CreateGameRoomComponent implements OnInit, OnDestroy {
+export class CreateGameRoomComponent implements OnInit, OnDestroy, AfterViewInit {
   mapOptionsForm: FormGroup;
   mapList: MapResponse[];
   mapDatas: MapDto[] = [];
@@ -26,12 +36,16 @@ export class CreateGameRoomComponent implements OnInit, OnDestroy {
   selectedMapSubscription: Subscription;
   selectedMapName: String;
 
+  @ViewChildren('filteredMaps') maps: QueryList<any>;
+
   constructor(
     private formBuilder: FormBuilder,
     private mapService: MapService,
     private gameRoomService: GameRoomService,
     private userService: UserService,
-    private router: Router
+    private router: Router,
+    private cdRef: ChangeDetectorRef
+
   ) {}
 
   ngOnInit(): void {
@@ -50,6 +64,19 @@ export class CreateGameRoomComponent implements OnInit, OnDestroy {
       }
     });
     this.subscribeToMap();
+
+  }
+  ngAfterViewInit() {
+    this.maps.changes.subscribe(maps=> {
+      if(maps.first == undefined)
+        this.mapService.clearMap()
+      else {
+        this.mapOptionsForm.controls['map'].setValue(maps.first.nativeElement.value)
+        this.selectedMapId = maps.first.nativeElement.value
+        this.setMap()
+        this.cdRef.detectChanges()
+      }
+    })
   }
 
   ngOnDestroy(): void {
