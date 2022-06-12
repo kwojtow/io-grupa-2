@@ -8,4 +8,5 @@ public class PlayerInitialCoord {
     private Long userId;
     private int xCoord;
     private int yCoord;
+    private String color;
 }

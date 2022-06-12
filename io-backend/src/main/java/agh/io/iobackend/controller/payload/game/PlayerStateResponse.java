@@ -11,4 +11,5 @@ public class PlayerStateResponse {
     private int yCoordinate;
     private Vector vector;
     private PlayerStatus playerStatus;
+    private String color;
 }

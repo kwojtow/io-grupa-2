@@ -24,14 +24,17 @@ public class Player {
     private int xVector;
     private int yVector;
 
+    private String color;
 
-    public Player(int xCoordinate, int yCoordinate, Long userId) {
+
+    public Player(int xCoordinate, int yCoordinate, Long userId, String color) {
         this.playerId = userId;
         this.playerStatus = PlayerStatus.WAITING;
         this.xCoordinate = xCoordinate;
         this.yCoordinate = yCoordinate;
         this.xVector = 0;
         this.yVector = 0;
+        this.color = color;
     }
 
     public void updatePlayerAfterMove(int xCoordinate, int yCoordinate, int xVector, int yVector, PlayerStatus playerStatus) {
@@ -58,4 +61,7 @@ public class Player {
         this.yCoordinate = yCoordinate;
     }
 
+    public String getColor() {
+        return color;
+    }
 }

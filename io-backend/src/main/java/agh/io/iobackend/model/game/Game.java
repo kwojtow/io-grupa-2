@@ -84,6 +84,7 @@ public class Game {
             playerStateResponse.setXCoordinate(playerDetails.getXCoordinate());
             playerStateResponse.setYCoordinate(playerDetails.getYCoordinate());
             playerStateResponse.setVector(new Vector(playerDetails.getXVector(), playerDetails.getYVector()));
+            playerStateResponse.setColor(playerDetails.getColor());
             playerStatesList.add(playerStateResponse);
         }
         return playerStatesList;

@@ -111,8 +111,9 @@ export class GameRoomService {
   }
   initGame(playersList: Array<Player>, gameId: number){
     console.log(gameId);
+    const colors = ["#be76fa", "#2861fa", "#e5795b", "#93d35b", "#ff89d8", "#f6250d", "#7a250d", "#7a1a97", "#7ca042", "#969293", "#489293"];
     return this.http.post<number>(
-      "http://localhost:8080/game/" + gameId, playersList.map(player => new PlayerInitialCoord(player.playerId, player.position.x, player.position.y)),
+      "http://localhost:8080/game/" + gameId, playersList.map(player => new PlayerInitialCoord(player.playerId, player.position.x, player.position.y, colors[Math.floor(Math.random() * colors.length)])),
       this.httpOptions).pipe(
       catchError(this.handleError)
     )
