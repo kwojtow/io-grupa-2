@@ -64,7 +64,7 @@ public class GameService {
     public void startGame(Long gameId, ArrayList<PlayerInitialCoord> playerInitialCoordsList) throws NoGameFoundException {
         Game game = getGameFromRepo(gameId);
         for (PlayerInitialCoord playerInitialCoord : playerInitialCoordsList){
-            Player player = new Player(playerInitialCoord.getXCoord(), playerInitialCoord.getYCoord(), playerInitialCoord.getUserId());
+            Player player = new Player(playerInitialCoord.getXCoord(), playerInitialCoord.getYCoord(), playerInitialCoord.getUserId(), playerInitialCoord.getColor());
             playerRepository.save(player);
             game.startGameForPlayer(player);
         }
@@ -74,8 +74,6 @@ public class GameService {
     public ArrayList<PlayerStateResponse> getPlayerStatesList(Long gameId) throws NoGameFoundException, GameRoomNotFoundException {
         ArrayList<PlayerStateResponse> response = getGameFromRepo(gameId).getPlayerStatesList();
 
-        // nie wiem, czy tak to zrobic i czy tutaj, bo moze to za szybko i cos sie zepsuc (ewentualnie jest do tego endpoint, ktory front moze
-        // w odpowiednim czasie zawolac)
         if (response.stream().anyMatch(playerState -> playerState.getPlayerStatus() == PlayerStatus.WON)){
             Game game = getGameFromRepo(gameId);
             game.getNumOfPlayers();
