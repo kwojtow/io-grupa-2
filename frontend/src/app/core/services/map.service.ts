@@ -390,8 +390,8 @@ export class MapService {
 
   private initArrow(fieldWidth: number, player: Player): Path2D{
     const currentVectorPositionPx = player.getCurrentVectorPositionPx(fieldWidth);
-    const arrowWidth = 20;
-    const arrowHeadLen = 10;
+    const arrowWidth = (fieldWidth - this.LINE_WIDTH * 2)/10;
+    const arrowHeadLen = (fieldWidth - this.LINE_WIDTH * 2)/10;
 
     if(player.position.equals(player.getCurrentVectorPosition())) return new Path2D();
 
@@ -405,8 +405,8 @@ export class MapService {
                              arrowWidth, arrowHeadLen);
   }
 
-  private drawArrow(ctx: CanvasRenderingContext2D,arrow: Path2D): void{
-    ctx.lineWidth = 20;
+  private drawArrow(ctx: CanvasRenderingContext2D,arrow: Path2D, fieldWidth: number, lineWidth: number): void{
+    ctx.lineWidth = (fieldWidth - lineWidth * 2)/3;
     ctx.fill(arrow);
     ctx.stroke(arrow);
   }
@@ -456,7 +456,7 @@ export class MapService {
         ctx.fillStyle = "#454545";
         ctx.strokeStyle = "#454545";
       }
-      drawArrow(ctx, arrow);
+      drawArrow(ctx, arrow, fieldWidth, lineWidth);
     }
   }
 
@@ -524,7 +524,7 @@ export class MapService {
             ctx.fillStyle = "#454545";
             ctx.strokeStyle = "#454545";
           }
-          drawArrow(ctx, arrow);
+          drawArrow(ctx, arrow, fieldWidth, lineWidth);
       }
     }
   }
@@ -555,7 +555,7 @@ export class MapService {
       const arrow = this.initArrow(fieldWidth, player);
       ctx.fillStyle = '#454545';
       ctx.strokeStyle = '#454545';
-      this.drawArrow(this.ctx, arrow);
+      this.drawArrow(this.ctx, arrow, fieldWidth, this.LINE_WIDTH);
 
       this.highlightAvaliableVectors(canvas, ctx, map, player, availableVectorsPaths, arrow);
       this.changePosition(canvas, ctx, map, player, availableVectorsPaths, arrow);
