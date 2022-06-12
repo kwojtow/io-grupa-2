@@ -72,7 +72,7 @@ export class CreateGameRoomComponent implements OnInit, OnDestroy, AfterViewInit
         this.mapService.clearMap()
       else {
         this.mapOptionsForm.controls['map'].setValue(maps.first.nativeElement.value)
-        this.selectedMapId = maps.first.nativeElement.value
+        this.selectedMapName = maps.first.nativeElement.value
         this.setMap()
         this.cdRef.detectChanges()
       }
@@ -145,8 +145,9 @@ export class CreateGameRoomComponent implements OnInit, OnDestroy, AfterViewInit
 
   createRoom() {
     if (this.mapOptionsForm.valid) {
+      let findId = this.mapDatas[this.mapDatas.findIndex(map => map.name == this.mapOptionsForm.value.map)].raceMap.mapId;
       let id: number;
-      let mapId: number = parseInt(this.mapOptionsForm.value.map);
+      let mapId: number = findId;
       let playersLimit: number = parseInt(
         this.mapOptionsForm.value.maxGamersNumber
       );
