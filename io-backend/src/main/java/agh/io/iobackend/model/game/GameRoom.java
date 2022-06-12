@@ -55,11 +55,13 @@ public class GameRoom {
     @Column(name = "gameStarted")
     private Boolean gameStarted;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     private List<User> userList;
 
     @OneToOne
     private Game game;
+
+    private Boolean random = false;
 
     public GameRoom(GameMap map, int playersLimit, int roundTime, Long gameMasterId) {
         this.gameMap = map;
