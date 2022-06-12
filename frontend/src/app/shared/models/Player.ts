@@ -27,6 +27,7 @@ export class Player{
       this._playerStatus = newState.playerStatus;
       this.position = newState.currentPosition;
       this.currentVector = newState.currentVector
+      this._color = newState.color;
       }
     }
 

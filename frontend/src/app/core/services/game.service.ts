@@ -93,7 +93,8 @@ export class GameService {
             playerState.playerStatus,
             playerState.xcoordinate,
             playerState.ycoordinate,
-            new Vector(playerState.vector.x, playerState.vector.y))
+            new Vector(playerState.vector.x, playerState.vector.y),
+            playerState.color)
             return result;
           })
         })
