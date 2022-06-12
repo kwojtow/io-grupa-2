@@ -87,3 +87,15 @@ span{
 #randomGame{
     transform: rotate(45deg);
 }
+
+
+#iconButtons{
+    display: flex;
+    align-self: center;
+  }
+
+#help{
+    color: rgba(255, 255, 255, 100);
+    font-size: 55px;
+    cursor: pointer;
+  }

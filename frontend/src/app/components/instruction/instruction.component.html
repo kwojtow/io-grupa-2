@@ -1,0 +1,288 @@
+<div class="container-fluid m-0 p-0">
+  <div
+    id="top-bar"
+    class="container-fluid d-flex justify-content-between align-items-center"
+  >
+  <h1 id="header">Instrukcja</h1>
+    <div>
+      <button class="btn btn-outline-primary px-5 mx-3 back" [routerLink]="'/start'">Graj</button>
+      <button class="btn btn-primary px-5 mx-3 back" [routerLink]="'/profile'">
+        Mój profil
+      </button>
+    </div>
+  </div>
+  <div id="content" class="container-fluid">
+    <div class="row">
+    </div>
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <div class="smaller-header">
+          <h2>Spis treści</h2>
+        </div>
+        <ol>
+          <li
+            [routerLink]="'/instruction'"
+            fragment="create-game"
+            (click)="refresh()"
+          >
+            Utworzenie własnej rozgrywki
+          </li>
+          <li
+            [routerLink]="'/instruction'"
+            fragment="join-game"
+            (click)="refresh()"
+          >
+            Dołączenie do gry za pomocą kodu
+          </li>
+          <li
+            [routerLink]="'/instruction'"
+            fragment="random-game"
+            (click)="refresh()"
+          >
+            Dołączenie do losowej gry
+          </li>
+          <li [routerLink]="'/instruction'" fragment="game" (click)="refresh()">
+            Zasady rozgrywki
+          </li>
+          <li
+            [routerLink]="'/instruction'"
+            fragment="profile"
+            (click)="refresh()"
+          >
+            Profil gracza
+          </li>
+          <li
+            [routerLink]="'/instruction'"
+            fragment="create-map"
+            (click)="refresh()"
+          >
+            Tworzenie własnej mapy
+          </li>
+        </ol>
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      <div id="create-game" class="col-md-10">
+        <div class="smaller-header">
+          <h2>Utworzenie własnej rozgrywki</h2>
+        </div>
+        <p>
+          <span>
+            <b>1) Widok tworzenia pokoju</b> <br />
+            • Po wybraniu opcji <i>Utwórz nową rozgrywkę</i> przechodzisz do
+            widoku tworzenie pokoju. <br />
+            • Możesz wybrać parametry rozgrywki: maksymalną ilość graczy, czas
+            trwania pojedynczego ruchu w trakcie rozgrywki oraz mapę. <br />
+            • Z każdą mapą powiązane są statystyki, które mogą pomóc Ci w
+            wyborze mapy. Te statystyki to: liczba rozegranych gier, średnia
+            ocen wystawianych przez graczy oraz autor mapy. <br />
+            • Jeśli nie wiesz na jaką mapę się zdecydować możesz kliknąć
+            przycisk
+            <button class="button random-map">Losuj mapę</button>,
+            który losowo wybierze jedną z dostępnych map. <br />
+            • Chcąc zrezygnować z tworzenia pokoju kliknij przycisk
+            <button
+              style="padding-bottom: 65px"
+              class="btn btn-primary px-3 "
+            >
+              Anuluj</button
+            >. <br />
+            • Po wybraniu parametrów gry kliknij przycisk
+            <button class="button to-login">Utwórz pokój</button> aby przejść do
+            widoku pokoju. <br />
+            <br />
+            <b>2) Widok pokoju gry</b> <br />
+            • W lewym górnym rogu widoku pokoju znajduje się kod pokoju.
+            Udostępnij go swoim znajomym aby mogli dołączyć do utworzonego przez
+            Ciebie pokoju. <br />
+            • W widoku pokoju znajduje się podsumowanie wybranych przez Ciebie
+            parametrów gry wraz z awatarami i nazwami graczy, którzy już
+            dołączyli do pokoju. <br />
+            • Jako game master masz możliwość wyrzucenia z pokoju dowolnego
+            gracza. Chcąc to uczynić wybierz znajdujący się nad awatarem danego
+            gracza wielokropek a następnie kliknij przycisk
+            <button class="kick badge rounded-pill bg-danger">
+              Wyrzuć gracza</button
+            >.
+            <br />
+            • Chcąc rozpocząć rozgrywkę kliknij przycisk
+            <button class="btn btn-success px-2">
+              Rozpocznij rozgrywkę</button
+            >.
+            <br />
+            • Po odliczeniu czasu do rozpoczęcia rozgrywki przejdziesz do widoku
+            gry. <br />
+            • Chcąc zamknąć pokój kliknij przycisk
+            <button class="btn btn-danger px-2">Zamknij</button>. <br />
+          </span>
+        </p>
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      <div id="join-game" class="col-md-10">
+        <div class="smaller-header">
+          <h2>Dołączenie do gry za pomocą kodu</h2>
+        </div>
+        <p>
+          <span>
+            <b>1) Dołączenie do gry</b> <br />
+            • Poproś znajomego, który utworzył pokój o podanie Tobie kodu
+            pokoju, aby móc do niego dołączyć. <br />
+            • Po wybraniu opcji <i>Dołącz do gry za pomocą kodu</i> wprowadź
+            otrzymany wcześniej kod i kliknij przycisk
+            <button class="button-join">Dołącz</button> aby przejść do widoku
+            pokoju. <br />
+            Jeśli chcesz zrezygnować z dołączania do gry poprzez kod kliknij
+            przycisk
+            <button class="button-cancel">Anuluj</button>. <br />
+            <br />
+            <b>2) Pokój</b> <br />
+            • Znajdując się w widoku pokoju, aby przejść do widoku gry musisz
+            czekać aż game master rozpocznie rozgrywkę. <br />
+            • W każdej chwili możesz opuścić pokój klikając znajdujący się w
+            lewym górnym rogu przycisk
+            <button class="button-cancel">Opuść</button>. <br />
+          </span>
+        </p>
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      <div id="random-game" class="col-md-10">
+        <div class="smaller-header">
+          <h2>Dołączenie do losowej gry</h2>
+        </div>
+        <p>
+          <span>
+            • Chcąc dołączyć do losowej gry wybierz opcję
+            <i>Dołącz do losowej gry</i>.
+            <br />
+            • Zostaniesz dołączony do gry wraz z graczami o podobnej do Ciebie
+            pozycji w rankingu. <br />
+            • Jeśli w danym momencie będzie problem z zestawieniem rozgrywki z
+            graczami o podobnej do ciebie pozycji w rankingu możesz zostać
+            dołączony do gry z graczami o wyższej lub niższej od ciebie pozycji.
+            <br />
+          </span>
+        </p>
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      <div id="game" class="col-md-10">
+        <div class="smaller-header">
+          <h2>Zasady rozgrywki</h2>
+        </div>
+        <p>
+          <span>
+            • Przebieg rozgrywki wygląda tak samo niezależnie od wybranej
+            wcześniej opcji rozgrywki (<i>Utworzenie własnej rozgrywki</i>,
+            <i>Dołączenie do gry za pomocą kodu</i> czy
+            <i>Dołączenie do losowej gry</i>). <br />
+            • Udział w rozgrywce zaczynasz na swojej indywidualnej pozycji
+            startowej. <br />
+            • Celem gry jest dotarcie na pozycję mety. <br />
+            • W czasie trwania wyboru ruchu możesz zmienić wektor poruszania się
+            swojego samochodu o jedną z sąsiadujących i dostępnych do wyboru
+            kratek, względem aktualnego wektora poruszania się twojego
+            samochodu.
+            <br />
+            • Jeśli nie dokonasz zmiany wektora w ciągu czasu trwania twojego
+            ruchu, wektor poruszania się twojego samochodu pozostanie taki sam.
+            <br />
+            • Musisz unikać wjechania na przeszkodę oraz granice mapy. Wjechanie
+            na takie pozycję skutkuje odpadnięciem z gry. <br />
+            • W danym ruchu masz konkretną ilość czasu na wykonanie ruchu. Czas
+            trwania ruchu wybierany jest przez game mastera przy tworzeniu
+            pokoju rozgrywki. <br />
+            • Ruch graczy odbywa się sekwencyjnie – tylko jeden gracz w danym
+            momencie dokonuje wyboru ruchu. <br />
+            • Rozgrywka kończy się gdy jeden z graczy jako pierwszy dotrze na
+            pozycję mety. Wygrywa on rozgrywkę, a pozostali gracze przegrywają.
+            <br />
+            • Po zakończeniu rozgrywki możesz ocenić mapę w skali 1-10. <br />
+            • W każdej chwili możesz opuścić grę klikając przycisk
+            <button id="leave-game-btn">Opuść grę</button>.
+            <br />
+          </span>
+        </p>
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      <div id="profile" class="col-md-10">
+        <div class="smaller-header">
+          <h2>Profil gracza</h2>
+        </div>
+        <p>
+          <span>
+            • W widoku profilu gracza znajdują się dane i statystyki powiązane z
+            twoim kontem: 
+            twoja nazwa oraz e-mail, pozycja w rankingu, zdobyte punkty oraz
+            liczba rozegranych i wygranych gier. <br />
+            • W profilu masz możliwość przeglądnąć ranking graczy oraz ranking
+            map.
+            <br />
+            • W profilu możesz przeglądać utworzone przez Ciebie mapy, mapy, na
+            których uzyskiwałeś najlepsze wyniki oraz mapy, na których
+            najczęściej grałeś. <br />
+            • Chcąc stworzyć własną nową mapę kliknij przycisk
+            <button class="button to-login">Utwórz nową</button>.
+            <br />
+            • Chcąc usunąć jedną ze swoich map kliknij przycisk
+            <button class="button to-login">Usuń mapę</button>.
+            <br />
+            • Chcąc zmienić swój awatar kliknij na twój aktualny awatar i
+            wybierz nowy. <br />
+          </span>
+        </p>
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      <div id="create-map" class="col-md-10">
+        <div class="smaller-header">
+          <h2>Tworzenie mapy</h2>
+        </div>
+        <p>
+          <span>
+            • W widoku tworzenia mapy masz możliwość stworzyć swoją własną mapę.
+            <br />
+            • Masz do wyboru trzy rozmiary map: mały (wymiary 40x28 kratek),
+            średni (wymiary 60x42 kratek), duży (wymiary 102x70 kratek). <br />
+            • Chcąc narysować pozycję startową kliknij przycisk
+            <button style="background-color: #1684fc" class="btn draw-buttons">
+              Rysuj start
+            </button>
+            a następnie wybierz dane miejsce na mapie. Pamiętaj, że liczba
+            pozycji startowych warunkuje maksymalną liczbę graczy na stworzonej
+            mapie, przez co pozycje startowe muszą być co najmniej dwie. <br />
+            • Chcąc narysować pozycję mety kliknij przycisk
+            <button style="background-color: #0e8806" class="btn draw-buttons">
+              Rysuj metę
+            </button>
+            a następnie wybierz dane miejsce na mapie. Pamiętaj, że na mapie
+            musi być co najmniej jedna meta. <br />
+            • Chcąc narysować przeszkodę kliknij przycisk
+            <button style="background-color: black" class="btn draw-buttons">
+              Rysuj przeszkodę
+            </button>
+            a następnie wybierz dane miejsce na mapie. <br />
+            • Chcąc cofnąć wybór kliknij przycisk
+            <button style="background-color: darkgray" class="btn draw-buttons">
+              Wyczyść pole
+            </button>
+            i wybierz pole, które chcesz wyczyścić. <br />
+            • W celu zapisania mapy kliknij przycisk
+            <button style="background-color: red" class="btn draw-buttons">
+              Zapisz</button
+            >. Pamiętaj o nadaniu nazwy swojej mapie. <br />
+            • Chcąc odrzucić mapę wybierz przycisk
+            <button
+              style="padding-bottom: 65px"
+              class="btn btn-primary px-2"
+            >
+              Odrzuć</button
+            >. <br />
+          </span>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

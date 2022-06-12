@@ -289,13 +289,15 @@ img:hover{
 .btn {
   border-radius: 20px;
   font-size: larger;
-  height: 55px;
+   height: 55px; 
+
 
 
 }
 
 #buttons{
   justify-content: right;
+  
 }
 
 .btn-outline-primary{
@@ -380,4 +382,16 @@ span{
   font-weight: bold;
   background-color: rgba(78, 42, 106, 100);
   color: white;
+}
+
+
+#help{
+  color: rgba(255, 255, 255, 100);
+  font-size: 55px;
+  cursor: pointer;
+}
+
+#iconButtons{
+  display: flex;
+  align-self: center;
 }
