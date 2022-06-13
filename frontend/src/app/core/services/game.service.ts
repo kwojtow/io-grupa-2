@@ -159,6 +159,10 @@ export class GameService {
           newVector, this.game.map)) {
             this.player.setNewVector(this.player.currentVector);
           }
+          else {
+            this.player.playerStatus = "LOST";
+            this.player.setNewVector(new Vector(0,0));
+          }
 
         this.moveDone = false;
       }
