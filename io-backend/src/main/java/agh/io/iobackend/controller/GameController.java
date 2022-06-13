@@ -61,6 +61,15 @@ public class GameController {
         }
     }
 
+    @PostMapping("/{id}/state/{user}")
+    public void playerWon(@PathVariable Long id, @PathVariable Long user) {
+        try {
+            gameService.markWinner(id, user);
+        } catch (NoGameFoundException e) {
+            logger.info("No game found, can not mark a winner");
+        }
+    }
+
     @DeleteMapping("/{id}/state")
     public ResponseEntity<String> endGame(@PathVariable Long id) {
         try {

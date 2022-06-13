@@ -18,9 +18,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.math.*;
+import java.util.stream.Collectors;
 
 @Service
 public class GameService {
@@ -89,15 +89,49 @@ public class GameService {
         game.changeGameState(playerMove);
     }
 
+    public void markWinner(Long gameId, Long userId) throws NoGameFoundException {
+        Game game = getGameFromRepo(gameId);
+        game.getPlayer(userId).setPlayerStatus(PlayerStatus.WON);
+    }
+
+    private double pow_normalized(double x, int normalizer, double base) {
+        return Math.pow(x / ((double) normalizer), base);
+    }
+
+    // Before the game ends, calculates ranking points with a function:
+    //
+    //      ranking_fun(z) = 100 * (1 - softmax_pow(z / max(z), 0.5))
+    //
+    // where softmax_pow is a softmax with exp() substituted by power(x, 0.5)
+    // this ranking_fun() calculates rewards for each player in case of his win,
+    // but in our use case, we should only update the winners ranking points
     public void endGame(Long gameId) throws NoGameFoundException, GameRoomNotFoundException {
         Game game = getGameFromRepo(gameId);
         Long gameRoomId = game.getGameRoomId();
         GameRoom gameRoom = gameRoomService.getGameRoom(gameRoomId);
         gameRoom.setGameStarted(false);
         List<User> users = gameRoom.getUserList();
+
+        // Calculate components of the ranking_fun()
+        LinkedHashMap<User, Integer> ranking = new LinkedHashMap<>();
+        for (User user : statisticsService.getUsersRanking().keySet()) {
+            ranking.put(user, Math.max(statisticsService.getUsersRanking().get(user), 1));
+        }   // Guaranties that ranking is at least 1, otherwise the function does not have sense
+        ranking.keySet().retainAll(users);
+        int max_ranked = ranking.values().stream().mapToInt(Integer::intValue).sum();
+        double sum_ranking = ranking.values().stream().mapToDouble(Integer::doubleValue)
+                .map(x -> Math.pow(x / max_ranked, 0.5)).sum();
+
         if (users.size() == game.getNumOfPlayers()) {  // szczegolnie do testow potrzebne
             for (User user : users) {
-                statisticsService.saveHistoryEntry(game.getMap(), user, game.getPlayer(user.getUserId()).checkPlayerResult(), 100);
+                int reward_points = 0;
+                if (game.getPlayer(user.getUserId()).checkIfWinner()) {
+                    double winner_points = (double) ranking.get(user);
+                    reward_points = (int) Math.floor(
+                            100.0 * (1.0 - pow_normalized(winner_points, max_ranked, 0.5) / sum_ranking)
+                    );
+                }
+                statisticsService.saveHistoryEntry(game.getMap(), user, game.getPlayer(user.getUserId()).checkPlayerResult(), reward_points);
             }
         }
         gameRoom.setGame(null);

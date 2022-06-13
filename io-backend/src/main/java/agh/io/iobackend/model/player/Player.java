@@ -46,6 +46,8 @@ public class Player {
         return playerStatus != PlayerStatus.LOST;
     }
 
+    public Boolean checkIfWinner() { return playerStatus == PlayerStatus.WON; }
+
     public PlayerStatus getPlayerStatus() {
         return playerStatus;
     }
