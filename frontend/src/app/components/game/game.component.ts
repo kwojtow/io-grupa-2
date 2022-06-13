@@ -89,6 +89,8 @@ export class GameComponent implements OnInit, OnDestroy {
   }
 
   leaveGame() {
+    this.authorizedPlayer.playerStatus = "LOST";
+    this.authorizedPlayer.setNewVector(new Vector(0,0));
     this.gameEnd = true;
     // this.router.navigate(['start'])
   }
