@@ -5,6 +5,8 @@ import {Vector} from "../../shared/models/Vector";
 import {HttpClient, HttpHeaders} from "@angular/common/http";
 import {MapResponse} from "../../payload/MapResponse";
 import {Router} from "@angular/router";
+import {UserService} from "../../core/services/user.service";
+import {User} from "../../shared/models/User";
 
 enum ObjectType{
   NONE, START, FINISH, OBSTACLE
@@ -19,6 +21,7 @@ export class CreateMapComponent implements OnInit {
   objectTypeEnum = ObjectType;
   map: RaceMap;
   chosenObject = ObjectType.NONE;
+  user : User;
   mapSizes =[
     {name: 'Mały', width: 40, height: 28},
     {name: 'Średni', width: 60, height: 42},
@@ -28,11 +31,15 @@ export class CreateMapComponent implements OnInit {
 
   constructor(private _mapService: MapService,
               private _http: HttpClient,
+              private _userService: UserService,
               private router: Router) {
     this.resetMap();
   }
 
   ngOnInit(): void {
+    this._userService.getUser().subscribe(user => {
+      this.user = user;
+    });
   }
 
   drawObject(event: MouseEvent) {
