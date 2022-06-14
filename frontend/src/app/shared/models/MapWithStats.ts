@@ -17,5 +17,6 @@ export class MapWithStats {
 
   get games(): number {
     return this._games;
+
   }
 }
