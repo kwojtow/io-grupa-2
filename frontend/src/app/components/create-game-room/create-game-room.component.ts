@@ -77,6 +77,7 @@ export class CreateGameRoomComponent implements OnInit, OnDestroy, AfterViewInit
         this.cdRef.detectChanges()
       }
     })
+
   }
 
   ngOnDestroy(): void {
@@ -89,6 +90,9 @@ export class CreateGameRoomComponent implements OnInit, OnDestroy, AfterViewInit
       'map'
     ].valueChanges.subscribe((value) => {
       this.selectedMapName = value;
+      console.log(this.mapDtoMap);
+      console.log(this.mapDtoMap.get(this.selectedMapName))
+      console.log(this.selectedMapName)
       this.mapService.clearMap();
       this.setMap();
     });
@@ -125,7 +129,7 @@ export class CreateGameRoomComponent implements OnInit, OnDestroy, AfterViewInit
         author: mapAuthor,
       };
       this.mapDatas.push(mapDto);
-      this.mapDtoMap.set(mapId.toString(), mapDto);
+      this.mapDtoMap.set(mapDto.name, mapDto);
       this.selectedMapName = this.mapDatas[0].name;
       this.setMap();
 
